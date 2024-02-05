@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     }
 
     //requestParam 검증
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler
     public ResponseEntity<ExceptionResponse> constraintViolationException(final ConstraintViolationException e) {
         final List<ErrorResponse> errorResponses = e.getConstraintViolations()
                 .stream()
