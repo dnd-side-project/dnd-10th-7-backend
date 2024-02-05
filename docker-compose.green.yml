@@ -1,0 +1,8 @@
+#green
+version: '3'
+services:
+  sendback-api:
+    build: .
+    ports:
+      - "8082:8080"
+    container_name: spring-green
