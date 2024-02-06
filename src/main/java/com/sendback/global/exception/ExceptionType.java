@@ -2,7 +2,7 @@ package com.sendback.global.exception;
 
 public interface ExceptionType {
 
-    int statusCode();
+    int getStatusCode();
 
-    String message();
+    String getMessage();
 }

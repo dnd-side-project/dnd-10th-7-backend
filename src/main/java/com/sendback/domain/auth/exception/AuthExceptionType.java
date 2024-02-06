@@ -1,8 +1,10 @@
 package com.sendback.domain.auth.exception;
 
 import com.sendback.global.exception.ExceptionType;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public enum AuthExceptionType implements ExceptionType {
 
     UNAUTHORIZED(1000, "리소스 접근 권한이 없습니다."),
@@ -20,15 +22,5 @@ public enum AuthExceptionType implements ExceptionType {
     AuthExceptionType(int statusCode, String message) {
         this.statusCode = statusCode;
         this.message = message;
-    }
-
-    @Override
-    public int statusCode() {
-        return statusCode;
-    }
-
-    @Override
-    public String message() {
-        return message;
     }
 }

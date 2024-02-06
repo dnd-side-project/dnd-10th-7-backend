@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendback.domain.auth.dto.SocialUserInfo;
 import com.sendback.domain.auth.dto.Token;
-import com.sendback.domain.auth.dto.response.AuthResponseDto.TokensResponseDto;
-import com.sendback.domain.users.entity.Users;
+import com.sendback.domain.auth.dto.response.TokensResponseDto;
+import com.sendback.domain.users.entity.User;
 import com.sendback.domain.users.repository.UsersRepository;
 import com.sendback.global.common.constants.SocialType;
 import com.sendback.global.config.jwt.JwtProvider;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,20 +40,18 @@ public class GoogleService {
     private String GOOGLE_TOKEN_URI;
     @Value("${oauth2.google.userInfoUri}")
     private String GOOGLE_USERINFO_URI;
+    private final RestTemplate rt;
 
     @Transactional
     public TokensResponseDto loginGoogle(String code) throws JsonProcessingException {
         String accessToken = getAccessToken(code);
         SocialUserInfo googleUserInfo = getGoogleUserInfo(accessToken);
-        Users kakaoUser = registerGoogleUserIfNeeded(googleUserInfo);
+        User kakaoUser = registerGoogleUserIfNeeded(googleUserInfo);
         Token token =  jwtProvider.issueToken(kakaoUser.getId());
         return new TokensResponseDto(token.accessToken(), token.refreshToken());
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
-
-        RestTemplate rt = new RestTemplate();
-
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
 
@@ -86,8 +83,6 @@ public class GoogleService {
 
     private SocialUserInfo getGoogleUserInfo(String accessToken) throws JsonProcessingException {
 
-        RestTemplate rt = new RestTemplate();
-
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -113,13 +108,13 @@ public class GoogleService {
         return new SocialUserInfo(id, nickname, email, profile_image);
     }
 
-    private Users registerGoogleUserIfNeeded(SocialUserInfo socialUserInfo) {
+    private User registerGoogleUserIfNeeded(SocialUserInfo socialUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         String socialId = socialUserInfo.id();
-        Users googleUser = usersRepository.findBySocialId(socialId)
+        User googleUser = usersRepository.findBySocialId(socialId)
                 .orElse(null);
         if (googleUser == null) {
-            googleUser = Users.of(SocialType.GOOGLE, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
+            googleUser = User.of(SocialType.GOOGLE, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
             usersRepository.save(googleUser);
         }
         return googleUser;

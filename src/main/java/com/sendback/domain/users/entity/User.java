@@ -8,15 +8,14 @@ import com.sendback.global.common.constants.SocialType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "isDeleted = false")
 @SQLDelete(sql = "UPDATE Users SET isDeleted = true WHERE id = ?")
-public class Users extends BaseEntity {
+@Table(name="users")
+public class User extends BaseEntity {
     @Id // primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,10 +33,10 @@ public class Users extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Career career;
 
-    private boolean isDeleted = Boolean.FALSE;
+    private Boolean isDeleted = Boolean.FALSE;
 
     @Builder
-    public Users(SocialType socialType, String socialId, String email, Level level, String nickname, Gender gender, String birthday, String profileImageUrl, Career career) {
+    public User(SocialType socialType, String socialId, String email, Level level, String nickname, Gender gender, String birthday, String profileImageUrl, Career career) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.email = email;
@@ -49,8 +48,8 @@ public class Users extends BaseEntity {
         this.career = career;
     }
 
-    public static Users of(SocialType socialType, String socialId, String email, String nickname, String profileImageUrl){
-        return Users.builder()
+    public static User of(SocialType socialType, String socialId, String email, String nickname, String profileImageUrl){
+        return User.builder()
                 .socialType(socialType)
                 .socialId(socialId)
                 .email(email)

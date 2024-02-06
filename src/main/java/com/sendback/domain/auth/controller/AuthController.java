@@ -2,8 +2,8 @@ package com.sendback.domain.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sendback.domain.auth.dto.Token;
-import com.sendback.domain.auth.dto.request.AuthRequestDto.*;
-import com.sendback.domain.auth.dto.response.AuthResponseDto.TokensResponseDto;
+import com.sendback.domain.auth.dto.request.RefreshTokenRequestDto;
+import com.sendback.domain.auth.dto.response.TokensResponseDto;
 import com.sendback.domain.auth.service.AuthService;
 import com.sendback.domain.auth.service.GoogleService;
 import com.sendback.domain.auth.service.KakaoService;

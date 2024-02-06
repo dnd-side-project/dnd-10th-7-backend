@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendback.domain.auth.dto.SocialUserInfo;
 import com.sendback.domain.auth.dto.Token;
-import com.sendback.domain.auth.dto.response.AuthResponseDto.TokensResponseDto;
-import com.sendback.domain.users.entity.Users;
+import com.sendback.domain.auth.dto.response.TokensResponseDto;
+import com.sendback.domain.users.entity.User;
 import com.sendback.domain.users.repository.UsersRepository;
 import com.sendback.global.common.constants.SocialType;
 import com.sendback.global.config.redis.RedisService;
@@ -39,22 +39,19 @@ public class KakaoService {
     private String KAKAO_USERINFO_URI;
     @Value("${oauth2.kakao.tokenUri}")
     private String KAKAO_TOKEN_URI;
-
-    @Autowired
     private final RedisService redisService;
+    private final RestTemplate rt;
 
     @Transactional
     public TokensResponseDto loginKakao(String code) throws JsonProcessingException {
         String accessToken = getAccessToken(code);
         SocialUserInfo kakaoUserInfo = getKakaoUserInfo(accessToken);
-        Users kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
+        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
         Token token =  jwtProvider.issueToken(kakaoUser.getId());
         return new TokensResponseDto(token.accessToken(), token.refreshToken());
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
-        RestTemplate rt = new RestTemplate();
-
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -84,8 +81,6 @@ public class KakaoService {
         return jsonNode.get("access_token").asText();
     }
     private SocialUserInfo getKakaoUserInfo(String accessToken) throws JsonProcessingException {
-        RestTemplate rt = new RestTemplate();
-
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -114,12 +109,13 @@ public class KakaoService {
         return new SocialUserInfo(id, nickname, email, profile_image);
     }
 
-    private Users registerKakaoUserIfNeeded(SocialUserInfo socialUserInfo) {
+    private User registerKakaoUserIfNeeded(SocialUserInfo socialUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         String socialId = socialUserInfo.id();
-        Users kakaoUser = usersRepository.findBySocialId(socialId).orElse(null);
+        User kakaoUser = usersRepository.findBySocialId(socialId).orElse(null);
+
         if (kakaoUser == null) {
-            kakaoUser = Users.of(SocialType.KAKAO, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
+            kakaoUser = User.of(SocialType.KAKAO, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
             usersRepository.save(kakaoUser);
         }
         return kakaoUser;
