@@ -33,22 +33,16 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     }
 
     private void handleUnauthorizedException(HttpServletResponse response, UnAuthorizedException e) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("utf-8");
-        response.setStatus(e.getExceptionType().statusCode());
-        String body = objectMapper.writeValueAsString(
-                ExceptionResponse.from(e.getExceptionType())
-        );
-        response.getWriter().write(body);
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        objectMapper.writeValue(response.getWriter(), ExceptionResponse.from(AuthExceptionType.INVALID_ACCESS_TOKEN_VALUE));
     }
 
     private void handleException(HttpServletResponse response) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("utf-8");
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        String body = objectMapper.writeValueAsString(
-                ExceptionResponse.from(AuthExceptionType.INTERNAL_SERVER_ERROR)
-        );
-        response.getWriter().write(body);
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        objectMapper.writeValue(response.getWriter(), ExceptionResponse.from(AuthExceptionType.INTERNAL_SERVER_ERROR));
     }
 }
