@@ -2,8 +2,7 @@ package com.sendback.global.config.jwt;
 
 import com.sendback.domain.auth.dto.Token;
 import com.sendback.global.config.redis.RedisService;
-import com.sendback.global.error.ErrorCode;
-import com.sendback.global.error.type.UnAuthorizedException;
+import com.sendback.global.exception.type.UnAuthorizedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+
+import static com.sendback.domain.auth.exception.AuthExceptionType.*;
 
 @Getter
 @Component
@@ -52,9 +53,9 @@ public class JwtProvider {
         try {
             getJwtParser().parseClaimsJws(accessToken);
         } catch (ExpiredJwtException e) {
-            throw new UnAuthorizedException(ErrorCode.EXPIRED_ACCESS_TOKEN);
+            throw new UnAuthorizedException(EXPIRED_ACCESS_TOKEN);
         } catch (Exception e) {
-            throw new UnAuthorizedException(ErrorCode.INVALID_ACCESS_TOKEN_VALUE);
+            throw new UnAuthorizedException(INVALID_ACCESS_TOKEN_VALUE);
         }
     }
 
@@ -62,15 +63,15 @@ public class JwtProvider {
         try {
             getJwtParser().parseClaimsJws(refreshToken);
         } catch (ExpiredJwtException e) {
-            throw new UnAuthorizedException(ErrorCode.EXPIRED_REFRESH_TOKEN);
+            throw new UnAuthorizedException(EXPIRED_REFRESH_TOKEN);
         } catch (Exception e) {
-            throw new UnAuthorizedException(ErrorCode.INVALID_REFRESH_TOKEN_VALUE);
+            throw new UnAuthorizedException(INVALID_REFRESH_TOKEN_VALUE);
         }
     }
 
-    public void equalsRefreshToken(String providedRefreshToken, String storedRefreshToken) {
-        if (!providedRefreshToken.equals(storedRefreshToken)) {
-            throw new UnAuthorizedException(ErrorCode.NOT_MATCH_REFRESH_TOKEN);
+    public void equalsRefreshToken(Long userId, String refreshToken) {
+        if (!redisService.validateRefreshToken(userId, refreshToken)) {
+            throw new UnAuthorizedException(NOT_MATCH_REFRESH_TOKEN);
         }
     }
 
@@ -95,10 +96,9 @@ public class JwtProvider {
         try {
             Claims claims = getJwtParser().parseClaimsJws(token).getBody();
             return Long.parseLong(claims.getSubject());
-
         }
-        catch (ExpiredJwtException ex) {
-            throw new RuntimeException();
+        catch (Exception ex) {
+            throw new UnAuthorizedException(INVALID_REFRESH_TOKEN_VALUE);
         }
     }
 }

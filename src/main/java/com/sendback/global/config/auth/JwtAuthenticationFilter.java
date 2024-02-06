@@ -1,8 +1,9 @@
 package com.sendback.global.config.auth;
 
+import com.sendback.domain.auth.exception.AuthExceptionType;
 import com.sendback.global.config.jwt.JwtProvider;
-import com.sendback.global.error.ErrorCode;
-import com.sendback.global.error.type.UnAuthorizedException;
+import com.sendback.global.exception.ExceptionType;
+import com.sendback.global.exception.type.UnAuthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(BEARER)) {
             return accessToken.substring(BEARER.length());
         }
-        throw new UnAuthorizedException(ErrorCode.INVALID_ACCESS_TOKEN);
+        throw new UnAuthorizedException(AuthExceptionType.INVALID_ACCESS_TOKEN_VALUE);
     }
 
     private void setAuthentication(HttpServletRequest request, Long userId) {
@@ -45,3 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
+
+
+
