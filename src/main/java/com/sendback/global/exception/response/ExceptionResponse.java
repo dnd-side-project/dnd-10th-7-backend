@@ -4,11 +4,10 @@ import com.sendback.global.exception.BaseException;
 import com.sendback.global.exception.ExceptionType;
 
 public record ExceptionResponse(
-        int statusCode,
+        int code,
         String message
 ) {
-    public static ExceptionResponse from(final BaseException e) {
-        final ExceptionType exceptionType = e.getExceptionType();
-        return new ExceptionResponse(exceptionType.getStatusCode(), exceptionType.getMessage());
+    public static ExceptionResponse from(ExceptionType exceptionType) {
+        return new ExceptionResponse(exceptionType.statusCode(), exceptionType.message());
     }
 }
