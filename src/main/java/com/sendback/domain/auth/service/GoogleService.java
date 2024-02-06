@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendback.domain.auth.dto.SocialUserInfo;
 import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
-import com.sendback.domain.users.entity.User;
-import com.sendback.domain.users.repository.UsersRepository;
+import com.sendback.domain.user.entity.User;
+import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.common.constants.SocialType;
 import com.sendback.global.config.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class GoogleService {
 
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     @Value("${oauth2.google.clientId}")
     private String GOOGLE_CLIENT_ID;
@@ -111,11 +111,11 @@ public class GoogleService {
     private User registerGoogleUserIfNeeded(SocialUserInfo socialUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         String socialId = socialUserInfo.id();
-        User googleUser = usersRepository.findBySocialId(socialId)
+        User googleUser = userRepository.findBySocialId(socialId)
                 .orElse(null);
         if (googleUser == null) {
             googleUser = User.of(SocialType.GOOGLE, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
-            usersRepository.save(googleUser);
+            userRepository.save(googleUser);
         }
         return googleUser;
     }

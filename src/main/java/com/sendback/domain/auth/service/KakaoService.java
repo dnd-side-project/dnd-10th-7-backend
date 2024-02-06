@@ -6,14 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendback.domain.auth.dto.SocialUserInfo;
 import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
-import com.sendback.domain.users.entity.User;
-import com.sendback.domain.users.repository.UsersRepository;
+import com.sendback.domain.user.entity.User;
+import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.common.constants.SocialType;
 import com.sendback.global.config.redis.RedisService;
 import com.sendback.global.config.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoService {
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     @Value("${oauth2.kakao.clientId}")
     private String KAKAO_CLIENT_ID;
@@ -112,11 +111,11 @@ public class KakaoService {
     private User registerKakaoUserIfNeeded(SocialUserInfo socialUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         String socialId = socialUserInfo.id();
-        User kakaoUser = usersRepository.findBySocialId(socialId).orElse(null);
+        User kakaoUser = userRepository.findBySocialId(socialId).orElse(null);
 
         if (kakaoUser == null) {
             kakaoUser = User.of(SocialType.KAKAO, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
-            usersRepository.save(kakaoUser);
+            userRepository.save(kakaoUser);
         }
         return kakaoUser;
     }

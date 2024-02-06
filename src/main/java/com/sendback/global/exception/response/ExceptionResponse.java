@@ -8,6 +8,6 @@ public record ExceptionResponse(
         String message
 ) {
     public static ExceptionResponse from(ExceptionType exceptionType) {
-        return new ExceptionResponse(exceptionType.statusCode(), exceptionType.message());
+        return new ExceptionResponse(exceptionType.getStatusCode(), exceptionType.getMessage());
     }
 }

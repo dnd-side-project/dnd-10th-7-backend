@@ -1,4 +1,4 @@
-package com.sendback.domain.users.entity;
+package com.sendback.domain.user.entity;
 
 import com.sendback.global.common.BaseEntity;
 import com.sendback.global.common.constants.Career;
