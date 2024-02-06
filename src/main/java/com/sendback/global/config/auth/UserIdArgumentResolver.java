@@ -1,5 +1,6 @@
 package com.sendback.global.config.auth;
 
+import com.sendback.global.common.UserId;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

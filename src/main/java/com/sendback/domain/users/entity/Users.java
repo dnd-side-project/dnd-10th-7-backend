@@ -1,6 +1,6 @@
 package com.sendback.domain.users.entity;
 
-import com.sendback.global.common.Entity.BaseEntity;
+import com.sendback.global.common.BaseEntity;
 import com.sendback.global.common.constants.Career;
 import com.sendback.global.common.constants.Gender;
 import com.sendback.global.common.constants.Level;

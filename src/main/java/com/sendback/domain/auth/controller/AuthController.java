@@ -8,7 +8,7 @@ import com.sendback.domain.auth.service.AuthService;
 import com.sendback.domain.auth.service.GoogleService;
 import com.sendback.domain.auth.service.KakaoService;
 import com.sendback.global.common.ApiResponse;
-import com.sendback.global.config.auth.UserId;
+import com.sendback.global.common.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

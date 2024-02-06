@@ -1,4 +1,4 @@
-package com.sendback.global.common.Entity;
+package com.sendback.global.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

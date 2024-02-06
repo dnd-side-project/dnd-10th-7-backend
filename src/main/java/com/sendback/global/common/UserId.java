@@ -1,4 +1,4 @@
-package com.sendback.global.config.auth;
+package com.sendback.global.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
