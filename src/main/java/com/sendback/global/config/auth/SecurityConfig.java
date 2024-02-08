@@ -27,16 +27,12 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private static final String[] whiteList = {
+    private static final String[] PUBLIC_URLS = {
             "api/auth/kakao/callback",
             "api/auth/google/callback",
             "api/auth/reissue"
     };
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(whiteList);
-    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return  http
@@ -49,13 +45,14 @@ public class SecurityConfig {
 
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class)
 
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .anyRequest().authenticated()
+                )
                 .build();
     }
 
