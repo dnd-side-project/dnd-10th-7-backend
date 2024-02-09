@@ -12,10 +12,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+import static com.sendback.global.config.auth.SecurityConfig.*;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,10 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String accessToken = getAccessTokenFromHttpServletRequest(request);
-        jwtProvider.validateAccessToken(accessToken);
-        final Long userId = jwtProvider.getSubject(accessToken);
-        setAuthentication(request, userId);
+        if(!isPermittedUrl(request)){
+            final String accessToken = getAccessTokenFromHttpServletRequest(request);
+            jwtProvider.validateAccessToken(accessToken);
+            final Long userId = jwtProvider.getSubject(accessToken);
+            setAuthentication(request, userId);
+        }
         filterChain.doFilter(request, response);
     }
 
@@ -44,6 +50,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         UserAuthentication authentication = new UserAuthentication(userId, null, null);
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private boolean isPermittedUrl(HttpServletRequest request) {
+        for (String urlPattern : PERMITTED_URLS) {
+            AntPathRequestMatcher matcher = new AntPathRequestMatcher(urlPattern);
+            if (matcher.matches(request)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
