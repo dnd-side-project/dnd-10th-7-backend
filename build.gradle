@@ -52,6 +52,13 @@ dependencies {
 
 	//logback
 	implementation 'com.github.maricn:logback-slack-appender:1.4.0'
+
+	// S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
 }
 
 // gradlew 빌드시 에러 발생방지, 빌드시 -plain.jar 생기는 설정 끄기 for Github Actions
