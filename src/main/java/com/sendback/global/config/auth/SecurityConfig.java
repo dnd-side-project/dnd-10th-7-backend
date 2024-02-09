@@ -1,15 +1,11 @@
 package com.sendback.global.config.auth;
 
-import com.sendback.global.config.auth.ExceptionHandlerFilter;
-import com.sendback.global.config.auth.JwtAuthenticationFilter;
-import com.sendback.global.config.auth.JwtAuthenticationEntryPoint;
 import com.sendback.global.config.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,7 +13,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.Collections;
 
 @Configuration
@@ -27,10 +22,10 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private static final String[] PUBLIC_URLS = {
-            "api/auth/kakao/callback",
-            "api/auth/google/callback",
-            "api/auth/reissue"
+    protected static final String[] PERMITTED_URLS = {
+            "/api/auth/kakao/callback",
+            "/api/auth/google/callback",
+            "/api/auth/reissue",
     };
 
     @Bean
@@ -45,14 +40,16 @@ public class SecurityConfig {
 
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class)
 
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers(PERMITTED_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .build();
     }
 
