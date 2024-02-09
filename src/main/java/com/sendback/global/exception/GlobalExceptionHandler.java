@@ -2,10 +2,7 @@ package com.sendback.global.exception;
 
 import com.sendback.global.exception.response.ErrorResponse;
 import com.sendback.global.exception.response.ExceptionResponse;
-import com.sendback.global.exception.type.BadRequestException;
-import com.sendback.global.exception.type.ForbiddenException;
-import com.sendback.global.exception.type.NotFoundException;
-import com.sendback.global.exception.type.UnAuthorizedException;
+import com.sendback.global.exception.type.*;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -81,6 +78,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleNotFoundException(final NotFoundException e) {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ExceptionResponse.from(e.getExceptionType()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleImageException(final ImageException e) {
+        log.warn("[" + e.getClass() + "] : " + e.getMessage());
+        return ResponseEntity.badRequest()
                 .body(ExceptionResponse.from(e.getExceptionType()));
     }
 
