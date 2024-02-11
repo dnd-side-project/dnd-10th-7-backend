@@ -18,7 +18,7 @@ public class AuthService {
     @Value("${jwt.refresh-token-expire-time}")
     private long REFRESH_TOKEN_EXPIRE_TIME;
 
-    @Transactional(noRollbackFor = UnAuthorizedException.class)
+    @Transactional
     public Token reissueToken(String refreshToken) {
         Long userId = jwtProvider.parseRefreshToken(refreshToken);
         validateRefreshToken(refreshToken, userId);
