@@ -29,7 +29,8 @@ public class SecurityConfig {
             "/api/auth/kakao/callback",
             "/api/auth/google/callback",
             "/api/auth/reissue",
-            "/"
+            "/",
+            "/docs/index.html"
     };
 
     @Bean
