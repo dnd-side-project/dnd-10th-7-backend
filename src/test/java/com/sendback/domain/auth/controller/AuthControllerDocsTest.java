@@ -1,4 +1,4 @@
-package com.sendback.global.config.auth;
+package com.sendback.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendback.domain.auth.controller.AuthController;
@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AuthController.class)
 public class AuthControllerDocsTest extends RestDocsSupport {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
     @MockBean
     KakaoService kakaoService;
     @MockBean
