@@ -23,7 +23,7 @@ public class ScrapService {
     private final ScrapRepository scrapRepository;
 
     @Transactional
-    public ClickScrapResponse click(Long userId, Long projectId) {
+    public ClickScrapResponse clickScrap(Long userId, Long projectId) {
         User loginUser = userService.getUserById(userId);
         Project project = projectService.getProjectById(projectId);
 

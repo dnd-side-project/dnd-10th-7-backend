@@ -65,7 +65,7 @@ public class ScrapServiceTest extends ServiceTest {
             given(scrapRepository.save(any(Scrap.class))).willReturn(scrap);
 
             //when
-            ClickScrapResponse clickScrapResponse = scrapService.click(1L, 1L);
+            ClickScrapResponse clickScrapResponse = scrapService.clickScrap(1L, 1L);
 
             //then
             assertThat(clickScrapResponse.isClicked()).isTrue();
@@ -80,7 +80,7 @@ public class ScrapServiceTest extends ServiceTest {
             given(scrapRepository.findByUserAndProject(any(User.class), any(Project.class))).willReturn(Optional.of(scrap));
 
             //when
-            ClickScrapResponse clickScrapResponse = scrapService.click(1L, 1L);
+            ClickScrapResponse clickScrapResponse = scrapService.clickScrap(1L, 1L);
 
             //then
             assertThat(clickScrapResponse.isClicked()).isFalse();
@@ -97,7 +97,7 @@ public class ScrapServiceTest extends ServiceTest {
             given(scrapRepository.findByUserAndProject(any(User.class), any(Project.class))).willReturn(Optional.of(scrap));
 
             //when
-            ClickScrapResponse clickScrapResponse = scrapService.click(1L, 1L);
+            ClickScrapResponse clickScrapResponse = scrapService.clickScrap(1L, 1L);
 
             //then
             assertThat(clickScrapResponse.isClicked()).isTrue();
