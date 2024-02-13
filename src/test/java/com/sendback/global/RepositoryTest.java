@@ -1,8 +1,10 @@
 package com.sendback.global;
 
 import com.sendback.domain.field.persister.FieldTestPersister;
+import com.sendback.domain.like.persister.LikeTestPersister;
 import com.sendback.domain.project.persister.ProjectImageTestPersister;
 import com.sendback.domain.project.persister.ProjectTestPersister;
+import com.sendback.domain.scrap.persister.ScrapTestPersister;
 import com.sendback.domain.user.persister.UserTestPersister;
 import com.sendback.global.config.TestJpaConfig;
 import org.junit.jupiter.api.MethodOrderer;
@@ -37,4 +39,10 @@ public abstract class RepositoryTest {
 
     @Autowired
     protected ProjectImageTestPersister projectImageTestPersister;
+
+    @Autowired
+    protected LikeTestPersister likeTestPersister;
+
+    @Autowired
+    protected ScrapTestPersister scrapTestPersister;
 }
