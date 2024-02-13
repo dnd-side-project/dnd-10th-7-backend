@@ -1,0 +1,18 @@
+[[Scrap-API]]
+= Scrap API
+
+[[scrap]]
+== 스크랩
+
+[[click]]
+=== 클릭
+
+==== HTTP Requests
+include::{snippets}/scrap/click/http-request.adoc[]
+
+- *header*
+include::{snippets}/scrap/click/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/scrap/click/http-response.adoc[]
+include::{snippets}/scrap/click/response-fields.adoc[]

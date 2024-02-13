@@ -1,0 +1,18 @@
+[[Like-API]]
+= Project API
+
+[[like]]
+== 좋아요
+
+[[react]]
+=== 반응
+
+==== HTTP Requests
+include::{snippets}/like/react/http-request.adoc[]
+
+- *header*
+include::{snippets}/like/react/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/like/react/http-response.adoc[]
+include::{snippets}/like/react/response-fields.adoc[]
