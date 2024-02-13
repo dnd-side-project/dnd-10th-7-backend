@@ -61,8 +61,8 @@ public class GlobalExceptionHandler {
     }
 
     // login 검증
-    @ExceptionHandler(SignInException.class)  //분리 이유: SignToken
-    public ResponseEntity<?> handle(SignInException e) {
+    @ExceptionHandler(SignInException.class)
+    public ResponseEntity<?> handleSignInException(SignInException e) {
         return ResponseEntity.badRequest()
                 .body(ExceptionResponse.of(e.getExceptionType(), e.data));
     }
