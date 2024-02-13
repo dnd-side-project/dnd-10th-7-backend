@@ -26,9 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class AuthControllerDocsTest extends ControllerTest {
 
-    static final String ACCESS_TOKEN_PREFIX = "Bearer ";
-
-
     @Test
     @DisplayName("카카오 로그인을 성공하면 200 상태코드와 함께 access token, refresh token을 반환한다.")
     @WithMockCustomUser
