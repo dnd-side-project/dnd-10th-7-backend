@@ -23,7 +23,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
 
     @Transactional
-    public ReactLikeResponse react(Long userId, Long projectId) {
+    public ReactLikeResponse reactLike(Long userId, Long projectId) {
         User loginUser = userService.getUserById(userId);
         Project project = projectService.getProjectById(projectId);
 
