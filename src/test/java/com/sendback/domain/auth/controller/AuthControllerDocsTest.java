@@ -1,20 +1,13 @@
 package com.sendback.domain.auth.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sendback.domain.auth.controller.AuthController;
 import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.auth.dto.request.RefreshTokenRequestDto;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
-import com.sendback.domain.auth.service.AuthService;
-import com.sendback.domain.auth.service.GoogleService;
-import com.sendback.domain.auth.service.KakaoService;
+import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
-import com.sendback.global.config.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.BDDMockito.given;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -24,28 +17,17 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AuthController.class)
-public class AuthControllerDocsTest extends RestDocsSupport {
-
-    @MockBean
-    KakaoService kakaoService;
-    @MockBean
-    GoogleService googleService;
-    @MockBean
-    AuthService authService;
+public class AuthControllerDocsTest extends ControllerTest {
 
     static final String ACCESS_TOKEN_PREFIX = "Bearer ";
 
-    @Override
-    protected Object initController(){
-        return new AuthController(kakaoService, googleService, authService);
-    }
 
     @Test
     @DisplayName("카카오 로그인을 성공하면 200 상태코드와 함께 access token, refresh token을 반환한다.")
@@ -152,7 +134,7 @@ public class AuthControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                     post("/api/auth/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(content))
+                            .content(content).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("200"))
                 .andExpect(jsonPath("$.message").value("성공"))
@@ -191,7 +173,7 @@ public class AuthControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(post("/api/auth/logout")
                         // 인증정보 설정
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken"))
+                        .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("200"))
                 .andExpect(jsonPath("$.message").value("성공"))
