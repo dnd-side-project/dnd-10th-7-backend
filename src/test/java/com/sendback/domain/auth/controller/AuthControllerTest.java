@@ -31,7 +31,7 @@ public class AuthControllerTest extends ControllerTest {
 
     @Nested
     @DisplayName("카카오 로그인")
-    class saveProject {
+    class loginKakao {
 
         @Test
         @DisplayName("카카오 로그인을 성공하면(기존 회원) 200 상태코드와 함께 access token, refresh token을 반환한다.")
@@ -114,50 +114,94 @@ public class AuthControllerTest extends ControllerTest {
         }
     }
 
-    @Test
-    @DisplayName("구글 로그인을 성공하면 200 상태코드와 함께 access token, refresh token을 반환한다.")
-    @WithMockCustomUser
-    void loginGoogle() throws Exception {
+    @Nested
+    @DisplayName("구글 로그인")
+    class loginGoogle {
 
-        // given
-        String code = "123456";
-        String accessToken = "abcdefg";
-        String refreshToken = "qwerstu";
-        given(googleService.loginGoogle(code)).willReturn(
-                new TokensResponseDto(accessToken, refreshToken)
-        );
+        @Test
+        @DisplayName("구글 로그인을 성공하면 200 상태코드와 함께 access token, refresh token을 반환한다.")
+        @WithMockCustomUser
+        void loginGoogle_success() throws Exception {
 
-        // when &then
-        mockMvc.perform(
-                        get("/api/auth/google/callback").param("code", code))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("성공"))
-                .andExpect(jsonPath("$.data.accessToken").value(accessToken))
-                .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
-                .andDo(print())
-                .andDo(document("login-google",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("code").description("인가 코드")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("응답 데이터"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
-                                        .description("access 토큰"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
-                                        .description("refresh 토큰"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지")
-                        )));
+            // given
+            String code = "123456";
+            String accessToken = "abcdefg";
+            String refreshToken = "qwerstu";
+            given(googleService.loginGoogle(code)).willReturn(
+                    new TokensResponseDto(accessToken, refreshToken)
+            );
+
+            // when &then
+            mockMvc.perform(
+                            get("/api/auth/google/callback").param("code", code))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.accessToken").value(accessToken))
+                    .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
+                    .andDo(print())
+                    .andDo(document("login-google",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            queryParameters(
+                                    parameterWithName("code").description("인가 코드")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
+                                    fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                                            .description("access 토큰"),
+                                    fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                                            .description("refresh 토큰"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )));
 
 
-        verify(googleService).loginGoogle(code);
+            verify(googleService).loginGoogle(code);
+        }
+
+        @Test
+        @DisplayName("회원 가입이 필요하면 1070 상태코드와 함께 sign token을 반환한다.")
+        @WithMockCustomUser
+        void loginGoogle_fail1() throws Exception {
+
+            // given
+            String code = "valid code";
+            given(googleService.loginGoogle(code))
+                    .willThrow(new SignInException(NEED_TO_SIGNUP, new SignTokenResponseDto("test_sign_token")));
+
+            // when &then
+            mockMvc.perform(
+                            get("/api/auth/google/callback").param("code", code))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("1070"))
+                    .andExpect(jsonPath("$.message").value("추가 정보를 입력하세요."))
+                    .andExpect(jsonPath("$.data.signToken").value("test_sign_token"))
+                    .andDo(document("login-google-failure",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            queryParameters(
+                                    parameterWithName("code").description("인가 코드")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
+                                    fieldWithPath("data.signToken").type(JsonFieldType.STRING)
+                                            .description("sign 토큰"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )));
+
+            verify(googleService).loginGoogle(code);
+        }
     }
+
+
 
     @Test
     @DisplayName("refresh token을 정상적으로 재발급하면 200 상태코드를 반환한다.")
