@@ -10,6 +10,7 @@ import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.common.constants.SocialType;
 import com.sendback.global.config.jwt.JwtProvider;
+import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,9 +24,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.sendback.domain.auth.exception.AuthExceptionType.NEED_TO_SIGNUP;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class GoogleService {
 
     private final UserRepository userRepository;
@@ -46,8 +50,15 @@ public class GoogleService {
     public TokensResponseDto loginGoogle(String code) throws JsonProcessingException {
         String accessToken = getAccessToken(code);
         SocialUserInfo googleUserInfo = getGoogleUserInfo(accessToken);
-        User kakaoUser = registerGoogleUserIfNeeded(googleUserInfo);
-        Token token =  jwtProvider.issueToken(kakaoUser.getId());
+
+        User googleUser = userRepository.findBySocialId(googleUserInfo.id()).orElse(null);
+
+        if (googleUser == null) {
+            String signToken = jwtProvider.generateSignToken(googleUserInfo.email());
+            throw new SignInException(NEED_TO_SIGNUP, signToken);
+        }
+
+        Token token =  jwtProvider.issueToken(googleUser.getId());
         return new TokensResponseDto(token.accessToken(), token.refreshToken());
     }
 
