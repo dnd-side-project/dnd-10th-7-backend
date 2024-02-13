@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
                 .toList();
         log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(200, errorResponses.toString()));
+                .body(new ExceptionResponse(300, errorResponses.toString()));
     }
 
     //requestParam 검증
@@ -48,7 +49,15 @@ public class GlobalExceptionHandler {
                 .toList();
         log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(201, errorResponses.toString()));
+                .body(new ExceptionResponse(301, errorResponses.toString()));
+    }
+
+    //requestPart 검증
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> unAuthorizedException(final MissingServletRequestPartException e) {
+
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse(302, e.getMessage()));
     }
 
     // 인증 처리 검증
