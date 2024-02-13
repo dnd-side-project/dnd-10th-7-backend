@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleException(final Exception e) {
         log.error("[" + e.getClass() + "] : " + e.getMessage());
         return ResponseEntity.internalServerError()
-                .body(new ExceptionResponse(100, "알 수 없는 서버 에러가 발생했습니다."));
+                .body(ExceptionResponse.of(100, "알 수 없는 서버 에러가 발생했습니다."));
     }
 
     //valid 검증
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
                 .toList();
         log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(300, errorResponses.toString()));
+                .body(ExceptionResponse.of(300, errorResponses.toString()));
     }
 
     //requestParam 검증
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
                 .toList();
         log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(301, errorResponses.toString()));
+                .body(ExceptionResponse.of(301, errorResponses.toString()));
     }
 
     //requestPart 검증
@@ -57,7 +57,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> unAuthorizedException(final MissingServletRequestPartException e) {
 
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(302, e.getMessage()));
+                .body(ExceptionResponse.of(302, e.getMessage()));
+    }
+
+    // login 검증
+    @ExceptionHandler(SignInException.class)  //분리 이유: SignToken
+    public ResponseEntity<?> handle(SignInException e) {
+        return ResponseEntity.badRequest()
+                .body(ExceptionResponse.of(e.getExceptionType(), e.data));
     }
 
     // 인증 처리 검증
