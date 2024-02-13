@@ -4,6 +4,7 @@ import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.project.dto.request.SaveProjectRequest;
 import com.sendback.domain.project.dto.request.UpdateProjectRequest;
+import com.sendback.domain.project.dto.response.ProjectIdResponse;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.project.repository.ProjectImageRepository;
@@ -34,6 +35,7 @@ import static com.sendback.domain.project.fixture.ProjectFixture.*;
 import static com.sendback.domain.user.fixture.UserFixture.createDummyUser;
 import static com.sendback.global.config.image.exception.ImageExceptionType.AWS_S3_UPLOAD_FAIL;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -80,10 +82,10 @@ public class ProjectServiceTest extends ServiceTest {
         when(project.getId()).thenReturn(SPYING_PROJECT_ID);
 
         //when
-        Long response = projectService.saveProject(1L, saveProjectRequest, List.of());
+        ProjectIdResponse response = projectService.saveProject(1L, saveProjectRequest, List.of());
 
         //then
-        assertThat(response).isEqualTo(1L);
+        assertThat(response.projectId()).isEqualTo(1L);
     }
 
     @Test
@@ -98,10 +100,9 @@ public class ProjectServiceTest extends ServiceTest {
 
 
         //when
-        Long response = projectService.saveProject(1L, saveProjectRequest, images);
-
+        ProjectIdResponse response = projectService.saveProject(1L, saveProjectRequest, images);
         //then
-        assertThat(response).isEqualTo(1L);
+        assertThat(response.projectId()).isEqualTo(1L);
         verify(projectImageRepository, times(3)).save(any());
     }
 
@@ -112,7 +113,7 @@ public class ProjectServiceTest extends ServiceTest {
         @DisplayName("프로젝트를 찾을 수 없으면 예외를 발생한다.")
         public void fail_notFoundProject() throws Exception {
             //given
-            UpdateProjectRequest updateProjectRequest = new UpdateProjectRequest(project.getTitle(), project.getField().toString(), project.getContent(), project.getDemoSiteUrl(),
+            UpdateProjectRequest updateProjectRequest = new UpdateProjectRequest(project.getTitle(), project.getField().toString(), project.getContent(), project.getSummary(), project.getDemoSiteUrl(),
                     project.getStartedAt(), project.getEndedAt(),
                     project.getProgress().toString(), project.getProjectParticipantCount().getPlannerCount(), project.getProjectParticipantCount().getFrontendCount(),
                     project.getProjectParticipantCount().getBackendCount(), project.getProjectParticipantCount().getDesignCount(), List.of());
@@ -171,10 +172,10 @@ public class ProjectServiceTest extends ServiceTest {
             when(project.getId()).thenReturn(SPYING_PROJECT_ID);
 
             //when
-            Long response = projectService.updateProject(1L, 1L, updateProjectRequest, images);
+            ProjectIdResponse response = projectService.updateProject(1L, 1L, updateProjectRequest, images);
 
             //then
-            assertThat(response).isEqualTo(1L);
+            assertThat(response.projectId()).isEqualTo(1L);
             assertThat(project.getTitle()).isEqualTo(updateProjectRequest.title());
         }
     }
@@ -208,6 +209,21 @@ public class ProjectServiceTest extends ServiceTest {
             assertThatThrownBy(() -> projectService.deleteProject(1L, 1L))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage(NOT_PROJECT_AUTHOR.getMessage());
+        }
+
+        @Test
+        @DisplayName("정상적인 요청시 프로젝트를 삭제한다.")
+        public void success() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
+            given(project.isAuthor(user)).willReturn(true);
+            given(projectImageRepository.findAllByProject(project)).willReturn(List.of());
+            doNothing().when(projectImageRepository).deleteAll(anyList());
+            doNothing().when(projectRepository).delete(project);
+
+            //when - then
+            assertDoesNotThrow(() -> projectService.deleteProject(1L, 1L));
         }
     }
 

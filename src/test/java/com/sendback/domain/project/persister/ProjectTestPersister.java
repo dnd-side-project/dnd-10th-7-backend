@@ -43,6 +43,7 @@ public class ProjectTestPersister {
     private static final String TITLE = "title";
     private static final String FIELD = "edu";
     private static final String CONTENT = "content";
+    private static final String SUMMARY = "summary";
     private static final String DEMO_SITE_URL = "demoUrl";
     private static final LocalDate START_DATE = LocalDate.of(2024, 1, 1);
     private static final LocalDate END_DATE = LocalDate.of(2024, 1, 3);
@@ -52,7 +53,7 @@ public class ProjectTestPersister {
         Project project = Project.of(
                 (user == null ? userTestPersister.save() : user),
                 (field == null ? fieldTestPersister.save() : field),
-                (saveProjectRequest == null ? new SaveProjectRequest(TITLE, FIELD, CONTENT, DEMO_SITE_URL, START_DATE, END_DATE,
+                (saveProjectRequest == null ? new SaveProjectRequest(TITLE, FIELD, CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
                         PLANNING_PROGRESS.toString(), 1L, 2L, 3L, 4L) : saveProjectRequest)
         );
         return projectRepository.save(project);
