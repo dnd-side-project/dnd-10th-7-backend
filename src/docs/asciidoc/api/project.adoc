@@ -1,0 +1,57 @@
+
+[[Project-API]]
+= Project API
+
+[[project]]
+== 프로젝트
+
+[[save]]
+=== 등록
+
+==== HTTP Requests
+include::{snippets}/project/save/http-request.adoc[]
+
+- *header*
+include::{snippets}/project/save/request-headers.adoc[]
+---
+- *body*
+include::{snippets}/project/save/request-parts.adoc[]
+data
+include::{snippets}/project/save/request-part-data-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/project/save/http-response.adoc[]
+include::{snippets}/project/save/response-body.adoc[]
+include::{snippets}/project/save/response-fields.adoc[]
+
+[[update]]
+=== 수정
+
+==== HTTP Requests
+include::{snippets}/project/update/http-request.adoc[]
+
+- *header*
+include::{snippets}/project/update/request-headers.adoc[]
+- *body*
+include::{snippets}/project/update/request-parts.adoc[]
+data
+include::{snippets}/project/update/request-part-data-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/project/update/http-response.adoc[]
+include::{snippets}/project/update/response-body.adoc[]
+include::{snippets}/project/update/response-fields.adoc[]
+
+[[delete]]
+=== 삭제
+
+==== HTTP Requests
+include::{snippets}/project/delete/http-request.adoc[]
+- *header*
+include::{snippets}/project/delete/request-headers.adoc[]
+
+
+==== HTTP Response
+include::{snippets}/project/delete/http-response.adoc[]
+include::{snippets}/project/delete/response-body.adoc[]
+include::{snippets}/project/delete/response-fields.adoc[]
