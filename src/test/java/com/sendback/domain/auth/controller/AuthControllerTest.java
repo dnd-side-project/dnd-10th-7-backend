@@ -201,80 +201,87 @@ public class AuthControllerTest extends ControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("토큰 재발급")
+    class reissueToken {
 
+        @Test
+        @DisplayName("refresh token을 정상적으로 재발급하면 200 상태코드를 반환한다.")
+        @WithMockCustomUser
+        void reissueToken_success() throws Exception {
 
-    @Test
-    @DisplayName("refresh token을 정상적으로 재발급하면 200 상태코드를 반환한다.")
-    @WithMockCustomUser
-    void reissueToken() throws Exception{
+            // given
+            String accessToken = "abcdefg";
+            String refreshToken = "qwerstu";
+            RefreshTokenRequestDto refreshTokenRequestDto = new RefreshTokenRequestDto("qwer");
+            given(authService.reissueToken(refreshTokenRequestDto.refreshToken())).willReturn(
+                    new Token(accessToken, refreshToken)
+            );
+            String content = objectMapper.writeValueAsString(refreshTokenRequestDto);
 
-        // given
-        String accessToken = "abcdefg";
-        String refreshToken = "qwerstu";
-        RefreshTokenRequestDto refreshTokenRequestDto = new RefreshTokenRequestDto("qwer");
-        given(authService.reissueToken(refreshTokenRequestDto.refreshToken())).willReturn(
-                new Token(accessToken, refreshToken)
-        );
-        String content = objectMapper.writeValueAsString(refreshTokenRequestDto);
+            // when &then
+            mockMvc.perform(
+                            post("/api/auth/reissue")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(content).with(csrf()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.accessToken").value(accessToken))
+                    .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
+                    .andDo(print())
+                    .andDo(document("reissue-token",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestFields(
+                                    fieldWithPath("refreshToken").type(JsonFieldType.STRING)
+                                            .description("refresh 토큰")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
+                                    fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                                            .description("access 토큰"),
+                                    fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                                            .description("refresh 토큰"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )));
 
-        // when &then
-        mockMvc.perform(
-                    post("/api/auth/reissue")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(content).with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("성공"))
-                .andExpect(jsonPath("$.data.accessToken").value(accessToken))
-                .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
-                .andDo(print())
-                .andDo(document("reissue-token",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("refreshToken").type(JsonFieldType.STRING)
-                                    .description("refresh 토큰")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("응답 데이터"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
-                                        .description("access 토큰"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
-                                        .description("refresh 토큰"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지")
-                        )));
-
-        verify(authService).reissueToken(refreshTokenRequestDto.refreshToken());
+            verify(authService).reissueToken(refreshTokenRequestDto.refreshToken());
+        }
     }
 
-    @Test
-    @DisplayName("로그아웃을 성공하면 200 상태코드를 반환한다.")
-    @WithMockCustomUser
-    void logoutSocial() throws Exception {
+    @Nested
+    @DisplayName("로그아웃")
+    class logoutSocial {
+        @Test
+        @DisplayName("로그아웃을 성공하면 200 상태코드를 반환한다.")
+        @WithMockCustomUser
+        void logoutSocial_success() throws Exception {
 
-        // When & Then
-        mockMvc.perform(post("/api/auth/logout")
-                        // 인증정보 설정
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken").with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("성공"))
-                .andDo(print())
-                .andDo(document("logout-social",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("응답 데이터"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지")
-                        )));
+            // When & Then
+            mockMvc.perform(post("/api/auth/logout")
+                            // 인증정보 설정
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken").with(csrf()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andDo(print())
+                    .andDo(document("logout-social",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.NULL)
+                                            .description("응답 데이터"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )));
+        }
     }
 }
