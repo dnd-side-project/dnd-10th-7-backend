@@ -1,83 +1,354 @@
-//package com.sendback.domain.project.controller;
-//
-//import com.sendback.domain.project.dto.request.SaveProjectRequest;
-//import com.sendback.domain.project.service.ProjectService;
-//import com.sendback.global.exception.type.ImageException;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.BDDMockito;
-//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.http.MediaType;
-//import org.springframework.mock.web.MockMultipartFile;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-//import org.springframework.web.context.WebApplicationContext;
-//import org.springframework.web.filter.CharacterEncodingFilter;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import javax.imageio.ImageIO;
-//import java.awt.image.BufferedImage;
-//import java.io.ByteArrayOutputStream;
-//import java.io.IOException;
-//import java.time.LocalDate;
-//import java.util.List;
-//
-//import static com.sendback.global.config.image.exception.ImageExceptionType.AWS_S3_UPLOAD_FAIL;
-//import static org.mockito.BDDMockito.given;
-//import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
-//import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-//
-//@WebMvcTest(controllers = ProjectController.class)
-//public class ProjectControllerTest {
-//
-//    MockMvc mockMvc;
-//    @MockBean
-//    ProjectService projectService;
-//
-//    @BeforeEach
-//    public void setup(final WebApplicationContext context) {
-//        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
-//                .addFilter(new CharacterEncodingFilter("UTF-8", true))
-//                .alwaysDo(print())
-//                .build();
-//    }
-//
-//    @Test
-//    @DisplayName("정상적인 요청이면 프로젝트를 등록할 때 성공을 반환한다.")
-//    public void saveProject_success() throws Exception {
-//        //given
-//        Long responseId = 1L;
-//        SaveProjectRequest saveProjectRequest = new SaveProjectRequest("title", "field", "content", "demoSiteUrl",
-//                LocalDate.of(2024, 1, 1), LocalDate.of(2024, 1, 3),
-//                "planning", 1L, 2L, 3L, 4L);
-//        given(projectService.saveProject(1L, saveProjectRequest, List.of(mockingMultipartFile("sendback.jpg")))).willReturn(responseId);
-//
-//        //when
-//        mockMvc.perform(post("/projects"))
-//                .andExpect()
-//        //then
-//
-//    }
-//
-//    private MultipartFile mockingMultipartFile(String fileName) {
-//        return new MockMultipartFile(
-//                "images",
-//                fileName,
-//                MediaType.IMAGE_JPEG_VALUE,
-//                generateMockImage()
-//        );
-//    }
-//
-//    private byte[] generateMockImage() {
-//        BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-//
-//        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-//            ImageIO.write(image, "jpg", byteArrayOutputStream);
-//            return byteArrayOutputStream.toByteArray();
-//        } catch (IOException e) {
-//            throw new ImageException(AWS_S3_UPLOAD_FAIL);
-//        }
-//    }
-//}
+package com.sendback.domain.project.controller;
+
+import com.sendback.domain.project.dto.request.SaveProjectRequest;
+import com.sendback.domain.project.dto.request.UpdateProjectRequest;
+import com.sendback.domain.project.dto.response.ProjectIdResponse;
+import com.sendback.global.ControllerTest;
+import com.sendback.global.WithMockCustomUser;
+import com.sendback.global.exception.type.ImageException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
+
+import static com.sendback.domain.project.fixture.ProjectFixture.mock_saveProjectRequest;
+import static com.sendback.domain.project.fixture.ProjectFixture.mock_updateProjectRequest;
+import static org.mockito.ArgumentMatchers.*;
+
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static com.sendback.global.config.image.exception.ImageExceptionType.AWS_S3_UPLOAD_FAIL;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+public class ProjectControllerTest extends ControllerTest {
+
+    static final String ACCESS_TOKEN_PREFIX = "Bearer ";
+
+    @Nested
+    @DisplayName("project 등록 요청 시")
+    class saveProject {
+
+        SaveProjectRequest saveProjectRequest = mock_saveProjectRequest;
+        @Test
+        @DisplayName("saveProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
+        @WithMockCustomUser
+        public void saveProject_success() throws Exception {
+            //given
+            MockMultipartFile first_multipartFile = mockingMultipartFile("first");
+            MockMultipartFile second_multipartFile = mockingMultipartFile("second");
+            MockMultipartFile data =
+                    new MockMultipartFile("data", null, "application/json",
+                            objectMapper.writeValueAsString(saveProjectRequest).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponse projectIdResponse = new ProjectIdResponse(1L);
+            given(projectService.saveProject(anyLong(), any(SaveProjectRequest.class), anyList())).willReturn(projectIdResponse);
+
+            //when
+            mockMvc.perform(multipart("/api/projects")
+                            .file("images", first_multipartFile.getBytes())
+                            .file("images", second_multipartFile.getBytes())
+                            .file(data)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.projectId").value(1))
+                    .andDo(print())
+                    .andDo(document("project/save",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰")
+                            ),
+                            requestPartFields(
+                                    "data",
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("프로젝트 제목"),
+                                    fieldWithPath("field").type(JsonFieldType.STRING).description("분야"),
+                                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
+                                    fieldWithPath("summary").type(JsonFieldType.STRING).description("한 줄 요약"),
+                                    fieldWithPath("demoSiteUrl").type(JsonFieldType.STRING).description("데모 사이트 주소"),
+                                    fieldWithPath("startedAt").type(JsonFieldType.STRING).description("시작 날짜"),
+                                    fieldWithPath("endedAt").type(JsonFieldType.STRING).description("끝나는 날짜"),
+                                    fieldWithPath("progress").type(JsonFieldType.STRING).description("진행 정도"),
+                                    fieldWithPath("plannerCount").type(JsonFieldType.NUMBER).description("기획자 인원"),
+                                    fieldWithPath("frontendCount").type(JsonFieldType.NUMBER).description("프론트엔드 인원"),
+                                    fieldWithPath("backendCount").type(JsonFieldType.NUMBER).description("백엔드 인원"),
+                                    fieldWithPath("designCount").type(JsonFieldType.NUMBER).description("디자인 인원")
+                            ),
+                            requestParts(
+                                partWithName("data").description("프로젝트 정보"),
+                                partWithName("images").description("프로젝트 첨부 파일")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data.projectId").type(JsonFieldType.NUMBER)
+                                            .description("프로젝트 ID"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("saveProjectRequest가 존재한다면 성공을 반환한다.")
+        @WithMockCustomUser
+        public void saveProject_success_onlySaveProjectRequest() throws Exception {
+            //given
+            MockMultipartFile data =
+                    new MockMultipartFile("data", null, "application/json",
+                            objectMapper.writeValueAsString(saveProjectRequest).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponse projectIdResponse = new ProjectIdResponse(1L);
+            given(projectService.saveProject(anyLong(), any(SaveProjectRequest.class), any())).willReturn(projectIdResponse);
+
+            //when
+            mockMvc.perform(multipart("/api/projects")
+                            .file(data)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                    .andDo(print())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.projectId").value(1))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("saveProjectRequest가 존재하지 않는다면 프로젝트를 등록할 때 에러를 일으킨다.")
+        @WithMockCustomUser
+        public void saveProject_fail_request() throws Exception {
+            //when - then
+            mockMvc.perform(multipart("/api/projects")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                    .andDo(print())
+                    .andDo(document("project/save/failByNotExistData",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰")
+                            )))
+                    .andExpect(jsonPath("$.code").value("302"))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("project 수정 요청 시")
+    class updateProject {
+
+        UpdateProjectRequest updateProjectRequest = mock_updateProjectRequest;
+
+        @Test
+        @DisplayName("updateProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
+        @WithMockCustomUser
+        public void updateProject_success() throws Exception {
+            //given
+            Long projectId = 1L;
+
+            // RestDocumentationRequestBuilders를 put으로 사용하기 위함
+            MockMultipartHttpServletRequestBuilder builder =
+                    RestDocumentationRequestBuilders.
+                            multipart("/api/projects/{projectId}", projectId);
+
+            builder.with(new RequestPostProcessor() {
+                @Override
+                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                    request.setMethod("PUT");
+                    return request;
+                }
+            });
+
+            MockMultipartFile first_multipartFile = mockingMultipartFile("first");
+            MockMultipartFile second_multipartFile = mockingMultipartFile("second");
+            MockMultipartFile data =
+                    new MockMultipartFile("data", null, "application/json",
+                            objectMapper.writeValueAsString(updateProjectRequest).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponse projectIdResponse = new ProjectIdResponse(projectId);
+            given(projectService.updateProject(anyLong(), anyLong(), any(UpdateProjectRequest.class), anyList())).willReturn(projectIdResponse);
+
+            //when
+            mockMvc.perform(builder
+                            .file("images", first_multipartFile.getBytes())
+                            .file("images", second_multipartFile.getBytes())
+                            .file(data)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                    .andDo(print())
+                    .andDo(document("project/update",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("projectId").description("프로젝트 ID")
+                            ),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰")
+                            ),
+                            requestPartFields(
+                                    "data",
+                                    fieldWithPath("title").type(JsonFieldType.STRING).description("프로젝트 제목"),
+                                    fieldWithPath("field").type(JsonFieldType.STRING).description("분야"),
+                                    fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
+                                    fieldWithPath("summary").type(JsonFieldType.STRING).description("한 줄 요약"),
+                                    fieldWithPath("demoSiteUrl").type(JsonFieldType.STRING).description("데모 사이트 주소"),
+                                    fieldWithPath("startedAt").type(JsonFieldType.STRING).description("시작 날짜"),
+                                    fieldWithPath("endedAt").type(JsonFieldType.STRING).description("끝나는 날짜"),
+                                    fieldWithPath("progress").type(JsonFieldType.STRING).description("진행 정도"),
+                                    fieldWithPath("plannerCount").type(JsonFieldType.NUMBER).description("기획자 인원"),
+                                    fieldWithPath("frontendCount").type(JsonFieldType.NUMBER).description("프론트엔드 인원"),
+                                    fieldWithPath("backendCount").type(JsonFieldType.NUMBER).description("백엔드 인원"),
+                                    fieldWithPath("designCount").type(JsonFieldType.NUMBER).description("디자인 인원"),
+                                    fieldWithPath("urlsToDelete").type(JsonFieldType.ARRAY).description("삭제할 사진 URL")
+                            ),
+                            requestParts(
+                                    partWithName("data").description("업데이트 프로젝트 정보"),
+                                    partWithName("images").description("프로젝트 첨부 파일")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data.projectId").type(JsonFieldType.NUMBER)
+                                            .description("프로젝트 ID"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )))
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.projectId").value(projectId))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("updateProjectRequest가 존재하지 않는다면 프로젝트를 등록할 때 에러를 일으킨다.")
+        @WithMockCustomUser
+        public void updateProject_fail_request() throws Exception {
+            //given
+            Long projectId = 1L;
+
+            // RestDocumentationRequestBuilders를 put으로 사용하기 위함
+            MockMultipartHttpServletRequestBuilder builder =
+                    RestDocumentationRequestBuilders.
+                            multipart("/api/projects/{projectId}", projectId);
+
+            builder.with(new RequestPostProcessor() {
+                @Override
+                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                    request.setMethod("PUT");
+                    return request;
+                }
+            });
+
+            //when
+            mockMvc.perform(builder
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                    .andDo(print())
+                    .andDo(document("project/update/failByNotExistData",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("projectId").description("프로젝트 ID")
+                            ),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("에러 메시지")
+                            )))
+                    .andExpect(jsonPath("$.code").value("302"))
+                    .andExpect(status().isBadRequest());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("프로젝트 삭제 시")
+    class deleteProject {
+
+        @Test
+        @DisplayName("정상적인 요청이라면 프로젝트를 삭제한다.")
+        @WithMockCustomUser
+        public void deleteProject_success() throws Exception {
+            //given
+            Long projectId = 1L;
+            doNothing().when(projectService).deleteProject(anyLong(), anyLong());
+
+            //when
+            mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/projects/{projectId}", projectId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                    .andDo(print())
+                    .andDo(document("project/delete",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("projectId").description("프로젝트 ID")
+                            ),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.NULL)
+                                            .description("데이터"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )))
+                    .andExpect(status().isOk());
+        }
+    }
+
+    private MockMultipartFile mockingMultipartFile(String fileName) {
+        return new MockMultipartFile(
+                "images",
+                fileName,
+                MediaType.IMAGE_JPEG_VALUE,
+                generateMockImage()
+        );
+    }
+
+    private byte[] generateMockImage() {
+        BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "jpg", byteArrayOutputStream);
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            throw new ImageException(AWS_S3_UPLOAD_FAIL);
+        }
+    }
+}
