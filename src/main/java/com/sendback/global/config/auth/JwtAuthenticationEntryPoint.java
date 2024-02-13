@@ -7,6 +7,7 @@ import com.sendback.global.exception.type.UnAuthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -16,18 +17,16 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
+    // 유효한 자격증명을 제공하지 않고 접근하려 할때 1000
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        handleAuthenticationException(response, authException);
-    }
-
-    private void handleAuthenticationException(HttpServletResponse response, AuthenticationException authException) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("utf-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
         objectMapper.writeValue(response.getWriter(), ExceptionResponse.from(AuthExceptionType.UNAUTHORIZED));
     }
 }

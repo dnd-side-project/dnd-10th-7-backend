@@ -5,11 +5,14 @@ import com.sendback.global.config.redis.RedisService;
 import com.sendback.global.exception.type.UnAuthorizedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Base64;
@@ -30,6 +33,18 @@ public class JwtProvider {
 
     private final RedisService redisService;
 
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER = "Bearer ";
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION);
+
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)){
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
     public Token issueToken(Long userId) {
         Token token = new Token(generateToken(userId, true), generateToken(userId, false));
         redisService.put(userId, token.refreshToken(), REFRESH_TOKEN_EXPIRE_TIME);
@@ -49,9 +64,10 @@ public class JwtProvider {
                 .compact();
     }
 
-    public void validateAccessToken(String accessToken) {
+    public boolean validateAccessToken(String accessToken) {
         try {
             getJwtParser().parseClaimsJws(accessToken);
+            return true;
         } catch (ExpiredJwtException e) {
             throw new UnAuthorizedException(EXPIRED_ACCESS_TOKEN);
         } catch (Exception e) {
@@ -59,9 +75,10 @@ public class JwtProvider {
         }
     }
 
-    public void validateRefreshToken(String refreshToken) {
+    public boolean validateRefreshToken(String refreshToken) {
         try {
             getJwtParser().parseClaimsJws(refreshToken);
+            return true;
         } catch (ExpiredJwtException e) {
             throw new UnAuthorizedException(EXPIRED_REFRESH_TOKEN);
         } catch (Exception e) {

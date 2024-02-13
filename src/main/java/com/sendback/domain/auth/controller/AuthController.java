@@ -45,8 +45,4 @@ public class AuthController {
         return ApiResponse.success(null);
     }
 
-    @GetMapping("/ex")
-    public ApiResponse<String> tokenReissue(@UserId Long userId){
-        return ApiResponse.success(String.valueOf(userId));
-    }
 }
