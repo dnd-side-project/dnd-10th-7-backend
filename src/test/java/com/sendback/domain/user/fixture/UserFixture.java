@@ -1,7 +1,7 @@
 package com.sendback.domain.user.fixture;
 
 import com.sendback.domain.user.entity.User;
-import com.sendback.global.common.constants.SocialType;
+import com.sendback.domain.user.entity.SocialType;
 
 public class UserFixture {
 

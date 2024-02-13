@@ -3,7 +3,7 @@ package com.sendback.domain.project.persister;
 import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.field.persister.FieldTestPersister;
 import com.sendback.domain.project.dto.request.SaveProjectRequest;
-import com.sendback.global.common.constants.Progress;
+import com.sendback.domain.project.entity.Progress;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.entity.User;
