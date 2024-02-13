@@ -4,6 +4,7 @@ import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.project.dto.request.SaveProjectRequest;
 import com.sendback.domain.project.dto.request.UpdateProjectRequest;
+import com.sendback.domain.project.dto.response.ProjectIdResponse;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.project.repository.ProjectImageRepository;
@@ -34,20 +35,21 @@ public class ProjectService {
     private final ProjectImageRepository projectImageRepository;
 
     @Transactional
-    public Long saveProject(Long userId, SaveProjectRequest saveProjectRequest, List<MultipartFile> images) {
+    public ProjectIdResponse saveProject(Long userId, SaveProjectRequest saveProjectRequest, List<MultipartFile> images) {
         User loginUser = userService.getUserById(userId);
 
         Field field = fieldService.getFieldByName(saveProjectRequest.field());
         Project project = Project.of(loginUser, field, saveProjectRequest);
 
-        if (!images.isEmpty()) {
-            uploadProjectImage(project, images);
-        }
+        uploadProjectImage(project, images);
 
-        return projectRepository.save(project).getId();
+        return new ProjectIdResponse(projectRepository.save(project).getId());
     }
 
     private void uploadProjectImage(Project project, List<MultipartFile> images) {
+        if (images == null)
+            return;
+
         if (images.size() > 5) {
             throw new BadRequestException(IMAGE_SIZE_OVER);
         }
@@ -57,7 +59,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public Long updateProject(Long userId, Long projectId, UpdateProjectRequest updateProjectRequest, List<MultipartFile> images) {
+    public ProjectIdResponse updateProject(Long userId, Long projectId, UpdateProjectRequest updateProjectRequest, List<MultipartFile> images) {
         User loginUser = userService.getUserById(userId);
         Field field = fieldService.getFieldByName(updateProjectRequest.field());
         Project project = getProjectById(projectId);
@@ -69,13 +71,15 @@ public class ProjectService {
         uploadProjectImage(project, images);
         project.updateProject(field, updateProjectRequest);
 
-        return project.getId();
+        return new ProjectIdResponse(project.getId());
     }
 
     private void validateProjectImageCount(Project project, List<MultipartFile> images, List<String> urlsToDelete) {
         List<ProjectImage> projectImages = projectImageRepository.findAllByProject(project);
 
-        if (projectImages.size() + images.size() - urlsToDelete.size() > 5) {
+        int imageSize = (images == null ? 0 : images.size());
+
+        if (projectImages.size() + imageSize - urlsToDelete.size() > 5) {
             throw new BadRequestException(IMAGE_SIZE_OVER);
         }
     }
@@ -87,7 +91,10 @@ public class ProjectService {
 
         validateProjectAuthor(loginUser, project);
 
+        List<ProjectImage> projectImages = projectImageRepository.findAllByProject(project);
+
         // 추후 연관된 것 모두 삭제 처리할 것
+        projectImageRepository.deleteAll(projectImages);
         projectRepository.delete(project);
     }
 
@@ -110,7 +117,7 @@ public class ProjectService {
             throw new BadRequestException(NOT_PROJECT_AUTHOR);
     }
 
-    private Project getProjectById(Long projectId) {
+    public Project getProjectById(Long projectId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new NotFoundException(NOT_FOUND_PROJECT));
         if (project.isDeleted())
             throw new BadRequestException(DELETED_PROJECT);

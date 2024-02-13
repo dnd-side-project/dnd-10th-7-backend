@@ -38,6 +38,8 @@ public class Project extends BaseEntity {
 
     private String content;
 
+    private String summary;
+
     private String demoSiteUrl;
 
     private LocalDate startedAt;
@@ -55,7 +57,7 @@ public class Project extends BaseEntity {
 
     private boolean isFinished;
 
-    private boolean isDeleted = Boolean.FALSE;
+    private boolean isDeleted = false;
 
     @Builder
     private Project(
@@ -63,6 +65,7 @@ public class Project extends BaseEntity {
             final Field field,
             final String title,
             final String content,
+            final String summary,
             final String demoSiteUrl,
             final LocalDate startedAt,
             final LocalDate endedAt,
@@ -80,6 +83,7 @@ public class Project extends BaseEntity {
         this.field = field;
         this.title = title;
         this.content = content;
+        this.summary = summary;
         this.demoSiteUrl = demoSiteUrl;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
@@ -95,6 +99,7 @@ public class Project extends BaseEntity {
                 .field(field)
                 .title(saveProjectRequest.title())
                 .content(saveProjectRequest.content())
+                .summary(saveProjectRequest.summary())
                 .demoSiteUrl(saveProjectRequest.demoSiteUrl())
                 .startedAt(saveProjectRequest.startedAt())
                 .endedAt(saveProjectRequest.endedAt())
@@ -111,6 +116,7 @@ public class Project extends BaseEntity {
         this.field = field;
         this.title = updateProjectRequest.title();
         this.content = updateProjectRequest.content();
+        this.summary = updateProjectRequest.summary();
         this.demoSiteUrl = updateProjectRequest.demoSiteUrl();
         this.startedAt = updateProjectRequest.startedAt();
         this.endedAt = updateProjectRequest.endedAt();
