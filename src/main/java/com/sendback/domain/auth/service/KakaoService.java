@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendback.domain.auth.dto.SocialUserInfo;
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.auth.dto.response.SignTokenResponseDto;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
@@ -41,7 +42,6 @@ public class KakaoService {
     private String KAKAO_USERINFO_URI;
     @Value("${oauth2.kakao.tokenUri}")
     private String KAKAO_TOKEN_URI;
-    private final RedisService redisService;
     private final RestTemplate rt;
 
     @Transactional
@@ -52,8 +52,8 @@ public class KakaoService {
         User kakaoUser = userRepository.findBySocialId(kakaoUserInfo.id()).orElse(null);
 
         if (kakaoUser == null) {
-            String signToken = jwtProvider.generateSignToken(kakaoUserInfo.email());
-            throw new SignInException(NEED_TO_SIGNUP, signToken);
+            String signToken = jwtProvider.generateSignToken(kakaoUserInfo);
+            throw new SignInException(NEED_TO_SIGNUP,new SignTokenResponseDto(signToken));
         }
 
         Token token =  jwtProvider.issueToken(kakaoUser.getId());
