@@ -8,9 +8,9 @@ import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
-import com.sendback.global.common.constants.SocialType;
 import com.sendback.global.config.redis.RedisService;
 import com.sendback.global.config.jwt.JwtProvider;
+import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +24,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.sendback.domain.auth.exception.AuthExceptionType.NEED_TO_SIGNUP;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class KakaoService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
@@ -45,7 +48,14 @@ public class KakaoService {
     public TokensResponseDto loginKakao(String code) throws JsonProcessingException {
         String accessToken = getAccessToken(code);
         SocialUserInfo kakaoUserInfo = getKakaoUserInfo(accessToken);
-        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
+
+        User kakaoUser = userRepository.findBySocialId(kakaoUserInfo.id()).orElse(null);
+
+        if (kakaoUser == null) {
+            String signToken = jwtProvider.generateSignToken(kakaoUserInfo.email());
+            throw new SignInException(NEED_TO_SIGNUP, signToken);
+        }
+
         Token token =  jwtProvider.issueToken(kakaoUser.getId());
         return new TokensResponseDto(token.accessToken(), token.refreshToken());
     }
@@ -108,15 +118,4 @@ public class KakaoService {
         return new SocialUserInfo(id, nickname, email, profile_image);
     }
 
-    private User registerKakaoUserIfNeeded(SocialUserInfo socialUserInfo) {
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        String socialId = socialUserInfo.id();
-        User kakaoUser = userRepository.findBySocialId(socialId).orElse(null);
-
-        if (kakaoUser == null) {
-            kakaoUser = User.of(SocialType.KAKAO, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
-            userRepository.save(kakaoUser);
-        }
-        return kakaoUser;
-    }
 }
