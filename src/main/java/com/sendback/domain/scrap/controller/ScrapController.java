@@ -20,10 +20,10 @@ public class ScrapController {
     private final ScrapService scrapService;
 
     @PutMapping("/{projectId}/scrap")
-    public ApiResponse<ClickScrapResponse> reactLike(
+    public ApiResponse<ClickScrapResponse> click(
             @UserId Long userId,
             @PathVariable Long projectId) {
-        return success(scrapService.click(userId, projectId));
+        return success(scrapService.clickScrap(userId, projectId));
     }
 
 }

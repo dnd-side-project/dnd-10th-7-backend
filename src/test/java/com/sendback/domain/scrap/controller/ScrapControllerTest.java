@@ -35,7 +35,7 @@ public class ScrapControllerTest extends ControllerTest {
         //given
         Long projectId = 1L;
         ClickScrapResponse response = new ClickScrapResponse(true);
-        given(scrapService.click(anyLong(), anyLong())).willReturn(response);
+        given(scrapService.clickScrap(anyLong(), anyLong())).willReturn(response);
 
         //when
         mockMvc.perform(put("/api/projects/{projectId}/scrap", projectId)
