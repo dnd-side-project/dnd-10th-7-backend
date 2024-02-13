@@ -5,10 +5,12 @@ import com.sendback.domain.auth.controller.AuthController;
 import com.sendback.domain.auth.service.AuthService;
 import com.sendback.domain.auth.service.GoogleService;
 import com.sendback.domain.auth.service.KakaoService;
-
+import com.sendback.domain.like.controller.LikeController;
+import com.sendback.domain.like.service.LikeService;
 import com.sendback.domain.project.controller.ProjectController;
 import com.sendback.domain.project.service.ProjectService;
-
+import com.sendback.domain.scrap.controller.ScrapController;
+import com.sendback.domain.scrap.service.ScrapService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -21,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest({
         ProjectController.class,
+        LikeController.class,
+        ScrapController.class,
         AuthController.class
 })
 @ActiveProfiles("test")
@@ -37,6 +41,12 @@ public abstract class ControllerTest {
     protected ProjectService projectService;
 
     @MockBean
+    protected LikeService likeService;
+
+    @MockBean
+    protected ScrapService scrapService;
+
+    @MockBean
     protected KakaoService kakaoService;
 
     @MockBean
@@ -44,5 +54,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected AuthService authService;
+
+    protected static final String ACCESS_TOKEN_PREFIX = "Bearer ";
 
 }

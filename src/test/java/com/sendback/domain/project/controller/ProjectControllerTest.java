@@ -47,8 +47,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ProjectControllerTest extends ControllerTest {
 
-    static final String ACCESS_TOKEN_PREFIX = "Bearer ";
-
     @Nested
     @DisplayName("project 등록 요청 시")
     class saveProject {
