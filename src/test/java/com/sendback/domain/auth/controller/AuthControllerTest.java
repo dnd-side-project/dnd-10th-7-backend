@@ -2,11 +2,15 @@ package com.sendback.domain.auth.controller;
 
 import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.auth.dto.request.RefreshTokenRequestDto;
+import com.sendback.domain.auth.dto.response.SignTokenResponseDto;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
+import com.sendback.global.exception.type.SignInException;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import static com.sendback.domain.auth.exception.AuthExceptionType.NEED_TO_SIGNUP;
 import static org.mockito.BDDMockito.given;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,59 +19,101 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AuthControllerTest extends ControllerTest {
 
-    @Test
-    @DisplayName("카카오 로그인을 성공하면 200 상태코드와 함께 access token, refresh token을 반환한다.")
-    @WithMockCustomUser
-    void loginKakao() throws Exception{
 
-        // given
-        String code = "123456";
-        String accessToken = "abcdefg";
-        String refreshToken = "qwerstu";
-        given(kakaoService.loginKakao(code)).willReturn(
-                new TokensResponseDto(accessToken, refreshToken)
-        );
+    @Nested
+    @DisplayName("카카오 로그인")
+    class saveProject {
 
-        // when &then
-        mockMvc.perform(
-                get("/api/auth/kakao/callback").param("code", code))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("성공"))
-                .andExpect(jsonPath("$.data.accessToken").value(accessToken))
-                .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
-                .andDo(document("login-kakao",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("code").description("인가 코드")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("응답 데이터"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
-                                        .description("access 토큰"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
-                                        .description("refresh 토큰"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지")
-                        )));
+        @Test
+        @DisplayName("카카오 로그인을 성공하면(기존 회원) 200 상태코드와 함께 access token, refresh token을 반환한다.")
+        @WithMockCustomUser
+        void loginKakao_success() throws Exception {
 
-        verify(kakaoService).loginKakao(code);
+            // given
+            String code = "valid code";
+            String accessToken = "valid accessToken";
+            String refreshToken = "valid refreshToken";
+            given(kakaoService.loginKakao(code)).willReturn(
+                    new TokensResponseDto(accessToken, refreshToken)
+            );
+
+            // when &then
+            mockMvc.perform(
+                            get("/api/auth/kakao/callback").param("code", code))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.accessToken").value(accessToken))
+                    .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
+                    .andDo(document("login-kakao-success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            queryParameters(
+                                    parameterWithName("code").description("인가 코드")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
+                                    fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                                            .description("access 토큰"),
+                                    fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                                            .description("refresh 토큰"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )));
+
+            verify(kakaoService).loginKakao(code);
+        }
+
+        @Test
+        @DisplayName("회원 가입이 필요하면 1070 상태코드와 함께 sign token을 반환한다.")
+        @WithMockCustomUser
+        void loginKakao_fail1() throws Exception {
+
+            // given
+            String code = "valid code";
+            given(kakaoService.loginKakao(code))
+                    .willThrow(new SignInException(NEED_TO_SIGNUP, new SignTokenResponseDto("test_sign_token")));
+
+            // when &then
+            mockMvc.perform(
+                            get("/api/auth/kakao/callback").param("code", code))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("1070"))
+                    .andExpect(jsonPath("$.message").value("추가 정보를 입력하세요."))
+                    .andExpect(jsonPath("$.data.signToken").value("test_sign_token"))
+                    .andDo(document("login-kakao-failure",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            queryParameters(
+                                    parameterWithName("code").description("인가 코드")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
+                                    fieldWithPath("data.signToken").type(JsonFieldType.STRING)
+                                            .description("사인 토큰"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )));
+
+            verify(kakaoService).loginKakao(code);
+        }
     }
+
     @Test
     @DisplayName("구글 로그인을 성공하면 200 상태코드와 함께 access token, refresh token을 반환한다.")
     @WithMockCustomUser
