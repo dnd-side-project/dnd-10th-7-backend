@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sendback.domain.auth.dto.SocialUserInfo;
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.auth.dto.response.SignTokenResponseDto;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
-import com.sendback.global.common.constants.SocialType;
+import com.sendback.domain.user.entity.SocialType;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +55,8 @@ public class GoogleService {
         User googleUser = userRepository.findBySocialId(googleUserInfo.id()).orElse(null);
 
         if (googleUser == null) {
-            String signToken = jwtProvider.generateSignToken(googleUserInfo.email());
-            throw new SignInException(NEED_TO_SIGNUP, signToken);
+            String signToken = jwtProvider.generateSignToken(googleUserInfo);
+            throw new SignInException(NEED_TO_SIGNUP, new SignTokenResponseDto(signToken));
         }
 
         Token token =  jwtProvider.issueToken(googleUser.getId());
@@ -119,15 +120,4 @@ public class GoogleService {
         return new SocialUserInfo(id, nickname, email, profile_image);
     }
 
-    private User registerGoogleUserIfNeeded(SocialUserInfo socialUserInfo) {
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        String socialId = socialUserInfo.id();
-        User googleUser = userRepository.findBySocialId(socialId)
-                .orElse(null);
-        if (googleUser == null) {
-            googleUser = User.of(SocialType.GOOGLE, socialUserInfo.id(), socialUserInfo.email(), socialUserInfo.nickname(), socialUserInfo.profileImageUrl());
-            userRepository.save(googleUser);
-        }
-        return googleUser;
-    }
 }
