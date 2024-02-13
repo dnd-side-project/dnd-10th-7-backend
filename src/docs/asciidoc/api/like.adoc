@@ -1,5 +1,5 @@
 [[Like-API]]
-= Project API
+= Like API
 
 [[like]]
 == 좋아요
