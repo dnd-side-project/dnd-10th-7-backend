@@ -31,6 +31,9 @@ public class JwtProvider {
     @Value("${jwt.refresh-token-expire-time}")
     private long REFRESH_TOKEN_EXPIRE_TIME;
 
+    @Value("${jwt.sign-token-expire-time}")
+    private long SIGN_TOKEN_EXPIRE_TIME;
+
     private final RedisService redisService;
 
     private static final String AUTHORIZATION = "Authorization";
@@ -49,6 +52,20 @@ public class JwtProvider {
         Token token = new Token(generateToken(userId, true), generateToken(userId, false));
         redisService.put(userId, token.refreshToken(), REFRESH_TOKEN_EXPIRE_TIME);
         return token;
+    }
+
+    //SignToken 생성
+    public String generateSignToken(String socialEmail) {
+        Date now = new Date(System.currentTimeMillis());
+        final Date expiration = new Date(now.getTime() + SIGN_TOKEN_EXPIRE_TIME);
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setSubject(String.valueOf(socialEmail))
+                .claim("type","SIGN_TOKEN")
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private String generateToken(Long userId, boolean isAccessToken) {
