@@ -66,7 +66,7 @@ public class LikeServiceTest extends ServiceTest {
             given(likeRepository.save(any(Like.class))).willReturn(like);
 
             //when
-            ReactLikeResponseDto reactLikeResponseDto = likeService.react(1L, 1L);
+            ReactLikeResponseDto reactLikeResponseDto = likeService.reactLike(1L, 1L);
 
             //then
             assertThat(reactLikeResponseDto.isReacted()).isTrue();
@@ -81,7 +81,7 @@ public class LikeServiceTest extends ServiceTest {
             given(likeRepository.findByUserAndProject(any(User.class), any(Project.class))).willReturn(Optional.of(like));
 
             //when
-            ReactLikeResponseDto reactLikeResponseDto = likeService.react(1L, 1L);
+            ReactLikeResponseDto reactLikeResponseDto = likeService.reactLike(1L, 1L);
 
             //then
             assertThat(reactLikeResponseDto.isReacted()).isFalse();

@@ -38,7 +38,7 @@ public class LikeControllerTest extends ControllerTest {
         //given
         Long projectId = 1L;
         ReactLikeResponseDto reactLikeResponseDto = new ReactLikeResponseDto(true);
-        given(likeService.react(anyLong(), anyLong())).willReturn(reactLikeResponseDto);
+        given(likeService.reactLike(anyLong(), anyLong())).willReturn(reactLikeResponseDto);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/api/projects/{projectId}/like", projectId)

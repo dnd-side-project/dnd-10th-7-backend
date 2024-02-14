@@ -23,16 +23,16 @@ public class LikeService {
     private final LikeRepository likeRepository;
 
     @Transactional
-    public ReactLikeResponseDto react(Long userId, Long projectId) {
+    public ReactLikeResponseDto reactLike(Long userId, Long projectId) {
         User loginUser = userService.getUserById(userId);
         Project project = projectService.getProjectById(projectId);
 
-        Like like = reactLike(loginUser, project);
+        Like like = react(loginUser, project);
 
         return new ReactLikeResponseDto(!like.isDeleted());
     }
 
-    private Like reactLike(User user, Project project) {
+    private Like react(User user, Project project) {
         Optional<Like> likeOptional = likeRepository.findByUserAndProject(user, project);
         if (likeOptional.isEmpty()) {
             Like like = Like.of(user, project);
