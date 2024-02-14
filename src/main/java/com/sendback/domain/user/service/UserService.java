@@ -9,13 +9,18 @@ import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.config.jwt.JwtProvider;
+import com.sendback.global.exception.type.BadRequestException;
+import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +48,11 @@ public class UserService {
     }
 
     public CheckUserNicknameResponseDto checkUserNickname(String nickname) {
-        return new CheckUserNicknameResponseDto(true);
+        if(!nickname.matches("^[가-힣a-zA-Z]{2,8}$")){
+            throw new BadRequestException(INVALID_NICKNAME);
+        }
+        Optional<User> user =  userRepository.findByNickname(nickname);
+        return new CheckUserNicknameResponseDto(user.isPresent());
     }
 
 

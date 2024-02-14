@@ -1,19 +1,25 @@
 package com.sendback.domain.user.service;
 
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.ServiceTest;
 import com.sendback.global.config.jwt.JwtProvider;
+import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.SignInException;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import java.util.Optional;
+import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_SIGN_TOKEN;
 import static com.sendback.domain.user.fixture.UserFixture.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -63,5 +69,52 @@ public class UserServiceTest extends ServiceTest {
         assertThatThrownBy(() -> userService.signUpUser(mock_Invalid_SignToken_signUpRequestDto))
                 .isInstanceOf(SignInException.class)
                 .hasMessage(INVALID_SIGN_TOKEN.getMessage());
+    }
+
+    @Nested
+    @DisplayName("닉네임 중복 검사")
+    class checkNickname {
+
+        @Test
+        @DisplayName("닉네임 중복이면 check 값은 true이다.")
+        void checkNickname_true() {
+            // given
+            String nickname = "nickname";
+            User finduser = User.builder().nickname(nickname).build();
+            given(userRepository.findByNickname(nickname)).willReturn(Optional.of(finduser));
+
+            // when
+            CheckUserNicknameResponseDto responseDto = userService.checkUserNickname(nickname);
+
+            // then
+            assertTrue(responseDto.check());
+        }
+
+        @Test
+        @DisplayName("닉네임 중복이 아니면 check 값은 false이다.")
+        void checkNickname_false() {
+            // given
+            String nickname = "nickname";
+            given(userRepository.findByNickname(nickname)).willReturn(Optional.empty());
+
+            // when
+            CheckUserNicknameResponseDto responseDto = userService.checkUserNickname(nickname);
+
+            // then
+            assertTrue(!responseDto.check());
+        }
+
+        @Test
+        @DisplayName("닉네임이 중복이면 2050 상태코드를 반환한다.")
+        void checkNickname_BadRequestException() throws Exception {
+            // given
+            String nickname = "invalid nickname@@@@";
+
+            // when, then
+            assertThatThrownBy(() -> userService.checkUserNickname(nickname))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(INVALID_NICKNAME.getMessage());
+
+        }
     }
 }
