@@ -1,15 +1,30 @@
 package com.sendback.domain.user.service;
 
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.feedback.entity.FeedbackSubmit;
+import com.sendback.domain.feedback.entity.QFeedbackSubmit;
+import com.sendback.domain.feedback.repository.FeedbackRepository;
+import com.sendback.domain.feedback.repository.FeedbackSubmitRepository;
+import com.sendback.domain.feedback.service.FeedbackService;
 import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.field.service.FieldService;
+import com.sendback.domain.like.repository.LikeRepository;
+import com.sendback.domain.like.service.LikeService;
+import com.sendback.domain.project.entity.Project;
+import com.sendback.domain.project.repository.ProjectRepository;
+import com.sendback.domain.project.service.ProjectService;
 import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.response.UserInfoResponseDto;
+import com.sendback.domain.user.entity.Career;
+import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
+import com.sendback.global.exception.type.NotFoundException;
 import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
+import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +44,7 @@ import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKN
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final FieldService fieldService;
-
     private final JwtProvider jwtProvider;
 
     @Transactional
@@ -39,8 +53,7 @@ public class UserService {
         SigningAccount signingAccount = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
         User user = User.of(signingAccount, signUpRequestDto);
         User savedUser = userRepository.save(user);
-        List<Field> fieldList = new ArrayList<>();
-        signUpRequestDto.interests().stream()
+        List<Field> fieldList = signUpRequestDto.interests().stream()
                 .map(intersts -> Field.of(intersts, user))
                 .collect(Collectors.toList());
         fieldService.saveAll(fieldList);
@@ -55,9 +68,9 @@ public class UserService {
         return new CheckUserNicknameResponseDto(user.isPresent());
     }
 
-
-
     public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow();
+        return userRepository.findById(userId).orElseThrow(
+                ()-> new NotFoundException(NOT_FOUND_USER)
+        );
     }
 }
