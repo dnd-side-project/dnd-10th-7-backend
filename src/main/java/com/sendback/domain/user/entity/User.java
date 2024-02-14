@@ -57,4 +57,8 @@ public class User extends BaseEntity {
                 .profileImageUrl(profileImageUrl)
                 .build();
     }
+
+    public void levelUp(Level level) {
+        this.level = level;
+    }
 }
