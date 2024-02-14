@@ -6,7 +6,7 @@ import com.sendback.domain.user.entity.User;
 
 import static com.sendback.global.util.CustomDateUtil.customDateFormat;
 
-public record FeedbackDetailResponse(
+public record FeedbackDetailResponseDto(
 
         Long userId,
         String username,
@@ -25,10 +25,10 @@ public record FeedbackDetailResponse(
         String field,
         String progress
 ) {
-    public static FeedbackDetailResponse of(Feedback feedback) {
+    public static FeedbackDetailResponseDto of(Feedback feedback) {
         Project project = feedback.getProject();
         User user = project.getUser();
-        return new FeedbackDetailResponse(
+        return new FeedbackDetailResponseDto(
                 user.getId(),
                 user.getNickname(),
                 user.getLevel().getName(),

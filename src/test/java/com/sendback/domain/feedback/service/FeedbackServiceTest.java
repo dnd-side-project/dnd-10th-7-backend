@@ -1,9 +1,9 @@
 package com.sendback.domain.feedback.service;
 
-import com.sendback.domain.feedback.dto.request.SaveFeedbackRequest;
-import com.sendback.domain.feedback.dto.response.FeedbackDetailResponse;
-import com.sendback.domain.feedback.dto.response.FeedbackIdResponse;
-import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponse;
+import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
+import com.sendback.domain.feedback.dto.response.FeedbackDetailResponseDto;
+import com.sendback.domain.feedback.dto.response.FeedbackIdResponseDto;
+import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponseDto;
 import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.feedback.entity.FeedbackSubmit;
 import com.sendback.domain.feedback.repository.FeedbackRepository;
@@ -61,7 +61,7 @@ public class FeedbackServiceTest extends ServiceTest {
     private Feedback feedback = createDummyFeedback(user, project);
     private final FeedbackSubmit feedbackSubmit = createDummyFeedbackSubmit(user, feedback);
 
-    private final SaveFeedbackRequest saveFeedbackRequest = MOCK_SAVE_FEEDBACK_REQUEST;
+    private final SaveFeedbackRequestDto saveFeedbackRequestDto = MOCK_SAVE_FEEDBACK_REQUEST;
 
     @BeforeEach
     public void setUp() {
@@ -83,7 +83,7 @@ public class FeedbackServiceTest extends ServiceTest {
             doThrow(new BadRequestException(NOT_PROJECT_AUTHOR)).when(projectService).validateProjectAuthor(any(User.class), any(Project.class));
 
             //when - then
-            assertThatThrownBy(() -> feedbackService.saveFeedback(1L, 1L, saveFeedbackRequest))
+            assertThatThrownBy(() -> feedbackService.saveFeedback(1L, 1L, saveFeedbackRequestDto))
                     .isInstanceOf(BadRequestException.class)
                     .hasMessage(NOT_PROJECT_AUTHOR.getMessage());
         }
@@ -99,10 +99,10 @@ public class FeedbackServiceTest extends ServiceTest {
             given(feedback.getId()).willReturn(1L);
 
             //when
-            FeedbackIdResponse feedbackIdResponse = feedbackService.saveFeedback(1L, 1L, saveFeedbackRequest);
+            FeedbackIdResponseDto feedbackIdResponseDto = feedbackService.saveFeedback(1L, 1L, saveFeedbackRequestDto);
 
             //then
-            assertThat(feedbackIdResponse.feedbackId()).isEqualTo(1L);
+            assertThat(feedbackIdResponseDto.feedbackId()).isEqualTo(1L);
         }
     }
 
@@ -134,12 +134,12 @@ public class FeedbackServiceTest extends ServiceTest {
             given(feedback.getCreatedAt()).willReturn(LocalDateTime.now());
 
             //when
-            FeedbackDetailResponse feedbackDetailResponse = feedbackService.getFeedbackDetail(1L, 1L);
+            FeedbackDetailResponseDto feedbackDetailResponseDto = feedbackService.getFeedbackDetail(1L, 1L);
 
             //then
-            assertThat(feedbackDetailResponse.feedbackTitle()).isEqualTo(feedback.getTitle());
-            assertThat(feedbackDetailResponse.username()).isEqualTo(feedback.getUser().getNickname());
-            assertThat(feedbackDetailResponse.projectTitle()).isEqualTo(feedback.getProject().getTitle());
+            assertThat(feedbackDetailResponseDto.feedbackTitle()).isEqualTo(feedback.getTitle());
+            assertThat(feedbackDetailResponseDto.username()).isEqualTo(feedback.getUser().getNickname());
+            assertThat(feedbackDetailResponseDto.projectTitle()).isEqualTo(feedback.getProject().getTitle());
         }
     }
 
@@ -174,7 +174,7 @@ public class FeedbackServiceTest extends ServiceTest {
             given(user.getLevel()).willReturn(Level.ONE);
 
             //when
-            SubmitFeedbackResponse response = feedbackService.submitFeedback(1L, 1L, mockingMultipartFile("feedback"));
+            SubmitFeedbackResponseDto response = feedbackService.submitFeedback(1L, 1L, mockingMultipartFile("feedback"));
 
             //then
             assertThat(response.level()).isEqualTo(user.getLevel().getName());
@@ -195,7 +195,7 @@ public class FeedbackServiceTest extends ServiceTest {
             given(user.getLevel()).willReturn(Level.ONE).willReturn(Level.TWO);
 
             //when
-            SubmitFeedbackResponse response = feedbackService.submitFeedback(1L, 1L, mockingMultipartFile("feedback"));
+            SubmitFeedbackResponseDto response = feedbackService.submitFeedback(1L, 1L, mockingMultipartFile("feedback"));
 
             //then
             assertThat(response.level()).isEqualTo(Level.TWO.getName());

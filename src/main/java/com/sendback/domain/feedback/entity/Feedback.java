@@ -1,7 +1,7 @@
 package com.sendback.domain.feedback.entity;
 
 
-import com.sendback.domain.feedback.dto.request.SaveFeedbackRequest;
+import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.common.BaseEntity;
@@ -61,16 +61,16 @@ public class Feedback extends BaseEntity {
         this.endedAt = endedAt;
     }
 
-    public static Feedback of(User user, Project project, SaveFeedbackRequest saveFeedbackRequest) {
+    public static Feedback of(User user, Project project, SaveFeedbackRequestDto saveFeedbackRequestDto) {
         return Feedback.builder()
                 .user(user)
                 .project(project)
-                .title(saveFeedbackRequest.title())
-                .linkUrl(saveFeedbackRequest.linkUrl())
-                .content(saveFeedbackRequest.content())
-                .rewardMessage(saveFeedbackRequest.rewardMessage())
-                .startedAt(saveFeedbackRequest.startedAt())
-                .endedAt(saveFeedbackRequest.endedAt())
+                .title(saveFeedbackRequestDto.title())
+                .linkUrl(saveFeedbackRequestDto.linkUrl())
+                .content(saveFeedbackRequestDto.content())
+                .rewardMessage(saveFeedbackRequestDto.rewardMessage())
+                .startedAt(saveFeedbackRequestDto.startedAt())
+                .endedAt(saveFeedbackRequestDto.endedAt())
                 .build();
     }
 

@@ -1,6 +1,6 @@
 package com.sendback.domain.project.entity;
 
-import com.sendback.domain.project.dto.request.UpdateProjectRequest;
+import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,8 +18,8 @@ public class ProjectParticipantCount {
     private long backendCount;
     private long designCount;
 
-    public static ProjectParticipantCount of(UpdateProjectRequest updateProjectRequest) {
-        return new ProjectParticipantCount(updateProjectRequest.plannerCount(), updateProjectRequest.frontendCount(),
-                updateProjectRequest.backendCount(), updateProjectRequest.designCount());
+    public static ProjectParticipantCount of(UpdateProjectRequestDto updateProjectRequestDto) {
+        return new ProjectParticipantCount(updateProjectRequestDto.plannerCount(), updateProjectRequestDto.frontendCount(),
+                updateProjectRequestDto.backendCount(), updateProjectRequestDto.designCount());
     }
 }

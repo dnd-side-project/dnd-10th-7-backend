@@ -1,6 +1,6 @@
 package com.sendback.domain.scrap.controller;
 
-import com.sendback.domain.scrap.dto.response.ClickScrapResponse;
+import com.sendback.domain.scrap.dto.response.ClickScrapResponseDto;
 import com.sendback.domain.scrap.service.ScrapService;
 import com.sendback.global.common.ApiResponse;
 import com.sendback.global.common.UserId;
@@ -20,7 +20,7 @@ public class ScrapController {
     private final ScrapService scrapService;
 
     @PutMapping("/{projectId}/scrap")
-    public ApiResponse<ClickScrapResponse> reactLike(
+    public ApiResponse<ClickScrapResponseDto> reactLike(
             @UserId Long userId,
             @PathVariable Long projectId) {
         return success(scrapService.click(userId, projectId));

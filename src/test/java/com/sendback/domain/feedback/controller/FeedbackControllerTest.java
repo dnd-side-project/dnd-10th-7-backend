@@ -1,9 +1,9 @@
 package com.sendback.domain.feedback.controller;
 
-import com.sendback.domain.feedback.dto.request.SaveFeedbackRequest;
-import com.sendback.domain.feedback.dto.response.FeedbackDetailResponse;
-import com.sendback.domain.feedback.dto.response.FeedbackIdResponse;
-import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponse;
+import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
+import com.sendback.domain.feedback.dto.response.FeedbackDetailResponseDto;
+import com.sendback.domain.feedback.dto.response.FeedbackIdResponseDto;
+import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -40,21 +40,21 @@ public class FeedbackControllerTest extends ControllerTest {
     @DisplayName("피드백 등록 시")
     class saveFeedback {
 
-        SaveFeedbackRequest saveFeedbackRequest = MOCK_SAVE_FEEDBACK_REQUEST;
+        SaveFeedbackRequestDto saveFeedbackRequestDto = MOCK_SAVE_FEEDBACK_REQUEST;
 
         @Test
         @WithMockCustomUser
         @DisplayName("정상적인 요청이라면 성공을 반환한다.")
         public void success() throws Exception {
             //given
-            FeedbackIdResponse response = new FeedbackIdResponse(1L);
+            FeedbackIdResponseDto response = new FeedbackIdResponseDto(1L);
             given(feedbackService.saveFeedback(anyLong(), anyLong(), any())).willReturn(response);
 
             //when
             ResultActions resultActions = mockMvc.perform(post("/api/projects/{projectId}/feedback", 1L)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(saveFeedbackRequest)).with(csrf()))
+                            .content(objectMapper.writeValueAsString(saveFeedbackRequestDto)).with(csrf()))
                     .andDo(print());
 
             //then
@@ -95,7 +95,7 @@ public class FeedbackControllerTest extends ControllerTest {
     @DisplayName("피드백 상세 조회 시")
     class getFeedbackDetail {
 
-        FeedbackDetailResponse mockFeedbackDetailResponse = MOCK_FEEDBACK_DETAIL_RESPONSE;
+        FeedbackDetailResponseDto mockFeedbackDetailResponseDto = MOCK_FEEDBACK_DETAIL_RESPONSE;
 
         @Test
         @WithMockCustomUser
@@ -104,7 +104,7 @@ public class FeedbackControllerTest extends ControllerTest {
             //given
             Long projectId = 1L;
             Long feedbackId = 1L;
-            given(feedbackService.getFeedbackDetail(anyLong(), anyLong())).willReturn(mockFeedbackDetailResponse);
+            given(feedbackService.getFeedbackDetail(anyLong(), anyLong())).willReturn(mockFeedbackDetailResponseDto);
 
             //when
             ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}/feedbacks/{feedbackId}", projectId, feedbackId).with(csrf()))
@@ -143,21 +143,21 @@ public class FeedbackControllerTest extends ControllerTest {
                             )))
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
-                    .andExpect(jsonPath("$.data.username").value(mockFeedbackDetailResponse.username()))
-                    .andExpect(jsonPath("$.data.userLevel").value(mockFeedbackDetailResponse.userLevel()))
-                    .andExpect(jsonPath("$.data.profileImageUrl").value(mockFeedbackDetailResponse.profileImageUrl()))
-                    .andExpect(jsonPath("$.data.feedbackId").value(mockFeedbackDetailResponse.feedbackId()))
-                    .andExpect(jsonPath("$.data.feedbackTitle").value(mockFeedbackDetailResponse.feedbackTitle()))
-                    .andExpect(jsonPath("$.data.linkUrl").value(mockFeedbackDetailResponse.linkUrl()))
-                    .andExpect(jsonPath("$.data.content").value(mockFeedbackDetailResponse.content()))
-                    .andExpect(jsonPath("$.data.rewardMessage").value(mockFeedbackDetailResponse.rewardMessage()))
-                    .andExpect(jsonPath("$.data.createdAt").value(mockFeedbackDetailResponse.createdAt()))
-                    .andExpect(jsonPath("$.data.startedAt").value(mockFeedbackDetailResponse.startedAt()))
-                    .andExpect(jsonPath("$.data.endedAt").value(mockFeedbackDetailResponse.endedAt()))
-                    .andExpect(jsonPath("$.data.projectId").value(mockFeedbackDetailResponse.projectId()))
-                    .andExpect(jsonPath("$.data.projectTitle").value(mockFeedbackDetailResponse.projectTitle()))
-                    .andExpect(jsonPath("$.data.field").value(mockFeedbackDetailResponse.field()))
-                    .andExpect(jsonPath("$.data.progress").value(mockFeedbackDetailResponse.progress()))
+                    .andExpect(jsonPath("$.data.username").value(mockFeedbackDetailResponseDto.username()))
+                    .andExpect(jsonPath("$.data.userLevel").value(mockFeedbackDetailResponseDto.userLevel()))
+                    .andExpect(jsonPath("$.data.profileImageUrl").value(mockFeedbackDetailResponseDto.profileImageUrl()))
+                    .andExpect(jsonPath("$.data.feedbackId").value(mockFeedbackDetailResponseDto.feedbackId()))
+                    .andExpect(jsonPath("$.data.feedbackTitle").value(mockFeedbackDetailResponseDto.feedbackTitle()))
+                    .andExpect(jsonPath("$.data.linkUrl").value(mockFeedbackDetailResponseDto.linkUrl()))
+                    .andExpect(jsonPath("$.data.content").value(mockFeedbackDetailResponseDto.content()))
+                    .andExpect(jsonPath("$.data.rewardMessage").value(mockFeedbackDetailResponseDto.rewardMessage()))
+                    .andExpect(jsonPath("$.data.createdAt").value(mockFeedbackDetailResponseDto.createdAt()))
+                    .andExpect(jsonPath("$.data.startedAt").value(mockFeedbackDetailResponseDto.startedAt()))
+                    .andExpect(jsonPath("$.data.endedAt").value(mockFeedbackDetailResponseDto.endedAt()))
+                    .andExpect(jsonPath("$.data.projectId").value(mockFeedbackDetailResponseDto.projectId()))
+                    .andExpect(jsonPath("$.data.projectTitle").value(mockFeedbackDetailResponseDto.projectTitle()))
+                    .andExpect(jsonPath("$.data.field").value(mockFeedbackDetailResponseDto.field()))
+                    .andExpect(jsonPath("$.data.progress").value(mockFeedbackDetailResponseDto.progress()))
                     .andExpect(status().isOk());
         }
     }
@@ -166,7 +166,7 @@ public class FeedbackControllerTest extends ControllerTest {
     @DisplayName("피드백을 제출 시")
     class submitFeedback {
 
-        SubmitFeedbackResponse submitFeedbackResponse = MOCK_SUBMIT_FEEDBACK_RESPONSE;
+        SubmitFeedbackResponseDto submitFeedbackResponseDto = MOCK_SUBMIT_FEEDBACK_RESPONSE;
         @Test
         @WithMockCustomUser
         @DisplayName("정상적인 요청이면 성공을 반환한다.")
@@ -182,7 +182,7 @@ public class FeedbackControllerTest extends ControllerTest {
                     "mock image".getBytes()
             );
 
-            given(feedbackService.submitFeedback(anyLong(), anyLong(), any())).willReturn(submitFeedbackResponse);
+            given(feedbackService.submitFeedback(anyLong(), anyLong(), any())).willReturn(submitFeedbackResponseDto);
 
 
             //when
@@ -216,9 +216,9 @@ public class FeedbackControllerTest extends ControllerTest {
                             )))
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
-                    .andExpect(jsonPath("$.data.level").value(submitFeedbackResponse.level()))
-                    .andExpect(jsonPath("$.data.isLevelUp").value(submitFeedbackResponse.isLevelUp()))
-                    .andExpect(jsonPath("$.data.remainFeedbackCount").value(submitFeedbackResponse.remainFeedbackCount()))
+                    .andExpect(jsonPath("$.data.level").value(submitFeedbackResponseDto.level()))
+                    .andExpect(jsonPath("$.data.isLevelUp").value(submitFeedbackResponseDto.isLevelUp()))
+                    .andExpect(jsonPath("$.data.remainFeedbackCount").value(submitFeedbackResponseDto.remainFeedbackCount()))
                     .andExpect(status().isOk());
 
 

@@ -1,6 +1,6 @@
 package com.sendback.domain.like.controller;
 
-import com.sendback.domain.like.dto.response.ReactLikeResponse;
+import com.sendback.domain.like.dto.response.ReactLikeResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -37,8 +37,8 @@ public class LikeControllerTest extends ControllerTest {
     public void success() throws Exception {
         //given
         Long projectId = 1L;
-        ReactLikeResponse reactLikeResponse = new ReactLikeResponse(true);
-        given(likeService.react(anyLong(), anyLong())).willReturn(reactLikeResponse);
+        ReactLikeResponseDto reactLikeResponseDto = new ReactLikeResponseDto(true);
+        given(likeService.react(anyLong(), anyLong())).willReturn(reactLikeResponseDto);
 
         //when
         ResultActions resultActions = mockMvc.perform(put("/api/projects/{projectId}/like", projectId)

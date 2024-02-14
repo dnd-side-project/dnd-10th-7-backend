@@ -2,7 +2,7 @@ package com.sendback.domain.scrap.service;
 
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.service.ProjectService;
-import com.sendback.domain.scrap.dto.response.ClickScrapResponse;
+import com.sendback.domain.scrap.dto.response.ClickScrapResponseDto;
 import com.sendback.domain.scrap.entity.Scrap;
 import com.sendback.domain.scrap.repository.ScrapRepository;
 import com.sendback.domain.user.entity.User;
@@ -23,13 +23,13 @@ public class ScrapService {
     private final ScrapRepository scrapRepository;
 
     @Transactional
-    public ClickScrapResponse click(Long userId, Long projectId) {
+    public ClickScrapResponseDto click(Long userId, Long projectId) {
         User loginUser = userService.getUserById(userId);
         Project project = projectService.getProjectById(projectId);
 
         Scrap scrap = clickScrap(loginUser, project);
 
-        return new ClickScrapResponse(!scrap.isDeleted());
+        return new ClickScrapResponseDto(!scrap.isDeleted());
     }
 
     private Scrap clickScrap(User user, Project project) {

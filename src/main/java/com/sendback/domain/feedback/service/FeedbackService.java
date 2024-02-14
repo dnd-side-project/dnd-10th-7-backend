@@ -1,9 +1,9 @@
 package com.sendback.domain.feedback.service;
 
-import com.sendback.domain.feedback.dto.request.SaveFeedbackRequest;
-import com.sendback.domain.feedback.dto.response.FeedbackDetailResponse;
-import com.sendback.domain.feedback.dto.response.FeedbackIdResponse;
-import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponse;
+import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
+import com.sendback.domain.feedback.dto.response.FeedbackDetailResponseDto;
+import com.sendback.domain.feedback.dto.response.FeedbackIdResponseDto;
+import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponseDto;
 import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.feedback.entity.FeedbackSubmit;
 import com.sendback.domain.feedback.repository.FeedbackRepository;
@@ -36,23 +36,23 @@ public class FeedbackService {
     private final FeedbackSubmitRepository feedbackSubmitRepository;
 
     @Transactional
-    public FeedbackIdResponse saveFeedback(Long userId, Long projectId, SaveFeedbackRequest saveFeedbackRequest) {
+    public FeedbackIdResponseDto saveFeedback(Long userId, Long projectId, SaveFeedbackRequestDto saveFeedbackRequestDto) {
         User loginUser = userService.getUserById(userId);
         Project project = projectService.getProjectById(projectId);
 
         projectService.validateProjectAuthor(loginUser, project);
 
-        Feedback feedback = Feedback.of(loginUser, project, saveFeedbackRequest);
+        Feedback feedback = Feedback.of(loginUser, project, saveFeedbackRequestDto);
         Long responseId = feedbackRepository.save(feedback).getId();
 
-        return new FeedbackIdResponse(responseId);
+        return new FeedbackIdResponseDto(responseId);
     }
 
-    public FeedbackDetailResponse getFeedbackDetail(Long projectId, Long feedbackId) {
+    public FeedbackDetailResponseDto getFeedbackDetail(Long projectId, Long feedbackId) {
         projectService.getProjectById(projectId);
         Feedback feedback = getFeedback(feedbackId);
 
-        return FeedbackDetailResponse.of(feedback);
+        return FeedbackDetailResponseDto.of(feedback);
     }
 
     public Feedback getFeedback(Long feedbackId) {
@@ -61,7 +61,7 @@ public class FeedbackService {
     }
 
     @Transactional
-    public SubmitFeedbackResponse submitFeedback(Long userId, Long feedbackId, MultipartFile file) {
+    public SubmitFeedbackResponseDto submitFeedback(Long userId, Long feedbackId, MultipartFile file) {
         User loginUser = userService.getUserById(userId);
         Feedback feedback = getFeedback(feedbackId);
 
@@ -75,7 +75,7 @@ public class FeedbackService {
         boolean isLevelUp = isLevelUpUserLevelBySubmitting(loginUser, submitCount);
         Long remainCount = Level.getRemainCountUntilNextLevel(submitCount);
 
-        return new SubmitFeedbackResponse(loginUser.getLevel().getName(), isLevelUp, remainCount);
+        return new SubmitFeedbackResponseDto(loginUser.getLevel().getName(), isLevelUp, remainCount);
     }
 
     private boolean isLevelUpUserLevelBySubmitting(User user, Long submitCount) {

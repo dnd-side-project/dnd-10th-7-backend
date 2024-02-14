@@ -1,6 +1,6 @@
 package com.sendback.domain.scrap.controller;
 
-import com.sendback.domain.scrap.dto.response.ClickScrapResponse;
+import com.sendback.domain.scrap.dto.response.ClickScrapResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ public class ScrapControllerTest extends ControllerTest {
     public void success() throws Exception {
         //given
         Long projectId = 1L;
-        ClickScrapResponse response = new ClickScrapResponse(true);
+        ClickScrapResponseDto response = new ClickScrapResponseDto(true);
         given(scrapService.click(anyLong(), anyLong())).willReturn(response);
 
         //when

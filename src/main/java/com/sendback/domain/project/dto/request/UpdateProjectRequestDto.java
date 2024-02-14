@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
-public record UpdateProjectRequest(
+public record UpdateProjectRequestDto(
 
         @Size(max = 30, message = "제목은 글자 수가 최대 30글자 입니다.")
         @NotBlank(message = "제목은 비워둘 수 없습니다.")

@@ -1,8 +1,8 @@
 package com.sendback.domain.project.controller;
 
-import com.sendback.domain.project.dto.request.SaveProjectRequest;
-import com.sendback.domain.project.dto.request.UpdateProjectRequest;
-import com.sendback.domain.project.dto.response.ProjectIdResponse;
+import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
+import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +15,8 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.sendback.domain.project.fixture.ProjectFixture.mock_saveProjectRequest;
-import static com.sendback.domain.project.fixture.ProjectFixture.mock_updateProjectRequest;
+import static com.sendback.domain.project.fixture.ProjectFixture.MOCK___SAVE_PROJECT_REQUEST_DTO;
+import static com.sendback.domain.project.fixture.ProjectFixture.MOCK___UPDATE_PROJECT_REQUEST_DTO;
 import static org.mockito.ArgumentMatchers.*;
 
 
@@ -43,7 +43,7 @@ public class ProjectControllerTest extends ControllerTest {
     @DisplayName("project 등록 요청 시")
     class saveProject {
 
-        SaveProjectRequest saveProjectRequest = mock_saveProjectRequest;
+        SaveProjectRequestDto saveProjectRequestDto = MOCK___SAVE_PROJECT_REQUEST_DTO;
         @Test
         @DisplayName("saveProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
         @WithMockCustomUser
@@ -53,9 +53,9 @@ public class ProjectControllerTest extends ControllerTest {
             MockMultipartFile second_multipartFile = mockingMultipartFile("second");
             MockMultipartFile data =
                     new MockMultipartFile("data", null, "application/json",
-                            objectMapper.writeValueAsString(saveProjectRequest).getBytes(StandardCharsets.UTF_8));
-            ProjectIdResponse projectIdResponse = new ProjectIdResponse(1L);
-            given(projectService.saveProject(anyLong(), any(SaveProjectRequest.class), anyList())).willReturn(projectIdResponse);
+                            objectMapper.writeValueAsString(saveProjectRequestDto).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponseDto projectIdResponseDto = new ProjectIdResponseDto(1L);
+            given(projectService.saveProject(anyLong(), any(SaveProjectRequestDto.class), anyList())).willReturn(projectIdResponseDto);
 
             //when
             ResultActions resultActions = mockMvc.perform(multipart("/api/projects")
@@ -115,9 +115,9 @@ public class ProjectControllerTest extends ControllerTest {
             //given
             MockMultipartFile data =
                     new MockMultipartFile("data", null, "application/json",
-                            objectMapper.writeValueAsString(saveProjectRequest).getBytes(StandardCharsets.UTF_8));
-            ProjectIdResponse projectIdResponse = new ProjectIdResponse(1L);
-            given(projectService.saveProject(anyLong(), any(SaveProjectRequest.class), any())).willReturn(projectIdResponse);
+                            objectMapper.writeValueAsString(saveProjectRequestDto).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponseDto projectIdResponseDto = new ProjectIdResponseDto(1L);
+            given(projectService.saveProject(anyLong(), any(SaveProjectRequestDto.class), any())).willReturn(projectIdResponseDto);
 
             //when
             mockMvc.perform(multipart("/api/projects")
@@ -161,7 +161,7 @@ public class ProjectControllerTest extends ControllerTest {
     @DisplayName("project 수정 요청 시")
     class updateProject {
 
-        UpdateProjectRequest updateProjectRequest = mock_updateProjectRequest;
+        UpdateProjectRequestDto updateProjectRequestDto = MOCK___UPDATE_PROJECT_REQUEST_DTO;
 
         @Test
         @DisplayName("updateProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
@@ -174,9 +174,9 @@ public class ProjectControllerTest extends ControllerTest {
             MockMultipartFile second_multipartFile = mockingMultipartFile("second");
             MockMultipartFile data =
                     new MockMultipartFile("data", null, "application/json",
-                            objectMapper.writeValueAsString(updateProjectRequest).getBytes(StandardCharsets.UTF_8));
-            ProjectIdResponse projectIdResponse = new ProjectIdResponse(projectId);
-            given(projectService.updateProject(anyLong(), anyLong(), any(UpdateProjectRequest.class), anyList())).willReturn(projectIdResponse);
+                            objectMapper.writeValueAsString(updateProjectRequestDto).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponseDto projectIdResponseDto = new ProjectIdResponseDto(projectId);
+            given(projectService.updateProject(anyLong(), anyLong(), any(UpdateProjectRequestDto.class), anyList())).willReturn(projectIdResponseDto);
 
             //when
             ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.

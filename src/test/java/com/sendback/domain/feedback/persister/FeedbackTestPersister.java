@@ -1,6 +1,6 @@
 package com.sendback.domain.feedback.persister;
 
-import com.sendback.domain.feedback.dto.request.SaveFeedbackRequest;
+import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
 import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.feedback.repository.FeedbackRepository;
 import com.sendback.domain.project.entity.Project;
@@ -23,7 +23,7 @@ public class FeedbackTestPersister {
     private User user;
     private Project project;
 
-    private SaveFeedbackRequest saveFeedbackRequest;
+    private SaveFeedbackRequestDto saveFeedbackRequestDto;
 
     public FeedbackTestPersister user(User user) {
         this.user = user;
@@ -35,8 +35,8 @@ public class FeedbackTestPersister {
         return this;
     }
 
-    public FeedbackTestPersister saveFeedbackRequest(SaveFeedbackRequest saveFeedbackRequest) {
-        this.saveFeedbackRequest = saveFeedbackRequest;
+    public FeedbackTestPersister saveFeedbackRequestDto(SaveFeedbackRequestDto saveFeedbackRequestDto) {
+        this.saveFeedbackRequestDto = saveFeedbackRequestDto;
         return this;
     }
 
@@ -44,7 +44,7 @@ public class FeedbackTestPersister {
         Feedback feedback = Feedback.of(
                 (user == null ? userTestPersister.save() : user),
                 (project == null ? projectTestPersister.save() : project),
-                (saveFeedbackRequest == null) ? MOCK_SAVE_FEEDBACK_REQUEST : saveFeedbackRequest
+                (saveFeedbackRequestDto == null) ? MOCK_SAVE_FEEDBACK_REQUEST : saveFeedbackRequestDto
         );
         return feedbackRepository.save(feedback);
     }

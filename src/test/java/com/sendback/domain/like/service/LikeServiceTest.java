@@ -1,6 +1,6 @@
 package com.sendback.domain.like.service;
 
-import com.sendback.domain.like.dto.response.ReactLikeResponse;
+import com.sendback.domain.like.dto.response.ReactLikeResponseDto;
 import com.sendback.domain.like.entity.Like;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.entity.Project;
@@ -66,10 +66,10 @@ public class LikeServiceTest extends ServiceTest {
             given(likeRepository.save(any(Like.class))).willReturn(like);
 
             //when
-            ReactLikeResponse reactLikeResponse = likeService.react(1L, 1L);
+            ReactLikeResponseDto reactLikeResponseDto = likeService.react(1L, 1L);
 
             //then
-            assertThat(reactLikeResponse.isReacted()).isTrue();
+            assertThat(reactLikeResponseDto.isReacted()).isTrue();
         }
 
         @Test
@@ -81,10 +81,10 @@ public class LikeServiceTest extends ServiceTest {
             given(likeRepository.findByUserAndProject(any(User.class), any(Project.class))).willReturn(Optional.of(like));
 
             //when
-            ReactLikeResponse reactLikeResponse = likeService.react(1L, 1L);
+            ReactLikeResponseDto reactLikeResponseDto = likeService.react(1L, 1L);
 
             //then
-            assertThat(reactLikeResponse.isReacted()).isFalse();
+            assertThat(reactLikeResponseDto.isReacted()).isFalse();
         }
 
         @Test
@@ -98,10 +98,10 @@ public class LikeServiceTest extends ServiceTest {
             given(likeRepository.findByUserAndProject(any(User.class), any(Project.class))).willReturn(Optional.of(like));
 
             //when
-            ReactLikeResponse reactLikeResponse = likeService.react(1L, 1L);
+            ReactLikeResponseDto reactLikeResponseDto = likeService.react(1L, 1L);
 
             //then
-            assertThat(reactLikeResponse.isReacted()).isTrue();
+            assertThat(reactLikeResponseDto.isReacted()).isTrue();
         }
     }
 }

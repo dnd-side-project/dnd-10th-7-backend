@@ -1,6 +1,6 @@
 package com.sendback.domain.like.controller;
 
-import com.sendback.domain.like.dto.response.ReactLikeResponse;
+import com.sendback.domain.like.dto.response.ReactLikeResponseDto;
 import com.sendback.domain.like.service.LikeService;
 import com.sendback.global.common.ApiResponse;
 import com.sendback.global.common.UserId;
@@ -20,7 +20,7 @@ public class LikeController {
     private final LikeService likeService;
 
     @PutMapping("/{projectId}/like")
-    public ApiResponse<ReactLikeResponse> reactLike(
+    public ApiResponse<ReactLikeResponseDto> reactLike(
             @UserId Long userId,
             @PathVariable Long projectId) {
         return success(likeService.react(userId, projectId));

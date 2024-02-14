@@ -1,9 +1,9 @@
 package com.sendback.domain.feedback.controller;
 
-import com.sendback.domain.feedback.dto.request.SaveFeedbackRequest;
-import com.sendback.domain.feedback.dto.response.FeedbackDetailResponse;
-import com.sendback.domain.feedback.dto.response.FeedbackIdResponse;
-import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponse;
+import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
+import com.sendback.domain.feedback.dto.response.FeedbackDetailResponseDto;
+import com.sendback.domain.feedback.dto.response.FeedbackIdResponseDto;
+import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponseDto;
 import com.sendback.domain.feedback.service.FeedbackService;
 import com.sendback.global.common.ApiResponse;
 import com.sendback.global.common.UserId;
@@ -23,22 +23,22 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping("/{projectId}/feedback")
-    public ApiResponse<FeedbackIdResponse> save(
+    public ApiResponse<FeedbackIdResponseDto> saveFeedback(
             @UserId Long userId,
             @PathVariable Long projectId,
-            @RequestBody @Valid SaveFeedbackRequest saveFeedbackRequest) {
-        return success(feedbackService.saveFeedback(userId, projectId, saveFeedbackRequest));
+            @RequestBody @Valid SaveFeedbackRequestDto saveFeedbackRequestDto) {
+        return success(feedbackService.saveFeedback(userId, projectId, saveFeedbackRequestDto));
     }
 
     @GetMapping("/{projectId}/feedbacks/{feedbackId}")
-    public ApiResponse<FeedbackDetailResponse> getDetail(
+    public ApiResponse<FeedbackDetailResponseDto> getFeedbackDetail(
             @PathVariable Long projectId,
             @PathVariable Long feedbackId) {
         return success(feedbackService.getFeedbackDetail(projectId, feedbackId));
     }
 
     @PostMapping(value = "/{projectId}/feedbacks/{feedbackId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<SubmitFeedbackResponse> submit(
+    public ApiResponse<SubmitFeedbackResponseDto> submitFeedback(
             @UserId Long userId,
             @PathVariable Long projectId,
             @PathVariable Long feedbackId,
