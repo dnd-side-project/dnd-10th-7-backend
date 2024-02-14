@@ -3,7 +3,7 @@ package com.sendback.domain.user.persister;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.Persister;
-import com.sendback.global.common.constants.SocialType;
+import com.sendback.domain.user.entity.SocialType;
 import lombok.RequiredArgsConstructor;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 

@@ -32,6 +32,8 @@ public class SecurityConfig {
             "/api/auth/reissue",
             "/",
             "/docs/index.html",
+            "api/users/signup",
+            "api/users/check"
     };
 
     private final String[] GET_METHOD_PERMITTED_URLS = {

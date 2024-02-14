@@ -1,0 +1,27 @@
+[[User-API]]
+= User API
+
+[[signup-user]]
+== 회원 가입
+=== 성공
+==== HTTP Requests
+include::{snippets}/signUpKakao-success/http-request.adoc[]
+include::{snippets}/signUpKakao-success/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/signUpKakao-success/http-response.adoc[]
+include::{snippets}/signUpKakao-success/response-fields.adoc[]
+
+'''
+
+[[check-userNickname]]
+== 닉네임 중복검사
+=== 성공
+==== HTTP Requests
+include::{snippets}/checkUserNickname-success/http-request.adoc[]
+include::{snippets}/checkUserNickname-success/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/checkUserNickname-success/http-response.adoc[]
+include::{snippets}/checkUserNickname-success/response-fields.adoc[]
+

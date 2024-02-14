@@ -5,7 +5,6 @@ import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.common.BaseEntity;
-import com.sendback.global.common.constants.Progress;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
