@@ -23,7 +23,7 @@ public class ImageService {
                 .toList();
     }
 
-    private String uploadImage(MultipartFile multipartFile, String type) {
+    public String uploadImage(MultipartFile multipartFile, String type) {
         S3SaveDir s3SaveDir = S3SaveDir.toEnum(type);
         //파일 타입에 따라 업로드 파일 경로 만들기
         String s3UploadFilePath = FilePathUtils.createS3UploadFilePath(multipartFile);

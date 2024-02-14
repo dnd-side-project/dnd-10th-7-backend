@@ -112,7 +112,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_DELETE_IMAGE_URL));
     }
 
-    private void validateProjectAuthor(User user, Project project) {
+    public void validateProjectAuthor(User user, Project project) {
         if (!project.isAuthor(user))
             throw new BadRequestException(NOT_PROJECT_AUTHOR);
     }
