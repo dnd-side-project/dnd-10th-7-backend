@@ -1,10 +1,8 @@
 package com.sendback.domain.user.entity;
 
+import com.sendback.domain.user.dto.SigningAccount;
+import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.global.common.BaseEntity;
-import com.sendback.global.common.constants.Career;
-import com.sendback.global.common.constants.Gender;
-import com.sendback.global.common.constants.Level;
-import com.sendback.global.common.constants.SocialType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -55,6 +53,20 @@ public class User extends BaseEntity {
                 .email(email)
                 .nickname(nickname)
                 .profileImageUrl(profileImageUrl)
+                .build();
+    }
+
+    public static User of(SigningAccount signingAccount, SignUpRequestDto signUpRequestDto){
+        return User.builder()
+                .socialType(SocialType.toEnum(signingAccount.socialType()))
+                .socialId(signingAccount.socialId())
+                .email(signingAccount.email())
+                .level(Level.ONE)
+                .nickname(signingAccount.nickname())
+                .gender(Gender.toEnum(signUpRequestDto.gender()))
+                .birthday(signUpRequestDto.birthday())
+                .profileImageUrl(signingAccount.profileImageUrl())
+                .career(Career.toEnum(signUpRequestDto.career()))
                 .build();
     }
 }
