@@ -5,6 +5,7 @@ import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.global.Persister;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
