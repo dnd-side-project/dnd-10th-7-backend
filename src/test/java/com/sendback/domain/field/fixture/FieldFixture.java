@@ -1,7 +1,6 @@
 package com.sendback.domain.field.fixture;
 
 import com.sendback.domain.field.entity.Field;
-import com.sendback.domain.project.dto.request.SaveProjectRequest;
 
 import java.util.Arrays;
 import java.util.List;
