@@ -1,6 +1,7 @@
 package com.sendback.domain.user.service;
 
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
@@ -32,6 +33,9 @@ public class UserServiceTest extends ServiceTest {
     JwtProvider jwtProvider;
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    FieldService fieldService;
 
     @Test
     @DisplayName("사용자 추가정보를 통해 회원가입을 진행한다. 성공하면 200과 함께 access token, refresh token을 반환한다.")

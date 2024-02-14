@@ -32,7 +32,7 @@ public class UserControllerTest extends ControllerTest {
 
     @Nested
     @DisplayName("회원 가입")
-    class saveProject {
+    class signUp {
         @Test
         @DisplayName("회원 가입을 성공하면 200 상태코드와 함께 access token, refresh token을 반환한다.")
         @WithMockCustomUser
@@ -41,7 +41,7 @@ public class UserControllerTest extends ControllerTest {
             String accessToken = "valid accessToken";
             String refreshToken = "valid refreshToken";
             SignUpRequestDto signUpRequestDto = new SignUpRequestDto("user", "2000.01.01",
-                    "male", "backend", Arrays.asList("health", "game"), "valid signToken");
+                    "male", "backend", Arrays.asList("환경", "게임"), "valid signToken");
             given(userService.signUpUser(signUpRequestDto)).willReturn(new Token(accessToken, refreshToken));
 
             String content = objectMapper.writeValueAsString(signUpRequestDto);
