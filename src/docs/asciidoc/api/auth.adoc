@@ -23,6 +23,7 @@ include::{snippets}/login-kakao-failure/query-parameters.adoc[]
 include::{snippets}/login-kakao-failure/http-response.adoc[]
 include::{snippets}/login-kakao-failure/response-fields.adoc[]
 
+'''
 
 [[login-google]]
 == 구글 로그인
@@ -45,6 +46,7 @@ include::{snippets}/login-google-failure/query-parameters.adoc[]
 include::{snippets}/login-google-failure/http-response.adoc[]
 include::{snippets}/login-google-failure/response-fields.adoc[]
 
+'''
 
 [[reissue-token]]
 == 토큰 재발급
@@ -57,6 +59,7 @@ include::{snippets}/reissue-token/request-fields.adoc[]
 include::{snippets}/reissue-token/http-response.adoc[]
 include::{snippets}/reissue-token/response-fields.adoc[]
 
+'''
 
 [[logout-social]]
 == 로그아웃
@@ -67,3 +70,5 @@ include::{snippets}/logout-social/http-request.adoc[]
 ==== HTTP Response
 include::{snippets}/logout-social/http-response.adoc[]
 include::{snippets}/logout-social/response-fields.adoc[]
+
+'''
