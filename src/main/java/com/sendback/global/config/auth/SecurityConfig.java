@@ -30,7 +30,9 @@ public class SecurityConfig {
             "/api/auth/google/callback",
             "/api/auth/reissue",
             "/",
-            "/docs/index.html"
+            "/docs/index.html",
+            "api/users/signup",
+            "api/users/check"
     };
 
     @Bean
