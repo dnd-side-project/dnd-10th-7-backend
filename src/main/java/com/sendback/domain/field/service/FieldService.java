@@ -6,7 +6,7 @@ import com.sendback.global.exception.type.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.List;
 import static com.sendback.domain.field.exception.FieldExceptionType.NOT_FOUND_FIELD;
 
 @Service
@@ -18,5 +18,9 @@ public class FieldService {
 
     public Field getFieldByName(String name) {
         return fieldRepository.findByName(name).orElseThrow(() -> new NotFoundException(NOT_FOUND_FIELD));
+    }
+    @Transactional
+    public List<Field> saveAll(List<Field> fieldList) {
+        return fieldRepository.saveAll(fieldList);
     }
 }

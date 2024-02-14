@@ -272,7 +272,9 @@ public class ProjectControllerTest extends ControllerTest {
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
-                                            .description("에러 메시지")
+                                            .description("에러 메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.NULL)
+                                            .description("데이터")
                             )))
                     .andExpect(jsonPath("$.code").value("302"))
                     .andExpect(status().isBadRequest());

@@ -3,7 +3,7 @@ package com.sendback.domain.project.fixture;
 import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
-import com.sendback.global.common.constants.Progress;
+import com.sendback.domain.project.entity.Progress;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
 

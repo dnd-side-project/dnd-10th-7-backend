@@ -1,12 +1,11 @@
 package com.sendback.domain.project.entity;
 
-import com.sendback.global.common.constants.Progress;
 import com.sendback.global.exception.type.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static com.sendback.global.common.constants.Progress.*;
+import static com.sendback.domain.project.entity.Progress.*;
 import static com.sendback.domain.project.exception.ProjectExceptionType.NOT_FOUND_PROGRESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
