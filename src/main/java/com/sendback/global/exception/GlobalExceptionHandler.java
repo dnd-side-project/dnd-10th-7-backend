@@ -7,11 +7,14 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
@@ -30,15 +33,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(
             final MethodArgumentNotValidException e
     ) {
-        final List<ErrorResponse> errorResponses = e.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
-                .toList();
-        log.warn("[" + e.getClass() + "] " + errorResponses);
+
+        BindingResult bindingResult = e.getBindingResult();
+        List<ObjectError> objectErrors = bindingResult.getAllErrors();
+        List<String> errorMessages = new ArrayList<>();
+        for (ObjectError objectError : objectErrors) {
+            errorMessages.add(objectError.getDefaultMessage());
+        }
+        String errorMessage = String.join(" ", errorMessages);
         return ResponseEntity.badRequest()
-                .body(ExceptionResponse.of(300, errorResponses.toString()));
+                .body(ExceptionResponse.of(300, errorMessage));
     }
+
+
 
     //requestParam 검증
     @ExceptionHandler
