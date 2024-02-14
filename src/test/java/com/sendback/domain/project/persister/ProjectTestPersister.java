@@ -2,8 +2,8 @@ package com.sendback.domain.project.persister;
 
 import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.field.persister.FieldTestPersister;
-import com.sendback.domain.project.dto.request.SaveProjectRequest;
-import com.sendback.domain.project.entity.Progress;
+import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
+import com.sendback.global.common.constants.Progress;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.entity.User;
@@ -23,7 +23,7 @@ public class ProjectTestPersister {
 
     private User user;
     private Field field;
-    private SaveProjectRequest saveProjectRequest;
+    private SaveProjectRequestDto saveProjectRequestDto;
 
     public ProjectTestPersister user(User user) {
         this.user = user;
@@ -35,8 +35,8 @@ public class ProjectTestPersister {
         return this;
     }
 
-    public ProjectTestPersister saveProjectRequest(SaveProjectRequest saveProjectRequest) {
-        this.saveProjectRequest = saveProjectRequest;
+    public ProjectTestPersister saveProjectRequestDto(SaveProjectRequestDto saveProjectRequestDto) {
+        this.saveProjectRequestDto = saveProjectRequestDto;
         return this;
     }
 
@@ -53,8 +53,8 @@ public class ProjectTestPersister {
         Project project = Project.of(
                 (user == null ? userTestPersister.save() : user),
                 (field == null ? fieldTestPersister.save() : field),
-                (saveProjectRequest == null ? new SaveProjectRequest(TITLE, FIELD, CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
-                        PLANNING_PROGRESS.toString(), 1L, 2L, 3L, 4L) : saveProjectRequest)
+                (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, FIELD, CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
+                        PLANNING_PROGRESS.toString(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
         );
         return projectRepository.save(project);
     }

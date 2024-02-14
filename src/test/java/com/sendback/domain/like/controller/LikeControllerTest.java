@@ -1,6 +1,6 @@
 package com.sendback.domain.like.controller;
 
-import com.sendback.domain.like.dto.response.ReactLikeResponse;
+import com.sendback.domain.like.dto.response.ReactLikeResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -36,14 +37,17 @@ public class LikeControllerTest extends ControllerTest {
     public void success() throws Exception {
         //given
         Long projectId = 1L;
-        ReactLikeResponse reactLikeResponse = new ReactLikeResponse(true);
-        given(likeService.reactLike(anyLong(), anyLong())).willReturn(reactLikeResponse);
+        ReactLikeResponseDto reactLikeResponseDto = new ReactLikeResponseDto(true);
+        given(likeService.reactLike(anyLong(), anyLong())).willReturn(reactLikeResponseDto);
 
         //when
-        mockMvc.perform(put("/api/projects/{projectId}/like", projectId)
-                .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
-                .accept(MediaType.APPLICATION_JSON).with(csrf()))
-                .andDo(print())
+        ResultActions resultActions = mockMvc.perform(put("/api/projects/{projectId}/like", projectId)
+                        .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                .andDo(print());
+
+        //then
+        resultActions
                 .andDo(document("like/react",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),

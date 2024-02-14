@@ -59,7 +59,7 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    public static User of(SigningAccount signingAccount, SignUpRequestDto signUpRequestDto){
+    public static User of(SigningAccount signingAccount, SignUpRequestDto signUpRequestDto) {
         return User.builder()
                 .socialType(SocialType.toEnum(signingAccount.socialType()))
                 .socialId(signingAccount.socialId())
@@ -72,5 +72,8 @@ public class User extends BaseEntity {
                 .career(Career.toEnum(signUpRequestDto.career()))
                 .nickname(signUpRequestDto.nickname())
                 .build();
+    }
+    public void levelUp(Level level) {
+        this.level = level;
     }
 }

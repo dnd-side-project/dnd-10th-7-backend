@@ -1,0 +1,46 @@
+[[Feedback-API]]
+= Feedback API
+
+[[feedback-detail]]
+== 피드백 상세 조회
+
+=== 성공
+
+==== HTTP Requests
+include::{snippets}/feedback/detail/http-request.adoc[]
+include::{snippets}/feedback/detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/feedback/detail/http-response.adoc[]
+include::{snippets}/feedback/detail/response-fields.adoc[]
+
+'''
+
+[[feedback-save]]
+== 피드백 등록
+
+=== 성공
+
+==== HTTP Requests
+include::{snippets}/feedback/save/http-request.adoc[]
+include::{snippets}/feedback/save/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/feedback/save/http-response.adoc[]
+include::{snippets}/feedback/save/response-fields.adoc[]
+
+'''
+
+[[feedback-submit]]
+== 피드백 제출
+
+=== 성공
+
+==== HTTP Requests
+include::{snippets}/feedback/submit/http-request.adoc[]
+include::{snippets}/feedback/submit/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/feedback/submit/http-response.adoc[]
+include::{snippets}/feedback/submit/response-fields.adoc[]
+

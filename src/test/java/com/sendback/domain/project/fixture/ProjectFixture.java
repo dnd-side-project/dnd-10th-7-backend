@@ -1,9 +1,9 @@
 package com.sendback.domain.project.fixture;
 
 import com.sendback.domain.field.entity.Field;
-import com.sendback.domain.project.dto.request.SaveProjectRequest;
-import com.sendback.domain.project.dto.request.UpdateProjectRequest;
-import com.sendback.domain.project.entity.Progress;
+import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
+import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.global.common.constants.Progress;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
 
@@ -29,16 +29,16 @@ public class ProjectFixture {
     private static final Progress PLANNING_PROGRESS = Progress.PLANNING;
     private static final Progress DEVELOPING_PROGRESS = Progress.DEVELOPING;
 
-    public static final SaveProjectRequest mock_saveProjectRequest = new SaveProjectRequest(TITLE, FIELD, CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE,
+    public static final SaveProjectRequestDto MOCK___SAVE_PROJECT_REQUEST_DTO = new SaveProjectRequestDto(TITLE, FIELD, CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE,
             END_DATE, PLANNING_PROGRESS.toString(), 1L,2L,3L,4L);
 
-    public static final UpdateProjectRequest mock_updateProjectRequest = new UpdateProjectRequest(
+    public static final UpdateProjectRequestDto MOCK___UPDATE_PROJECT_REQUEST_DTO = new UpdateProjectRequestDto(
             UPDATE_TITLE, UPDATE_FIELD, UPDATE_CONTENT, UPDATE_SUMMARY, UPDATE_DEMO_SITE_URL, UPDATE_START_DATE, UPDATE_END_DATE, DEVELOPING_PROGRESS.toString(),
             4L, 3L, 2L, 1L, List.of("deleteUrl")
     );
 
     public static Project createDummyProject(User user) {
-        return Project.of(user, Field.of(FIELD), mock_saveProjectRequest);
+        return Project.of(user, Field.of(FIELD), MOCK___SAVE_PROJECT_REQUEST_DTO);
     }
 
 }

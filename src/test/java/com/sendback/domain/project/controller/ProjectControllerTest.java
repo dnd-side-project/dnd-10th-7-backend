@@ -1,35 +1,27 @@
 package com.sendback.domain.project.controller;
 
-import com.sendback.domain.project.dto.request.SaveProjectRequest;
-import com.sendback.domain.project.dto.request.UpdateProjectRequest;
-import com.sendback.domain.project.dto.response.ProjectIdResponse;
+import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
+import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
-import com.sendback.global.exception.type.ImageException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.test.web.servlet.ResultActions;
 
-import static com.sendback.domain.project.fixture.ProjectFixture.mock_saveProjectRequest;
-import static com.sendback.domain.project.fixture.ProjectFixture.mock_updateProjectRequest;
+import static com.sendback.domain.project.fixture.ProjectFixture.MOCK___SAVE_PROJECT_REQUEST_DTO;
+import static com.sendback.domain.project.fixture.ProjectFixture.MOCK___UPDATE_PROJECT_REQUEST_DTO;
 import static org.mockito.ArgumentMatchers.*;
 
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static com.sendback.global.config.image.exception.ImageExceptionType.AWS_S3_UPLOAD_FAIL;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -51,7 +43,7 @@ public class ProjectControllerTest extends ControllerTest {
     @DisplayName("project 등록 요청 시")
     class saveProject {
 
-        SaveProjectRequest saveProjectRequest = mock_saveProjectRequest;
+        SaveProjectRequestDto saveProjectRequestDto = MOCK___SAVE_PROJECT_REQUEST_DTO;
         @Test
         @DisplayName("saveProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
         @WithMockCustomUser
@@ -61,22 +53,25 @@ public class ProjectControllerTest extends ControllerTest {
             MockMultipartFile second_multipartFile = mockingMultipartFile("second");
             MockMultipartFile data =
                     new MockMultipartFile("data", null, "application/json",
-                            objectMapper.writeValueAsString(saveProjectRequest).getBytes(StandardCharsets.UTF_8));
-            ProjectIdResponse projectIdResponse = new ProjectIdResponse(1L);
-            given(projectService.saveProject(anyLong(), any(SaveProjectRequest.class), anyList())).willReturn(projectIdResponse);
+                            objectMapper.writeValueAsString(saveProjectRequestDto).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponseDto projectIdResponseDto = new ProjectIdResponseDto(1L);
+            given(projectService.saveProject(anyLong(), any(SaveProjectRequestDto.class), anyList())).willReturn(projectIdResponseDto);
 
             //when
-            mockMvc.perform(multipart("/api/projects")
+            ResultActions resultActions = mockMvc.perform(multipart("/api/projects")
                             .file("images", first_multipartFile.getBytes())
                             .file("images", second_multipartFile.getBytes())
                             .file(data)
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                             .accept(MediaType.APPLICATION_JSON).with(csrf()))
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
                     .andExpect(jsonPath("$.data.projectId").value(1))
-                    .andDo(print())
+                    .andDo(print());
+
+            //then
+            resultActions
                     .andDo(document("project/save",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -120,9 +115,9 @@ public class ProjectControllerTest extends ControllerTest {
             //given
             MockMultipartFile data =
                     new MockMultipartFile("data", null, "application/json",
-                            objectMapper.writeValueAsString(saveProjectRequest).getBytes(StandardCharsets.UTF_8));
-            ProjectIdResponse projectIdResponse = new ProjectIdResponse(1L);
-            given(projectService.saveProject(anyLong(), any(SaveProjectRequest.class), any())).willReturn(projectIdResponse);
+                            objectMapper.writeValueAsString(saveProjectRequestDto).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponseDto projectIdResponseDto = new ProjectIdResponseDto(1L);
+            given(projectService.saveProject(anyLong(), any(SaveProjectRequestDto.class), any())).willReturn(projectIdResponseDto);
 
             //when
             mockMvc.perform(multipart("/api/projects")
@@ -141,13 +136,16 @@ public class ProjectControllerTest extends ControllerTest {
         @DisplayName("saveProjectRequest가 존재하지 않는다면 프로젝트를 등록할 때 에러를 일으킨다.")
         @WithMockCustomUser
         public void saveProject_fail_request() throws Exception {
-            //when - then
-            mockMvc.perform(multipart("/api/projects")
+            //when
+            ResultActions resultActions = mockMvc.perform(multipart("/api/projects")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                             .accept(MediaType.APPLICATION_JSON).with(csrf()))
-                    .andDo(print())
+                    .andDo(print());
+
+            //then
+            resultActions
                     .andDo(document("project/save/failByNotExistData",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -163,7 +161,7 @@ public class ProjectControllerTest extends ControllerTest {
     @DisplayName("project 수정 요청 시")
     class updateProject {
 
-        UpdateProjectRequest updateProjectRequest = mock_updateProjectRequest;
+        UpdateProjectRequestDto updateProjectRequestDto = MOCK___UPDATE_PROJECT_REQUEST_DTO;
 
         @Test
         @DisplayName("updateProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
@@ -172,36 +170,31 @@ public class ProjectControllerTest extends ControllerTest {
             //given
             Long projectId = 1L;
 
-            // RestDocumentationRequestBuilders를 put으로 사용하기 위함
-            MockMultipartHttpServletRequestBuilder builder =
-                    RestDocumentationRequestBuilders.
-                            multipart("/api/projects/{projectId}", projectId);
-
-            builder.with(new RequestPostProcessor() {
-                @Override
-                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                    request.setMethod("PUT");
-                    return request;
-                }
-            });
-
             MockMultipartFile first_multipartFile = mockingMultipartFile("first");
             MockMultipartFile second_multipartFile = mockingMultipartFile("second");
             MockMultipartFile data =
                     new MockMultipartFile("data", null, "application/json",
-                            objectMapper.writeValueAsString(updateProjectRequest).getBytes(StandardCharsets.UTF_8));
-            ProjectIdResponse projectIdResponse = new ProjectIdResponse(projectId);
-            given(projectService.updateProject(anyLong(), anyLong(), any(UpdateProjectRequest.class), anyList())).willReturn(projectIdResponse);
+                            objectMapper.writeValueAsString(updateProjectRequestDto).getBytes(StandardCharsets.UTF_8));
+            ProjectIdResponseDto projectIdResponseDto = new ProjectIdResponseDto(projectId);
+            given(projectService.updateProject(anyLong(), anyLong(), any(UpdateProjectRequestDto.class), anyList())).willReturn(projectIdResponseDto);
 
             //when
-            mockMvc.perform(builder
+            ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.
+                            multipart("/api/projects/{projectId}", projectId)
                             .file("images", first_multipartFile.getBytes())
                             .file("images", second_multipartFile.getBytes())
                             .file(data)
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+                            .with(request -> {
+                                request.setMethod("PUT");
+                                return request;
+                            })
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                             .accept(MediaType.APPLICATION_JSON).with(csrf()))
-                    .andDo(print())
+                    .andDo(print());
+
+            //then
+            resultActions
                     .andDo(document("project/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -252,25 +245,20 @@ public class ProjectControllerTest extends ControllerTest {
             //given
             Long projectId = 1L;
 
-            // RestDocumentationRequestBuilders를 put으로 사용하기 위함
-            MockMultipartHttpServletRequestBuilder builder =
-                    RestDocumentationRequestBuilders.
-                            multipart("/api/projects/{projectId}", projectId);
-
-            builder.with(new RequestPostProcessor() {
-                @Override
-                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                    request.setMethod("PUT");
-                    return request;
-                }
-            });
-
             //when
-            mockMvc.perform(builder
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+            ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.
+                            multipart("/api/projects/{projectId}", projectId)
+                            .with(request -> {
+                                request.setMethod("PUT");
+                                return request;
+                            })
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                             .accept(MediaType.APPLICATION_JSON).with(csrf()))
-                    .andDo(print())
+                    .andDo(print());
+
+            //then
+            resultActions
                     .andDo(document("project/update/failByNotExistData",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -305,10 +293,13 @@ public class ProjectControllerTest extends ControllerTest {
             doNothing().when(projectService).deleteProject(anyLong(), anyLong());
 
             //when
-            mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/projects/{projectId}", projectId)
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+            ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/projects/{projectId}", projectId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .accept(MediaType.APPLICATION_JSON).with(csrf()))
-                    .andDo(print())
+                    .andDo(print());
+
+            //then
+            resultActions
                     .andDo(document("project/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -330,23 +321,4 @@ public class ProjectControllerTest extends ControllerTest {
         }
     }
 
-    private MockMultipartFile mockingMultipartFile(String fileName) {
-        return new MockMultipartFile(
-                "images",
-                fileName,
-                MediaType.IMAGE_JPEG_VALUE,
-                generateMockImage()
-        );
-    }
-
-    private byte[] generateMockImage() {
-        BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            ImageIO.write(image, "jpg", byteArrayOutputStream);
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            throw new ImageException(AWS_S3_UPLOAD_FAIL);
-        }
-    }
 }
