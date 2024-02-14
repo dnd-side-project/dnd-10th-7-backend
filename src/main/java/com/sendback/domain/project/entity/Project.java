@@ -1,8 +1,8 @@
 package com.sendback.domain.project.entity;
 
 import com.sendback.domain.field.entity.Field;
-import com.sendback.domain.project.dto.request.SaveProjectRequest;
-import com.sendback.domain.project.dto.request.UpdateProjectRequest;
+import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
+import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.common.BaseEntity;
 import com.sendback.global.common.constants.Progress;
@@ -94,35 +94,35 @@ public class Project extends BaseEntity {
         this.isFinished = isFinished;
     }
 
-    public static Project of(User user, Field field, SaveProjectRequest saveProjectRequest) {
+    public static Project of(User user, Field field, SaveProjectRequestDto saveProjectRequestDto) {
         return Project.builder()
                 .user(user)
                 .field(field)
-                .title(saveProjectRequest.title())
-                .content(saveProjectRequest.content())
-                .summary(saveProjectRequest.summary())
-                .demoSiteUrl(saveProjectRequest.demoSiteUrl())
-                .startedAt(saveProjectRequest.startedAt())
-                .endedAt(saveProjectRequest.endedAt())
-                .progress(Progress.toEnum(saveProjectRequest.progress()))
-                .plannerCount(saveProjectRequest.plannerCount())
-                .frontendCount(saveProjectRequest.frontendCount())
-                .backendCount(saveProjectRequest.backendCount())
-                .designCount(saveProjectRequest.designCount())
+                .title(saveProjectRequestDto.title())
+                .content(saveProjectRequestDto.content())
+                .summary(saveProjectRequestDto.summary())
+                .demoSiteUrl(saveProjectRequestDto.demoSiteUrl())
+                .startedAt(saveProjectRequestDto.startedAt())
+                .endedAt(saveProjectRequestDto.endedAt())
+                .progress(Progress.toEnum(saveProjectRequestDto.progress()))
+                .plannerCount(saveProjectRequestDto.plannerCount())
+                .frontendCount(saveProjectRequestDto.frontendCount())
+                .backendCount(saveProjectRequestDto.backendCount())
+                .designCount(saveProjectRequestDto.designCount())
                 .isFinished(false)
                 .build();
     }
 
-    public void updateProject(Field field, UpdateProjectRequest updateProjectRequest) {
+    public void updateProject(Field field, UpdateProjectRequestDto updateProjectRequestDto) {
         this.field = field;
-        this.title = updateProjectRequest.title();
-        this.content = updateProjectRequest.content();
-        this.summary = updateProjectRequest.summary();
-        this.demoSiteUrl = updateProjectRequest.demoSiteUrl();
-        this.startedAt = updateProjectRequest.startedAt();
-        this.endedAt = updateProjectRequest.endedAt();
-        this.progress = Progress.toEnum(updateProjectRequest.progress());
-        this.projectParticipantCount = ProjectParticipantCount.of(updateProjectRequest);
+        this.title = updateProjectRequestDto.title();
+        this.content = updateProjectRequestDto.content();
+        this.summary = updateProjectRequestDto.summary();
+        this.demoSiteUrl = updateProjectRequestDto.demoSiteUrl();
+        this.startedAt = updateProjectRequestDto.startedAt();
+        this.endedAt = updateProjectRequestDto.endedAt();
+        this.progress = Progress.toEnum(updateProjectRequestDto.progress());
+        this.projectParticipantCount = ProjectParticipantCount.of(updateProjectRequestDto);
     }
 
     public boolean isAuthor(final User user) {

@@ -1,6 +1,6 @@
 package com.sendback.domain.scrap.controller;
 
-import com.sendback.domain.scrap.dto.response.ClickScrapResponse;
+import com.sendback.domain.scrap.dto.response.ClickScrapResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -34,14 +35,17 @@ public class ScrapControllerTest extends ControllerTest {
     public void success() throws Exception {
         //given
         Long projectId = 1L;
-        ClickScrapResponse response = new ClickScrapResponse(true);
-        given(scrapService.clickScrap(anyLong(), anyLong())).willReturn(response);
+        ClickScrapResponseDto response = new ClickScrapResponseDto(true);
+        given(scrapService.click(anyLong(), anyLong())).willReturn(response);
 
         //when
-        mockMvc.perform(put("/api/projects/{projectId}/scrap", projectId)
-                        .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
+        ResultActions resultActions = mockMvc.perform(put("/api/projects/{projectId}/scrap", projectId)
+                        .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                         .accept(MediaType.APPLICATION_JSON).with(csrf()))
-                .andDo(print())
+                .andDo(print());
+
+        //then
+        resultActions
                 .andDo(document("scrap/click",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),

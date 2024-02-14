@@ -9,7 +9,8 @@ import static com.sendback.global.config.image.exception.ImageExceptionType.NOT_
 public enum S3SaveDir {
 
     USER("/user/profile"),
-    PROJECT("/project");
+    PROJECT("/project"),
+    FEEDBACK("/feedback");
 
     public final String path;
 
@@ -17,6 +18,7 @@ public enum S3SaveDir {
         return switch (stringParam.toLowerCase()) {
             case "user" -> USER;
             case "project" -> PROJECT;
+            case "feedback" -> FEEDBACK;
 
             default -> throw new ImageException(NOT_FOUND_IMAGE_PATH);
         };

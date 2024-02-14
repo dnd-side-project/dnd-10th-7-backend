@@ -2,9 +2,9 @@ package com.sendback.domain.project.service;
 
 import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.field.service.FieldService;
-import com.sendback.domain.project.dto.request.SaveProjectRequest;
-import com.sendback.domain.project.dto.request.UpdateProjectRequest;
-import com.sendback.domain.project.dto.response.ProjectIdResponse;
+import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
+import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.project.repository.ProjectImageRepository;
@@ -35,15 +35,15 @@ public class ProjectService {
     private final ProjectImageRepository projectImageRepository;
 
     @Transactional
-    public ProjectIdResponse saveProject(Long userId, SaveProjectRequest saveProjectRequest, List<MultipartFile> images) {
+    public ProjectIdResponseDto saveProject(Long userId, SaveProjectRequestDto saveProjectRequestDto, List<MultipartFile> images) {
         User loginUser = userService.getUserById(userId);
 
-        Field field = fieldService.getFieldByName(saveProjectRequest.field());
-        Project project = Project.of(loginUser, field, saveProjectRequest);
+        Field field = fieldService.getFieldByName(saveProjectRequestDto.field());
+        Project project = Project.of(loginUser, field, saveProjectRequestDto);
 
         uploadProjectImage(project, images);
 
-        return new ProjectIdResponse(projectRepository.save(project).getId());
+        return new ProjectIdResponseDto(projectRepository.save(project).getId());
     }
 
     private void uploadProjectImage(Project project, List<MultipartFile> images) {
@@ -59,19 +59,19 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectIdResponse updateProject(Long userId, Long projectId, UpdateProjectRequest updateProjectRequest, List<MultipartFile> images) {
+    public ProjectIdResponseDto updateProject(Long userId, Long projectId, UpdateProjectRequestDto updateProjectRequestDto, List<MultipartFile> images) {
         User loginUser = userService.getUserById(userId);
-        Field field = fieldService.getFieldByName(updateProjectRequest.field());
+        Field field = fieldService.getFieldByName(updateProjectRequestDto.field());
         Project project = getProjectById(projectId);
 
         validateProjectAuthor(loginUser, project);
-        validateProjectImageCount(project, images, updateProjectRequest.urlsToDelete());
+        validateProjectImageCount(project, images, updateProjectRequestDto.urlsToDelete());
 
-        deleteImageUrls(project, updateProjectRequest.urlsToDelete());
+        deleteImageUrls(project, updateProjectRequestDto.urlsToDelete());
         uploadProjectImage(project, images);
-        project.updateProject(field, updateProjectRequest);
+        project.updateProject(field, updateProjectRequestDto);
 
-        return new ProjectIdResponse(project.getId());
+        return new ProjectIdResponseDto(project.getId());
     }
 
     private void validateProjectImageCount(Project project, List<MultipartFile> images, List<String> urlsToDelete) {
@@ -112,7 +112,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_DELETE_IMAGE_URL));
     }
 
-    private void validateProjectAuthor(User user, Project project) {
+    public void validateProjectAuthor(User user, Project project) {
         if (!project.isAuthor(user))
             throw new BadRequestException(NOT_PROJECT_AUTHOR);
     }

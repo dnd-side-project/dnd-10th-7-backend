@@ -2,7 +2,7 @@ package com.sendback.domain.scrap.service;
 
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.service.ProjectService;
-import com.sendback.domain.scrap.dto.response.ClickScrapResponse;
+import com.sendback.domain.scrap.dto.response.ClickScrapResponseDto;
 import com.sendback.domain.scrap.entity.Scrap;
 import com.sendback.domain.scrap.repository.ScrapRepository;
 import com.sendback.domain.user.entity.User;
@@ -65,10 +65,10 @@ public class ScrapServiceTest extends ServiceTest {
             given(scrapRepository.save(any(Scrap.class))).willReturn(scrap);
 
             //when
-            ClickScrapResponse clickScrapResponse = scrapService.clickScrap(1L, 1L);
+            ClickScrapResponseDto clickScrapResponseDto = scrapService.click(1L, 1L);
 
             //then
-            assertThat(clickScrapResponse.isClicked()).isTrue();
+            assertThat(clickScrapResponseDto.isClicked()).isTrue();
         }
 
         @Test
@@ -80,10 +80,10 @@ public class ScrapServiceTest extends ServiceTest {
             given(scrapRepository.findByUserAndProject(any(User.class), any(Project.class))).willReturn(Optional.of(scrap));
 
             //when
-            ClickScrapResponse clickScrapResponse = scrapService.clickScrap(1L, 1L);
+            ClickScrapResponseDto clickScrapResponseDto = scrapService.click(1L, 1L);
 
             //then
-            assertThat(clickScrapResponse.isClicked()).isFalse();
+            assertThat(clickScrapResponseDto.isClicked()).isFalse();
         }
 
         @Test
@@ -97,10 +97,10 @@ public class ScrapServiceTest extends ServiceTest {
             given(scrapRepository.findByUserAndProject(any(User.class), any(Project.class))).willReturn(Optional.of(scrap));
 
             //when
-            ClickScrapResponse clickScrapResponse = scrapService.clickScrap(1L, 1L);
+            ClickScrapResponseDto clickScrapResponseDto = scrapService.click(1L, 1L);
 
             //then
-            assertThat(clickScrapResponse.isClicked()).isTrue();
+            assertThat(clickScrapResponseDto.isClicked()).isTrue();
         }
     }
 }
