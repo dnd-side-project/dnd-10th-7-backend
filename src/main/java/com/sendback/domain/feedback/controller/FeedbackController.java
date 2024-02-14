@@ -7,6 +7,7 @@ import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponse;
 import com.sendback.domain.feedback.service.FeedbackService;
 import com.sendback.global.common.ApiResponse;
 import com.sendback.global.common.UserId;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class FeedbackController {
     public ApiResponse<FeedbackIdResponse> save(
             @UserId Long userId,
             @PathVariable Long projectId,
-            @RequestBody SaveFeedbackRequest saveFeedbackRequest) {
+            @RequestBody @Valid SaveFeedbackRequest saveFeedbackRequest) {
         return success(feedbackService.saveFeedback(userId, projectId, saveFeedbackRequest));
     }
 
