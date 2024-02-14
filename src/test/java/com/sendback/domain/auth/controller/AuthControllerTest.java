@@ -92,7 +92,7 @@ public class AuthControllerTest extends ControllerTest {
             mockMvc.perform(
                             get("/api/auth/kakao/callback").param("code", code))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.code").value("1070"))
+                    .andExpect(jsonPath("$.code").value("1080"))
                     .andExpect(jsonPath("$.message").value("추가 정보를 입력하세요."))
                     .andExpect(jsonPath("$.data.signToken").value("test_sign_token"))
                     .andDo(document("login-kakao-failure",
@@ -179,7 +179,7 @@ public class AuthControllerTest extends ControllerTest {
             ResultActions resultActions = mockMvc.perform(
                             get("/api/auth/google/callback").param("code", code))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.code").value("1070"))
+                    .andExpect(jsonPath("$.code").value("1080"))
                     .andExpect(jsonPath("$.message").value("추가 정보를 입력하세요."))
                     .andExpect(jsonPath("$.data.signToken").value("test_sign_token"));
 
