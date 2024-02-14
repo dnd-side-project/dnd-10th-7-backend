@@ -25,7 +25,7 @@ public record FeedbackDetailResponseDto(
         String field,
         String progress
 ) {
-    public static FeedbackDetailResponseDto of(Feedback feedback) {
+    public static FeedbackDetailResponseDto from(Feedback feedback) {
         Project project = feedback.getProject();
         User user = project.getUser();
         return new FeedbackDetailResponseDto(
