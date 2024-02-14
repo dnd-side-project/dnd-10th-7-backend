@@ -4,10 +4,49 @@ import lombok.Getter;
 
 @Getter
 public enum Level {
-    ONE("ONE"), TWO("TWO"), THREE("THREE"), FOUR("FOUR"), FIVE("FIVE");
-    private final String level;
+    ONE("주먹밥", 0L),
+    TWO("솜주먹", 5L),
+    THREE("물주먹", 10L),
+    FOUR("돌주먹", 15L),
+    FIVE("불주먹", 20L);
+    private final String name;
+    private final Long feedbackSubmitCount;
 
-    Level(String level){
-        this.level = level;
+    Level(String name, Long feedbackSubmitCount){
+        this.name = name;
+        this.feedbackSubmitCount = feedbackSubmitCount;
+    }
+
+    public static Level getLevelByFeedbackSubmitCount(Long feedbackSubmitCount) {
+        if (TWO.feedbackSubmitCount > feedbackSubmitCount) {
+            return ONE;
+        }
+        else if (THREE.feedbackSubmitCount > feedbackSubmitCount) {
+            return TWO;
+        }
+        else if (FOUR.feedbackSubmitCount > feedbackSubmitCount) {
+            return THREE;
+        }
+        else if (FIVE.feedbackSubmitCount > feedbackSubmitCount) {
+            return FOUR;
+        }
+        else {
+            return FIVE;
+        }
+    }
+
+    public static Long getRemainCountUntilNextLevel(Long feedbackSubmitCount) {
+        if (TWO.feedbackSubmitCount > feedbackSubmitCount) {
+            return TWO.feedbackSubmitCount - feedbackSubmitCount;
+        }
+        else if (THREE.feedbackSubmitCount > feedbackSubmitCount) {
+            return THREE.feedbackSubmitCount - feedbackSubmitCount;
+        }
+        else if (FOUR.feedbackSubmitCount > feedbackSubmitCount) {
+            return FOUR.feedbackSubmitCount - feedbackSubmitCount;
+        }
+        else {
+            return FIVE.feedbackSubmitCount - feedbackSubmitCount;
+        }
     }
 }
