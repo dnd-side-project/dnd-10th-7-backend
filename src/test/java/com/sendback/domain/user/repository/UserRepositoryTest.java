@@ -28,8 +28,7 @@ public class UserRepositoryTest extends RepositoryTest {
         @DisplayName("db에 존재하는 유저를 닉네임을 통해 조회한다. ")
         public void findByNickname_success() {
             //given
-            User user = createDummyUser();
-            userRepository.save(user);
+            User user = userTestPersister.save();
 
             //when
             Optional<User> findUser = userRepository.findByNickname(user.getNickname());
@@ -43,11 +42,8 @@ public class UserRepositoryTest extends RepositoryTest {
         @Test
         @DisplayName("db에 찾고자하는 유저의 닉네임이 없으면 null 반환한다. ")
         public void findByNickname_null() {
-            //given
-            User user = createDummyUser();
-
-            //when
-            Optional<User> findUser = userRepository.findByNickname(user.getNickname());
+            //given when
+            Optional<User> findUser = userRepository.findByNickname("test name");
 
             //then
             assertTrue(!findUser.isPresent());

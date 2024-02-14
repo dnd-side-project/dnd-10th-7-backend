@@ -13,8 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 import static com.sendback.domain.field.exception.FieldExceptionType.NOT_FOUND_FIELD;
-import static com.sendback.domain.field.fixture.FieldFixture.mock_inputFields;
-import static com.sendback.domain.field.fixture.FieldFixture.mock_outputFields;
+import static com.sendback.domain.field.fixture.FieldFixture.mock_Fields;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -72,14 +71,14 @@ public class FieldServiceTest {
         void saveAllTest() {
             // given
 
-            given(fieldRepository.saveAll(mock_inputFields)).willReturn(mock_outputFields);
+            given(fieldRepository.saveAll(mock_Fields)).willReturn(mock_Fields);
 
             // when
-            List<Field> result = fieldService.saveAll(mock_inputFields);
+            List<Field> result = fieldService.saveAll(mock_Fields);
 
             // then
-            assertEquals(mock_outputFields, result);
-            verify(fieldRepository).saveAll(mock_inputFields);
+            assertEquals(mock_Fields, result);
+            verify(fieldRepository).saveAll(mock_Fields);
         }
 
     }

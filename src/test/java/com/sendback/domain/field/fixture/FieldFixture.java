@@ -7,11 +7,7 @@ import java.util.List;
 
 public class FieldFixture {
 
-    public static final List<Field> mock_inputFields = Arrays.asList(
-            Field.of("art"), Field.of("game"), Field.of("IT")
-    );
-
-    public static final List<Field> mock_outputFields = Arrays.asList(
+    public static final List<Field> mock_Fields = Arrays.asList(
             Field.of("art"), Field.of("game"), Field.of("IT")
     );
 }

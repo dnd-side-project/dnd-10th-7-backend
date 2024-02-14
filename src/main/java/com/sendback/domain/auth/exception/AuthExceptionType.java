@@ -17,7 +17,7 @@ public enum AuthExceptionType implements ExceptionType {
     NOT_MATCH_REFRESH_TOKEN(1060, "refresh token이 올바르지 않습니다."),
 
     ACCESS_DENIED(1070, "리소스에 접근할 수 잇는 권한이 없습니다."),
-    NEED_TO_SIGNUP(1070, "추가 정보를 입력하세요.");
+    NEED_TO_SIGNUP(1080, "추가 정보를 입력하세요.");
 
     private final int statusCode;
     private final String message;
