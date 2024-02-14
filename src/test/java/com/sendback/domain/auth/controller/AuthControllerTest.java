@@ -140,7 +140,7 @@ public class AuthControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.accessToken").value(accessToken))
                     .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
                     .andDo(print())
-                    .andDo(document("login-google",
+                    .andDo(document("login-google-success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
