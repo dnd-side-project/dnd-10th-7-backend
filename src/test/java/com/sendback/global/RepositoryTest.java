@@ -1,5 +1,7 @@
 package com.sendback.global;
 
+import com.sendback.domain.feedback.persister.FeedbackSubmitTestPersister;
+import com.sendback.domain.feedback.persister.FeedbackTestPersister;
 import com.sendback.domain.field.persister.FieldTestPersister;
 import com.sendback.domain.like.persister.LikeTestPersister;
 import com.sendback.domain.project.persister.ProjectImageTestPersister;
@@ -45,4 +47,11 @@ public abstract class RepositoryTest {
 
     @Autowired
     protected ScrapTestPersister scrapTestPersister;
+
+    @Autowired
+    protected FeedbackTestPersister feedbackTestPersister;
+
+    @Autowired
+    protected FeedbackSubmitTestPersister feedbackSubmitTestPersister;
+
 }
