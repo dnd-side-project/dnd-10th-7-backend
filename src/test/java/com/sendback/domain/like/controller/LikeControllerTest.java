@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -40,10 +41,13 @@ public class LikeControllerTest extends ControllerTest {
         given(likeService.react(anyLong(), anyLong())).willReturn(reactLikeResponse);
 
         //when
-        mockMvc.perform(put("/api/projects/{projectId}/like", projectId)
-                .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
-                .accept(MediaType.APPLICATION_JSON).with(csrf()))
-                .andDo(print())
+        ResultActions resultActions = mockMvc.perform(put("/api/projects/{projectId}/like", projectId)
+                        .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                .andDo(print());
+
+        //then
+        resultActions
                 .andDo(document("like/react",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
