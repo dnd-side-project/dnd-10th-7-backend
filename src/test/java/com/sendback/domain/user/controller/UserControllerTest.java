@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
+
 import java.util.Arrays;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -43,8 +45,9 @@ public class UserControllerTest extends ControllerTest {
             given(userService.signUpUser(signUpRequestDto)).willReturn(new Token(accessToken, refreshToken));
 
             String content = objectMapper.writeValueAsString(signUpRequestDto);
-            // when & then
-            mockMvc.perform(
+
+            // when
+            ResultActions resultActions = mockMvc.perform(
                             post("/api/users/signup")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(content).with(csrf()))
@@ -53,8 +56,10 @@ public class UserControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.message").value("성공"))
                     .andExpect(jsonPath("$.data.accessToken").value(accessToken))
                     .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
-                    .andDo(print())
-                    .andDo(document("signUpKakao-success",
+                    .andDo(print());
+
+            // then
+            resultActions.andDo(document("signUpKakao-success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
@@ -100,13 +105,17 @@ public class UserControllerTest extends ControllerTest {
             CheckUserNicknameResponseDto responseDto = new CheckUserNicknameResponseDto(true);
             given(userService.checkUserNickname(nickname)).willReturn(responseDto);
 
-            mockMvc.perform(get("/api/users/check")
+            // when
+            ResultActions resultActions = mockMvc.perform(get("/api/users/check")
                             .param("nickname", nickname))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
                     .andExpect(jsonPath("$.data.check").value(true))
-                    .andDo(print())
+                    .andDo(print());
+
+            // then
+            resultActions
                     .andDo(document("checkUserNickname-success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

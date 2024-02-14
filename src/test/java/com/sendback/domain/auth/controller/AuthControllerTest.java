@@ -15,6 +15,8 @@ import static org.mockito.BDDMockito.given;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.ResultActions;
+
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -173,14 +175,16 @@ public class AuthControllerTest extends ControllerTest {
             given(googleService.loginGoogle(code))
                     .willThrow(new SignInException(NEED_TO_SIGNUP, new SignTokenResponseDto("test_sign_token")));
 
-            // when &then
-            mockMvc.perform(
+            // when
+            ResultActions resultActions = mockMvc.perform(
                             get("/api/auth/google/callback").param("code", code))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value("1070"))
                     .andExpect(jsonPath("$.message").value("추가 정보를 입력하세요."))
-                    .andExpect(jsonPath("$.data.signToken").value("test_sign_token"))
-                    .andDo(document("login-google-failure",
+                    .andExpect(jsonPath("$.data.signToken").value("test_sign_token"));
+
+            // then
+            resultActions.andDo(document("login-google-failure",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
@@ -219,8 +223,8 @@ public class AuthControllerTest extends ControllerTest {
             );
             String content = objectMapper.writeValueAsString(refreshTokenRequestDto);
 
-            // when &then
-            mockMvc.perform(
+            // when
+            ResultActions resultActions = mockMvc.perform(
                             post("/api/auth/reissue")
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(content).with(csrf()))
@@ -229,8 +233,10 @@ public class AuthControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.message").value("성공"))
                     .andExpect(jsonPath("$.data.accessToken").value(accessToken))
                     .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
-                    .andDo(print())
-                    .andDo(document("reissue-token",
+                    .andDo(print());
+
+            // then
+            resultActions.andDo(document("reissue-token",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
@@ -262,15 +268,18 @@ public class AuthControllerTest extends ControllerTest {
         @WithMockCustomUser
         void logoutSocial_success() throws Exception {
 
-            // When & Then
-            mockMvc.perform(post("/api/auth/logout")
+            // when
+            ResultActions resultActions = mockMvc.perform(post("/api/auth/logout")
                             // 인증정보 설정
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken").with(csrf()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
-                    .andDo(print())
+                    .andDo(print());
+
+            // then
+            resultActions
                     .andDo(document("logout-social",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
