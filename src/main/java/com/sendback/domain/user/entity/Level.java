@@ -1,23 +1,52 @@
 package com.sendback.domain.user.entity;
 
-import com.sendback.global.exception.type.NotFoundException;
 import lombok.Getter;
-
-import static com.sendback.domain.project.exception.ProjectExceptionType.NOT_FOUND_PROGRESS;
-import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_LEVEL;
 
 @Getter
 public enum Level {
-    ONE, TWO, THREE, FOUR, FIVE;
-    public static Level toEnum(String level) {
-        return switch (level.toUpperCase()) {
-            case "ONE" -> ONE;
-            case "TWO" -> TWO;
-            case "THREE" -> THREE;
-            case "FOUR" -> FOUR;
-            case "FIVE" -> FIVE;
+    ONE("주먹밥", 0L),
+    TWO("솜주먹", 5L),
+    THREE("물주먹", 10L),
+    FOUR("돌주먹", 15L),
+    FIVE("불주먹", 20L);
+    private final String name;
+    private final Long feedbackSubmitCount;
 
-            default -> throw new NotFoundException(NOT_FOUND_LEVEL);
-        };
+    Level(String name, Long feedbackSubmitCount){
+        this.name = name;
+        this.feedbackSubmitCount = feedbackSubmitCount;
+    }
+
+    public static Level getLevelByFeedbackSubmitCount(Long feedbackSubmitCount) {
+        if (TWO.feedbackSubmitCount > feedbackSubmitCount) {
+            return ONE;
+        }
+        else if (THREE.feedbackSubmitCount > feedbackSubmitCount) {
+            return TWO;
+        }
+        else if (FOUR.feedbackSubmitCount > feedbackSubmitCount) {
+            return THREE;
+        }
+        else if (FIVE.feedbackSubmitCount > feedbackSubmitCount) {
+            return FOUR;
+        }
+        else {
+            return FIVE;
+        }
+    }
+
+    public static Long getRemainCountUntilNextLevel(Long feedbackSubmitCount) {
+        if (TWO.feedbackSubmitCount > feedbackSubmitCount) {
+            return TWO.feedbackSubmitCount - feedbackSubmitCount;
+        }
+        else if (THREE.feedbackSubmitCount > feedbackSubmitCount) {
+            return THREE.feedbackSubmitCount - feedbackSubmitCount;
+        }
+        else if (FOUR.feedbackSubmitCount > feedbackSubmitCount) {
+            return FOUR.feedbackSubmitCount - feedbackSubmitCount;
+        }
+        else {
+            return FIVE.feedbackSubmitCount - feedbackSubmitCount;
+        }
     }
 }
