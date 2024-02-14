@@ -2,7 +2,7 @@ package com.sendback.domain.user.dto;
 
 public record SigningAccount(
         String socialId,
-        String nickname,
+        String socialname,
         String profileImageUrl,
         String email,
         String socialType

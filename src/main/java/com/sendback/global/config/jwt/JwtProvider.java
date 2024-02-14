@@ -62,7 +62,7 @@ public class JwtProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .claim("id", socialUserInfo.id())
                 .claim("email", socialUserInfo.email())
-                .claim("nickname", socialUserInfo.nickname())
+                .claim("socialname", socialUserInfo.socialname())
                 .claim("profileImageUrl", socialUserInfo.profileImageUrl())
                 .claim("type", "SIGN_TOKEN")
                 .setIssuedAt(now)
@@ -92,7 +92,7 @@ public class JwtProvider {
                 .parseClaimsJws(signToken)
                 .getBody();
         String id = (String)body.get("id");
-        String nickname = (String)body.get("nickname");
+        String socialname = (String)body.get("socialname");
         String profileImageUrl = (String)body.get("profileImageUrl");
         String email = (String)body.get("email");
         String socialType;
@@ -100,7 +100,7 @@ public class JwtProvider {
             socialType = "google";
         else
             socialType = "kakao";
-        return new SigningAccount(id, nickname, profileImageUrl, email, socialType);
+        return new SigningAccount(id, socialname, profileImageUrl, email, socialType);
     }
 
     public void validateSignToken(String signToken){

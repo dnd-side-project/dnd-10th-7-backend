@@ -32,12 +32,12 @@ public class UserRepositoryTest extends RepositoryTest {
             userRepository.save(user);
 
             //when
-            Optional<User> findUser = userRepository.findByNickname(user.getNickname());
+            Optional<User> findUser = userRepository.findByNickname(user.getNicname());
 
             //then
             assertTrue(findUser.isPresent());
             assertEquals(user.getId(), findUser.get().getId());
-            assertEquals(user.getNickname(), findUser.get().getNickname());
+            assertEquals(user.getNicname(), findUser.get().getNicname());
         }
 
         @Test
@@ -47,7 +47,7 @@ public class UserRepositoryTest extends RepositoryTest {
             User user = createDummyUser();
 
             //when
-            Optional<User> findUser = userRepository.findByNickname(user.getNickname());
+            Optional<User> findUser = userRepository.findByNickname(user.getNicname());
 
             //then
             assertTrue(!findUser.isPresent());

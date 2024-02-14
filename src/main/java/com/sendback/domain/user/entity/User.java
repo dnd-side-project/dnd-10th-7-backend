@@ -23,6 +23,8 @@ public class User extends BaseEntity {
     private String email;
     @Enumerated(EnumType.STRING)
     private Level level;
+    private String socialname;
+
     private String nickname;
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -34,24 +36,25 @@ public class User extends BaseEntity {
     private Boolean isDeleted = Boolean.FALSE;
 
     @Builder
-    public User(SocialType socialType, String socialId, String email, Level level, String nickname, Gender gender, String birthday, String profileImageUrl, Career career) {
+    public User(SocialType socialType, String socialId, String email, Level level, String socialname, Gender gender, String birthday, String profileImageUrl, Career career, String nickname) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.email = email;
         this.level = level;
-        this.nickname = nickname;
+        this.socialname = socialname;
         this.gender = gender;
         this.birthDay = birthday;
         this.profileImageUrl = profileImageUrl;
         this.career = career;
+        this.nickname = nickname;
     }
 
-    public static User of(SocialType socialType, String socialId, String email, String nickname, String profileImageUrl){
+    public static User of(SocialType socialType, String socialId, String email, String socialName, String profileImageUrl){
         return User.builder()
                 .socialType(socialType)
                 .socialId(socialId)
                 .email(email)
-                .nickname(nickname)
+                .socialname(socialName)
                 .profileImageUrl(profileImageUrl)
                 .build();
     }
@@ -62,11 +65,12 @@ public class User extends BaseEntity {
                 .socialId(signingAccount.socialId())
                 .email(signingAccount.email())
                 .level(Level.ONE)
-                .nickname(signingAccount.nickname())
+                .socialname(signingAccount.socialname())
                 .gender(Gender.toEnum(signUpRequestDto.gender()))
                 .birthday(signUpRequestDto.birthday())
                 .profileImageUrl(signingAccount.profileImageUrl())
                 .career(Career.toEnum(signUpRequestDto.career()))
+                .nickname(signUpRequestDto.nickname())
                 .build();
     }
 }

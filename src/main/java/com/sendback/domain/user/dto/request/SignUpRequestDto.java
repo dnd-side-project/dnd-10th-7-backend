@@ -16,7 +16,7 @@ public record SignUpRequestDto(
         @Pattern(regexp = "male|female", message = "성별은 필수입니다.")
         String gender,
 
-        @Pattern(regexp = "프론트엔드|백엔드|디자이너|기획자", message = "직업군은 '프론트엔드', '백엔드', '디자이너', '기획자' 중 하나여야 합니다.")
+        @Pattern(regexp = "frontend|backend|designer|planner", message = "직업군은 '프론트엔드', '백엔드', '디자이너', '기획자' 중 하나여야 합니다.")
         String career,
 
         @Size(min = 1, message = "분야는 최소 1개 이상 선택되어야 합니다.")
