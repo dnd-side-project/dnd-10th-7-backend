@@ -4,6 +4,7 @@ import com.sendback.global.config.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -30,7 +31,11 @@ public class SecurityConfig {
             "/api/auth/google/callback",
             "/api/auth/reissue",
             "/",
-            "/docs/index.html"
+            "/docs/index.html",
+    };
+
+    private final String[] GET_METHOD_PERMITTED_URLS = {
+            "/api/projects/{projectId}/feedbacks/{feedbackId}"
     };
 
     @Bean
@@ -49,6 +54,7 @@ public class SecurityConfig {
                                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers(HttpMethod.GET, GET_METHOD_PERMITTED_URLS).permitAll()
                         .requestMatchers(PERMITTED_URLS).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -67,7 +73,7 @@ public class SecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));;
+        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
