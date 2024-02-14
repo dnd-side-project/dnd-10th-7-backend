@@ -23,7 +23,7 @@ public class LikeController {
     public ApiResponse<ReactLikeResponseDto> reactLike(
             @UserId Long userId,
             @PathVariable Long projectId) {
-        return success(likeService.react(userId, projectId));
+        return success(likeService.reactLike(userId, projectId));
     }
 
 }
