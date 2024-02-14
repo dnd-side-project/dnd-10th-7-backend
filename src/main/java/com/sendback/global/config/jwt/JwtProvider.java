@@ -1,24 +1,24 @@
 package com.sendback.global.config.jwt;
 
+import com.sendback.domain.auth.dto.SocialUserInfo;
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.global.config.redis.RedisService;
+import com.sendback.global.exception.type.SignInException;
 import com.sendback.global.exception.type.UnAuthorizedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-
 import static com.sendback.domain.auth.exception.AuthExceptionType.*;
+import static com.sendback.domain.user.exception.UserExceptionType.INVALID_SIGN_TOKEN;
 
 @Getter
 @Component
@@ -30,6 +30,9 @@ public class JwtProvider {
     private long ACCESS_TOKEN_EXPIRE_TIME;
     @Value("${jwt.refresh-token-expire-time}")
     private long REFRESH_TOKEN_EXPIRE_TIME;
+
+    @Value("${jwt.sign-token-expire-time}")
+    private long SIGN_TOKEN_EXPIRE_TIME;
 
     private final RedisService redisService;
 
@@ -51,6 +54,24 @@ public class JwtProvider {
         return token;
     }
 
+    //SignToken 생성
+    public String generateSignToken(SocialUserInfo socialUserInfo) {
+        Date now = new Date(System.currentTimeMillis());
+        final Date expiration = new Date(now.getTime() + SIGN_TOKEN_EXPIRE_TIME);
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .claim("id", socialUserInfo.id())
+                .claim("email", socialUserInfo.email())
+                .claim("socialname", socialUserInfo.socialname())
+                .claim("profileImageUrl", socialUserInfo.profileImageUrl())
+                .claim("type", "SIGN_TOKEN")
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+
     private String generateToken(Long userId, boolean isAccessToken) {
         final Date now = new Date();
         final Date expiration = new Date(now.getTime() + (isAccessToken ? ACCESS_TOKEN_EXPIRE_TIME : REFRESH_TOKEN_EXPIRE_TIME));
@@ -62,6 +83,32 @@ public class JwtProvider {
                 .setExpiration(expiration)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public SigningAccount getSignUserInfo(String signToken) {
+        Claims body = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(signToken)
+                .getBody();
+        String id = (String)body.get("id");
+        String socialname = (String)body.get("socialname");
+        String profileImageUrl = (String)body.get("profileImageUrl");
+        String email = (String)body.get("email");
+        String socialType;
+        if(email.contains("gmail"))
+            socialType = "google";
+        else
+            socialType = "kakao";
+        return new SigningAccount(id, socialname, profileImageUrl, email, socialType);
+    }
+
+    public void validateSignToken(String signToken){
+        try {
+            getJwtParser().parseClaimsJws(signToken);
+        } catch (Exception e) {
+            throw new SignInException(INVALID_SIGN_TOKEN);
+        }
     }
 
     public boolean validateAccessToken(String accessToken) {

@@ -1,9 +1,7 @@
 package com.sendback.domain.field.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.sendback.domain.user.entity.User;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,14 +18,26 @@ public class Field {
 
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Builder
-    private Field(String name) {
+    private Field(String name, User user) {
         this.name = name;
+        this.user = user;
     }
 
     public static Field of(String name) {
         return Field.builder()
                 .name(name)
+                .build();
+    }
+
+    public static Field of(String name, User user) {
+        return Field.builder()
+                .name(name)
+                .user(user)
                 .build();
     }
 }

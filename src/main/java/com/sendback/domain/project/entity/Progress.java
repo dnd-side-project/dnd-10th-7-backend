@@ -1,4 +1,4 @@
-package com.sendback.global.common.constants;
+package com.sendback.domain.project.entity;
 
 import com.sendback.global.exception.type.NotFoundException;
 import lombok.AllArgsConstructor;

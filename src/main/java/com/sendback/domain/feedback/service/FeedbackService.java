@@ -12,7 +12,7 @@ import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.service.ProjectService;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.service.UserService;
-import com.sendback.global.common.constants.Level;
+import com.sendback.domain.user.entity.Level;
 import com.sendback.global.config.image.service.ImageService;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;

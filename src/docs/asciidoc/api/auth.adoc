@@ -1,50 +1,74 @@
 
 [[Auth-API]]
-== Auth API
+= Auth API
 
 [[login-kakao]]
-=== 카카오 로그인
-
+== 카카오 로그인
+=== 성공
 ==== HTTP Requests
-include::{snippets}/login-kakao/http-request.adoc[]
-include::{snippets}/login-kakao/query-parameters.adoc[]
-
+include::{snippets}/login-kakao-success/http-request.adoc[]
+include::{snippets}/login-kakao-success/query-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/login-kakao/http-response.adoc[]
-include::{snippets}/login-kakao/response-fields.adoc[]
+include::{snippets}/login-kakao-success/http-response.adoc[]
+include::{snippets}/login-kakao-success/response-fields.adoc[]
+
+
+=== 실패(1070)
+==== HTTP Requests
+include::{snippets}/login-kakao-failure/http-request.adoc[]
+include::{snippets}/login-kakao-failure/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/login-kakao-failure/http-response.adoc[]
+include::{snippets}/login-kakao-failure/response-fields.adoc[]
+
+'''
 
 [[login-google]]
-=== 구글 로그인
-
+== 구글 로그인
+=== 성공
 ==== HTTP Requests
-include::{snippets}/login-google/http-request.adoc[]
-include::{snippets}/login-google/query-parameters.adoc[]
-
+include::{snippets}/login-google-success/http-request.adoc[]
+include::{snippets}/login-google-success/query-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/login-google/http-response.adoc[]
-include::{snippets}/login-google/response-fields.adoc[]
+include::{snippets}/login-google-success/http-response.adoc[]
+include::{snippets}/login-google-success/response-fields.adoc[]
+
+
+=== 실패(1070)
+==== HTTP Requests
+include::{snippets}/login-google-failure/http-request.adoc[]
+include::{snippets}/login-google-failure/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/login-google-failure/http-response.adoc[]
+include::{snippets}/login-google-failure/response-fields.adoc[]
+
+'''
 
 [[reissue-token]]
-=== 토큰 재발급
-
+== 토큰 재발급
+=== 성공
 ==== HTTP Requests
 include::{snippets}/reissue-token/http-request.adoc[]
 include::{snippets}/reissue-token/request-fields.adoc[]
-
 
 ==== HTTP Response
 include::{snippets}/reissue-token/http-response.adoc[]
 include::{snippets}/reissue-token/response-fields.adoc[]
 
-[[logout-social]]
-=== 로그아웃
+'''
 
+[[logout-social]]
+== 로그아웃
+=== 성공
 ==== HTTP Requests
 include::{snippets}/logout-social/http-request.adoc[]
-
 
 ==== HTTP Response
 include::{snippets}/logout-social/http-response.adoc[]
 include::{snippets}/logout-social/response-fields.adoc[]
+
+'''

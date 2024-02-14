@@ -10,13 +10,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import java.util.List;
 import java.util.Optional;
-
 import static com.sendback.domain.field.exception.FieldExceptionType.NOT_FOUND_FIELD;
+import static com.sendback.domain.field.fixture.FieldFixture.mock_Fields;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+
 
 
 @ExtendWith(MockitoExtension.class)
@@ -58,4 +61,26 @@ public class FieldServiceTest {
                     .hasMessage(NOT_FOUND_FIELD.getMessage());
         }
     }
+
+    @Nested
+    @DisplayName("분야를 일괄 저장 시")
+    class saveAllField {
+
+        @Test
+        @DisplayName("성공하면 200을 반환한다.")
+        void saveAllTest() {
+            // given
+
+            given(fieldRepository.saveAll(mock_Fields)).willReturn(mock_Fields);
+
+            // when
+            List<Field> result = fieldService.saveAll(mock_Fields);
+
+            // then
+            assertEquals(mock_Fields, result);
+            verify(fieldRepository).saveAll(mock_Fields);
+        }
+
+    }
+
 }

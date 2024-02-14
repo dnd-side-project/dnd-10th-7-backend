@@ -7,11 +7,14 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
@@ -22,7 +25,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleException(final Exception e) {
         log.error("[" + e.getClass() + "] : " + e.getMessage());
         return ResponseEntity.internalServerError()
-                .body(new ExceptionResponse(100, "알 수 없는 서버 에러가 발생했습니다."));
+                .body(ExceptionResponse.of(100, "알 수 없는 서버 에러가 발생했습니다."));
     }
 
     //valid 검증
@@ -30,15 +33,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(
             final MethodArgumentNotValidException e
     ) {
-        final List<ErrorResponse> errorResponses = e.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError -> new ErrorResponse(fieldError.getField(), fieldError.getDefaultMessage()))
-                .toList();
-        log.warn("[" + e.getClass() + "] " + errorResponses);
+
+        BindingResult bindingResult = e.getBindingResult();
+        List<ObjectError> objectErrors = bindingResult.getAllErrors();
+        List<String> errorMessages = new ArrayList<>();
+        for (ObjectError objectError : objectErrors) {
+            errorMessages.add(objectError.getDefaultMessage());
+        }
+        String errorMessage = String.join(" ", errorMessages);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(300, errorResponses.toString()));
+                .body(ExceptionResponse.of(300, errorMessage));
     }
+
+
 
     //requestParam 검증
     @ExceptionHandler
@@ -49,7 +56,7 @@ public class GlobalExceptionHandler {
                 .toList();
         log.warn("[" + e.getClass() + "] " + errorResponses);
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(301, errorResponses.toString()));
+                .body(ExceptionResponse.of(301, errorResponses.toString()));
     }
 
     //requestPart 검증
@@ -57,7 +64,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> unAuthorizedException(final MissingServletRequestPartException e) {
 
         return ResponseEntity.badRequest()
-                .body(new ExceptionResponse(302, e.getMessage()));
+                .body(ExceptionResponse.of(302, e.getMessage()));
+    }
+
+    // login 검증
+    @ExceptionHandler(SignInException.class)
+    public ResponseEntity<?> handleSignInException(SignInException e) {
+        return ResponseEntity.badRequest()
+                .body(ExceptionResponse.of(e.getExceptionType(), e.data));
     }
 
     // 인증 처리 검증
