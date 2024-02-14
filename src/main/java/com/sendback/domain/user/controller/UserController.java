@@ -1,14 +1,11 @@
 package com.sendback.domain.user.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sendback.domain.auth.dto.Token;
-import com.sendback.domain.auth.dto.response.TokensResponseDto;
-import com.sendback.domain.auth.service.AuthService;
-import com.sendback.domain.auth.service.GoogleService;
-import com.sendback.domain.auth.service.KakaoService;
+import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.service.UserService;
 import com.sendback.global.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +17,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ApiResponse<Token> signUpUser(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public ApiResponse<Token> signUpUser(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
         Token tokens = userService.signUpUser(signUpRequestDto);
         return ApiResponse.success(tokens);
     }
 
+    @GetMapping("/check")
+    public ApiResponse<CheckUserNicknameResponseDto> checkUserNickname(@RequestParam String nickname) {
+        return ApiResponse.success(userService.checkUserNickname(nickname));
+    }
 }

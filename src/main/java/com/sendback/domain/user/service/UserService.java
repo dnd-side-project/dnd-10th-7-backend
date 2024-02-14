@@ -4,6 +4,7 @@ import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.user.dto.SigningAccount;
+import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
@@ -39,6 +40,10 @@ public class UserService {
                 .collect(Collectors.toList());
         fieldService.saveAll(fieldList);
         return jwtProvider.issueToken(savedUser.getId());
+    }
+
+    public CheckUserNicknameResponseDto checkUserNickname(String nickname) {
+        return new CheckUserNicknameResponseDto(true);
     }
 
 
