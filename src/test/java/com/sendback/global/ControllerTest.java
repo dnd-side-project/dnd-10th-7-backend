@@ -11,12 +11,12 @@ import com.sendback.domain.project.controller.ProjectController;
 import com.sendback.domain.project.service.ProjectService;
 import com.sendback.domain.scrap.controller.ScrapController;
 import com.sendback.domain.scrap.service.ScrapService;
-
+import com.sendback.domain.user.controller.UserController;
+import com.sendback.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -25,7 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
         ProjectController.class,
         LikeController.class,
         ScrapController.class,
-        AuthController.class
+        AuthController.class,
+        UserController.class
 })
 @ActiveProfiles("test")
 @AutoConfigureRestDocs
@@ -54,6 +55,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected AuthService authService;
+
+    @MockBean
+    protected UserService userService;
 
     protected static final String ACCESS_TOKEN_PREFIX = "Bearer ";
 
