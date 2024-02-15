@@ -1,10 +1,12 @@
 package com.sendback.domain.field.repository;
 
 import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,5 +46,20 @@ public class FieldRepositoryTest extends RepositoryTest {
             //then
             assertThat(fieldOptional).isEmpty();
         }
+    }
+
+    @Test
+    @DisplayName("특정 uerId를 가지는 field들을 반환한다.")
+    public void findAllByUserId() {
+
+        //given
+        User user = userTestPersister.save();
+        fieldTestPersister.user(user).save1();
+
+        // when
+        List<Field> fieldList = fieldRepository.findAllByUserId(user.getId());
+
+        // then
+        assertThat(fieldList.size()).isEqualTo(1);
     }
 }

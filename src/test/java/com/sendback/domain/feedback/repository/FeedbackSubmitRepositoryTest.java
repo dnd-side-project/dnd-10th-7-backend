@@ -1,6 +1,8 @@
 package com.sendback.domain.feedback.repository;
 
 import com.sendback.domain.feedback.entity.FeedbackSubmit;
+import com.sendback.domain.project.entity.Project;
+import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -46,6 +48,20 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
             assertThat(exists).isFalse();
 
         }
+    }
+
+    @Test
+    @DisplayName("특정 uerId를 가지는 피드백들을 반환한다.")
+    public void countByUserId() {
+        // given
+        User user = userTestPersister.save();
+        Project project = projectTestPersister.user(user).save();
+
+        // when
+        Long feedBackCount = feedbackSubmitRepository.countByUserId(user.getId());
+
+        // then
+        assertThat(feedBackCount).isEqualTo(1);
     }
 
 }

@@ -4,11 +4,14 @@ import com.sendback.domain.like.entity.Like;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +51,24 @@ public class LikeRepositoryTest extends RepositoryTest {
             //then
             assertThat(response).isPresent();
         }
+    }
+
+    @Test
+    @DisplayName("특정 프로젝트 리스트들이 받은 좋아요 개수를 리턴한다.")
+    public void countByProjects() {
+        // given
+        User user = userTestPersister.save();
+        Project project = projectTestPersister.user(user).save();
+
+        List<Project> projectList = new ArrayList<>();
+        projectList.add(project);
+        Like like = likeTestPersister.user(user).project(project).save();
+
+        // when
+        Long feedBackCount = likeRepository.countByProjects(projectList);
+
+        // then
+        assertThat(feedBackCount).isEqualTo(1);
     }
 
 }
