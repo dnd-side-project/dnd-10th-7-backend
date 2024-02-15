@@ -11,8 +11,6 @@ public interface FeedbackSubmitRepository extends JpaRepository<FeedbackSubmit, 
 
     boolean existsByUserAndFeedbackAndIsDeletedIsFalse(User user, Feedback feedback);
     Long countByUserAndIsDeletedIsFalse(User user);
-
-    @Query("Select COUNT(s) from FeedbackSubmit s where s.user.id = :userId")
-    Long countByUserId(@Param("userId") Long userId);
+    Long countByUserId(Long userId);
 
 }

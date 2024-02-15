@@ -55,7 +55,7 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
     public void countByUserId() {
         // given
         User user = userTestPersister.save();
-        Project project = projectTestPersister.user(user).save();
+        feedbackSubmitTestPersister.user(user).save();
 
         // when
         Long feedBackCount = feedbackSubmitRepository.countByUserId(user.getId());

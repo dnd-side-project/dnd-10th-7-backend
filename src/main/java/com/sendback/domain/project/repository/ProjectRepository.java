@@ -8,8 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-
-    @Query("Select COUNT(p) from Project p where p.user.id = :userId")
-    Long countByUserId(@Param("userId") Long userId);
+    Long countByUserId(Long userId);
     List<Project> findByUserId(Long userId);
 }

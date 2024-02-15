@@ -65,7 +65,7 @@ public class LikeRepositoryTest extends RepositoryTest {
         Like like = likeTestPersister.user(user).project(project).save();
 
         // when
-        Long feedBackCount = likeRepository.countByProjects(projectList);
+        Long feedBackCount = likeRepository.countByProjectIn(projectList);
 
         // then
         assertThat(feedBackCount).isEqualTo(1);

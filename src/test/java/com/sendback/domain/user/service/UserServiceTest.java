@@ -176,7 +176,7 @@ public class UserServiceTest extends ServiceTest {
             List<Project> projectList = new ArrayList<>();
             projectList.add(project);
             given(projectRepository.findByUserId(mockUserId)).willReturn(projectList);
-            given(likeRepository.countByProjects(projectList)).willReturn(likeCount);
+            given(likeRepository.countByProjectIn(projectList)).willReturn(likeCount);
             given(fieldRepository.findAllByUserId(mockUserId)).willReturn(mock_Fields);
             List<String> mock_fieldNameList = mock_Fields.stream()
                     .map(Field::getName)

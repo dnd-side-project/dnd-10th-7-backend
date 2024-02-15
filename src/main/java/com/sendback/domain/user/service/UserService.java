@@ -72,7 +72,7 @@ public class UserService {
         Long projectCount = projectRepository.countByUserId(userId);
         Long feedbackCount = feedbackSubmitRepository.countByUserId(userId);
         List<Project> projectList = projectRepository.findByUserId(userId);
-        Long likeCount = likeRepository.countByProjects(projectList);
+        Long likeCount = likeRepository.countByProjectIn(projectList);
         List<Field> fieldList = fieldRepository.findAllByUserId(userId);
         List<String> fieldNameList = fieldList.stream()
                 .map(Field::getName)

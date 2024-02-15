@@ -13,7 +13,5 @@ import java.util.Optional;
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
     Optional<Like> findByUserAndProject(User user, Project project);
-
-    @Query("Select COUNT(l) From Like l where l.project IN :projects")
-    Long countByProjects(@Param("projects") List<Project> projects);
+    Long countByProjectIn(List<Project> projects);
 }
