@@ -8,9 +8,9 @@ import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
+import com.sendback.global.common.constants.FieldName;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
-import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
         List<Field> fieldList = new ArrayList<>();
         signUpRequestDto.interests().stream()
-                .map(intersts -> Field.of(intersts, user))
+                .map(interest -> Field.of(FieldName.toEnum(interest), user))
                 .collect(Collectors.toList());
         fieldService.saveAll(fieldList);
         return jwtProvider.issueToken(savedUser.getId());

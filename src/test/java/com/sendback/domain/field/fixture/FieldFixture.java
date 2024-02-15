@@ -1,13 +1,14 @@
 package com.sendback.domain.field.fixture;
 
 import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.user.entity.User;
+import com.sendback.global.common.constants.FieldName;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class FieldFixture {
 
-    public static final List<Field> mock_Fields = Arrays.asList(
-            Field.of("art"), Field.of("game"), Field.of("IT")
-    );
+    public static List<Field> createMockFields(User user) {
+        return List.of(Field.of(FieldName.IT, user), Field.of(FieldName.EDU, user), Field.of(FieldName.ENVIRONMENT, user));
+    }
 }

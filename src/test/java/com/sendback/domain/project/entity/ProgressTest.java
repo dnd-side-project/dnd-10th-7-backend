@@ -17,10 +17,10 @@ public class ProgressTest {
     class convertEnumProgress {
 
         @Test
-        @DisplayName("planning -> 정상적인 값 반환")
+        @DisplayName("기획중 -> 정상적인 값 반환")
         public void success_planning() throws Exception {
             //given
-            String planningMessage = "planning";
+            String planningMessage = "기획중";
 
             //when
             Progress planning = Progress.toEnum(planningMessage);
@@ -30,10 +30,10 @@ public class ProgressTest {
         }
 
         @Test
-        @DisplayName("developing -> 정상적인 값 반환")
+        @DisplayName("개발중 -> 정상적인 값 반환")
         public void success_developing() throws Exception {
             //given
-            String developingMessage = "developing";
+            String developingMessage = "개발중";
 
             //when
             Progress planning = Progress.toEnum(developingMessage);
@@ -43,10 +43,10 @@ public class ProgressTest {
         }
 
         @Test
-        @DisplayName("refactoring -> 정상적인 값 반환")
+        @DisplayName("리팩토링중 -> 정상적인 값 반환")
         public void success_refactoring() throws Exception {
             //given
-            String refactoringMessage = "refactoring";
+            String refactoringMessage = "리팩토링중";
 
             //when
             Progress planning = Progress.toEnum(refactoringMessage);

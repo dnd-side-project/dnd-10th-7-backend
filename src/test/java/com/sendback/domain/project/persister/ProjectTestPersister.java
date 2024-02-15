@@ -1,7 +1,5 @@
 package com.sendback.domain.project.persister;
 
-import com.sendback.domain.field.entity.Field;
-import com.sendback.domain.field.persister.FieldTestPersister;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
@@ -13,25 +11,20 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
+import static com.sendback.global.common.constants.FieldName.IT;
+
 @RequiredArgsConstructor
 @Persister
 public class ProjectTestPersister {
 
     private final ProjectRepository projectRepository;
     private final UserTestPersister userTestPersister;
-    private final FieldTestPersister fieldTestPersister;
 
     private User user;
-    private Field field;
     private SaveProjectRequestDto saveProjectRequestDto;
 
     public ProjectTestPersister user(User user) {
         this.user = user;
-        return this;
-    }
-
-    public ProjectTestPersister field(Field field) {
-        this.field = field;
         return this;
     }
 
@@ -41,7 +34,6 @@ public class ProjectTestPersister {
     }
 
     private static final String TITLE = "title";
-    private static final String FIELD = "edu";
     private static final String CONTENT = "content";
     private static final String SUMMARY = "summary";
     private static final String DEMO_SITE_URL = "demoUrl";
@@ -52,9 +44,8 @@ public class ProjectTestPersister {
     public Project save() {
         Project project = Project.of(
                 (user == null ? userTestPersister.save() : user),
-                (field == null ? fieldTestPersister.save() : field),
-                (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, FIELD, CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
-                        PLANNING_PROGRESS.toString(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
+                (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, IT.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
+                        PLANNING_PROGRESS.getValue(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
         );
         return projectRepository.save(project);
     }

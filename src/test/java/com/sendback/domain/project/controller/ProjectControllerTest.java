@@ -15,8 +15,8 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.sendback.domain.project.fixture.ProjectFixture.MOCK___SAVE_PROJECT_REQUEST_DTO;
-import static com.sendback.domain.project.fixture.ProjectFixture.MOCK___UPDATE_PROJECT_REQUEST_DTO;
+import static com.sendback.domain.project.fixture.ProjectFixture.MOCK_SAVE_PROJECT_REQUEST_DTO;
+import static com.sendback.domain.project.fixture.ProjectFixture.MOCK_UPDATE_PROJECT_REQUEST_DTO;
 import static org.mockito.ArgumentMatchers.*;
 
 
@@ -43,7 +43,7 @@ public class ProjectControllerTest extends ControllerTest {
     @DisplayName("project 등록 요청 시")
     class saveProject {
 
-        SaveProjectRequestDto saveProjectRequestDto = MOCK___SAVE_PROJECT_REQUEST_DTO;
+        SaveProjectRequestDto saveProjectRequestDto = MOCK_SAVE_PROJECT_REQUEST_DTO;
         @Test
         @DisplayName("saveProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
         @WithMockCustomUser
@@ -81,7 +81,7 @@ public class ProjectControllerTest extends ControllerTest {
                             requestPartFields(
                                     "data",
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("프로젝트 제목"),
-                                    fieldWithPath("field").type(JsonFieldType.STRING).description("분야"),
+                                    fieldWithPath("fieldName").type(JsonFieldType.STRING).description("분야"),
                                     fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
                                     fieldWithPath("summary").type(JsonFieldType.STRING).description("한 줄 요약"),
                                     fieldWithPath("demoSiteUrl").type(JsonFieldType.STRING).description("데모 사이트 주소"),
@@ -161,7 +161,7 @@ public class ProjectControllerTest extends ControllerTest {
     @DisplayName("project 수정 요청 시")
     class updateProject {
 
-        UpdateProjectRequestDto updateProjectRequestDto = MOCK___UPDATE_PROJECT_REQUEST_DTO;
+        UpdateProjectRequestDto updateProjectRequestDto = MOCK_UPDATE_PROJECT_REQUEST_DTO;
 
         @Test
         @DisplayName("updateProjectRequest와 이미지들이 존재한다면 성공을 반환한다.")
@@ -207,7 +207,7 @@ public class ProjectControllerTest extends ControllerTest {
                             requestPartFields(
                                     "data",
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("프로젝트 제목"),
-                                    fieldWithPath("field").type(JsonFieldType.STRING).description("분야"),
+                                    fieldWithPath("fieldName").type(JsonFieldType.STRING).description("분야"),
                                     fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
                                     fieldWithPath("summary").type(JsonFieldType.STRING).description("한 줄 요약"),
                                     fieldWithPath("demoSiteUrl").type(JsonFieldType.STRING).description("데모 사이트 주소"),

@@ -5,7 +5,6 @@ import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.entity.SocialType;
 
-import com.sendback.domain.field.entity.Field;
 import java.util.Arrays;
 
 public class UserFixture {
@@ -23,10 +22,10 @@ public class UserFixture {
     public static final SigningAccount mock_signingAccount = new SigningAccount("123", "mock",
             "mock_profile", "mock@kakao.com", "kakao");
     public static final SignUpRequestDto mock_signUpRequestDto = new SignUpRequestDto("mock_user", "2000.01.01",
-            "male", "backend", Arrays.asList("art", "game"), "valid signToken");
+            "남자", "백엔드", Arrays.asList("예술/대중문화", "게임"), "valid signToken");
 
     public static final SignUpRequestDto mock_Invalid_SignToken_signUpRequestDto = new SignUpRequestDto("mock_user", "2000.01.01",
-            "male", "backend", Arrays.asList("art", "game"), "Invalid signToken");
+            "남자", "백엔드", Arrays.asList("예술/대중문화", "게임"), "Invalid signToken");
 
     public static final User mock_user = User.of(mock_signingAccount, mock_signUpRequestDto);
 
