@@ -1,19 +1,13 @@
 package com.sendback.domain.user.service;
 
 import com.sendback.domain.auth.dto.Token;
-import com.sendback.domain.feedback.entity.FeedbackSubmit;
-import com.sendback.domain.feedback.entity.QFeedbackSubmit;
-import com.sendback.domain.feedback.repository.FeedbackRepository;
 import com.sendback.domain.feedback.repository.FeedbackSubmitRepository;
-import com.sendback.domain.feedback.service.FeedbackService;
 import com.sendback.domain.field.entity.Field;
 import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.like.repository.LikeRepository;
-import com.sendback.domain.like.service.LikeService;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
-import com.sendback.domain.project.service.ProjectService;
 import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
@@ -25,16 +19,13 @@ import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
-import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
 import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_USER;
 
