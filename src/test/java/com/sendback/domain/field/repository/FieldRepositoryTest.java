@@ -62,4 +62,19 @@ public class FieldRepositoryTest extends RepositoryTest {
         // then
         assertThat(fieldList.size()).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("특정 uerId를 가지는 field들을 제거한다.")
+    public void deleteByUserId() {
+
+        //given
+        User user = userTestPersister.save();
+        fieldTestPersister.user(user).save1();
+
+        // when
+        Long deletedUserCount = fieldRepository.deleteByUserId(user.getId());
+
+        // then
+        assertThat(deletedUserCount).isEqualTo(1);
+    }
 }
