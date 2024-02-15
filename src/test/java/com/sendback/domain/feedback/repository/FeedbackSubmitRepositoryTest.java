@@ -50,18 +50,22 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
         }
     }
 
-    @Test
-    @DisplayName("특정 uerId를 가지는 피드백들을 반환한다.")
-    public void countByUserId() {
-        // given
-        User user = userTestPersister.save();
-        feedbackSubmitTestPersister.user(user).save();
+    @Nested
+    @DisplayName("feedbackSubmit 테이블에서 특정 userId를 갖는 데이터의 개수를 조회하는 경우")
+    class countByUserId {
 
-        // when
-        Long feedBackCount = feedbackSubmitRepository.countByUserId(user.getId());
+        @Test
+        @DisplayName("조건을 만족하는 피드백들의 개수를 반환한다.")
+        public void success_true() {
+            // given
+            User user = userTestPersister.save();
+            feedbackSubmitTestPersister.user(user).save();
 
-        // then
-        assertThat(feedBackCount).isEqualTo(1);
+            // when
+            Long feedBackCount = feedbackSubmitRepository.countByUserId(user.getId());
+
+            // then
+            assertThat(feedBackCount).isEqualTo(1);
+        }
     }
-
 }

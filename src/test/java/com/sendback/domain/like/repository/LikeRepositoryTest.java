@@ -53,22 +53,26 @@ public class LikeRepositoryTest extends RepositoryTest {
         }
     }
 
-    @Test
-    @DisplayName("특정 프로젝트 리스트들이 받은 좋아요 개수를 리턴한다.")
-    public void countByProjects() {
-        // given
-        User user = userTestPersister.save();
-        Project project = projectTestPersister.user(user).save();
+    @Nested
+    @DisplayName("특정 프로젝트 리스트들이 받은 좋아요 개수를 조회하는 경우")
+    class countByProjects{
+        @Test
+        @DisplayName("조건을 만족하는 데이터 개수를 반환한다.")
+        public void success() {
+            // given
+            User user = userTestPersister.save();
+            Project project = projectTestPersister.user(user).save();
 
-        List<Project> projectList = new ArrayList<>();
-        projectList.add(project);
-        Like like = likeTestPersister.user(user).project(project).save();
+            List<Project> projectList = new ArrayList<>();
+            projectList.add(project);
+            Like like = likeTestPersister.user(user).project(project).save();
 
-        // when
-        Long feedBackCount = likeRepository.countByProjectIn(projectList);
+            // when
+            Long feedBackCount = likeRepository.countByProjectIn(projectList);
 
-        // then
-        assertThat(feedBackCount).isEqualTo(1);
+            // then
+            assertThat(feedBackCount).isEqualTo(1);
+        }
     }
 
 }
