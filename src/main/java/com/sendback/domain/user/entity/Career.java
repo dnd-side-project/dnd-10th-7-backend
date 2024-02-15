@@ -1,13 +1,24 @@
 package com.sendback.domain.user.entity;
 
-import com.sendback.domain.project.entity.Progress;
 import com.sendback.global.exception.type.NotFoundException;
 
-import static com.sendback.domain.project.exception.ProjectExceptionType.NOT_FOUND_PROGRESS;
 import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_CAREER;
 
 public enum Career {
-    DESIGNER, PLANNER,FRONTEND, BACKEND;
+    DESIGNER("디자이너"),
+    PLANNER("기획자"),
+    FRONTEND("프론트엔드 개발자"),
+    BACKEND("백엔드 개발자");
+
+    private final String value;
+
+    Career(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
     public static Career toEnum(String career) {
         return switch (career.toUpperCase()) {
@@ -17,6 +28,15 @@ public enum Career {
             case "BACKEND" -> BACKEND;
 
             default -> throw new NotFoundException(NOT_FOUND_CAREER);
+        };
+    }
+
+    public static String toString(Career career) {
+        return switch (career) {
+            case DESIGNER -> "디자이너";
+            case PLANNER -> "기획자";
+            case FRONTEND -> "프론트엔드 개발자";
+            case BACKEND -> "백엔드 개발자";
         };
     }
 }

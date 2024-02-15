@@ -1,26 +1,35 @@
 package com.sendback.domain.user.service;
 
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.feedback.repository.FeedbackSubmitRepository;
 import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.field.service.FieldService;
+import com.sendback.domain.like.repository.LikeRepository;
+import com.sendback.domain.project.entity.Project;
+import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.dto.SigningAccount;
+import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
+import com.sendback.domain.user.dto.response.UserInfoResponseDto;
+import com.sendback.domain.user.entity.Career;
+import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
-import com.sendback.global.exception.type.SignInException;
+import com.sendback.global.exception.type.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
+import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +37,12 @@ import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKN
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final FeedbackSubmitRepository feedbackSubmitRepository;
     private final FieldService fieldService;
-
+    private final FieldRepository fieldRepository;
+    private final ProjectRepository projectRepository;
     private final JwtProvider jwtProvider;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public Token signUpUser(@RequestBody SignUpRequestDto signUpRequestDto) {
@@ -39,8 +50,7 @@ public class UserService {
         SigningAccount signingAccount = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
         User user = User.of(signingAccount, signUpRequestDto);
         User savedUser = userRepository.save(user);
-        List<Field> fieldList = new ArrayList<>();
-        signUpRequestDto.interests().stream()
+        List<Field> fieldList = signUpRequestDto.interests().stream()
                 .map(intersts -> Field.of(intersts, user))
                 .collect(Collectors.toList());
         fieldService.saveAll(fieldList);
@@ -55,9 +65,46 @@ public class UserService {
         return new CheckUserNicknameResponseDto(user.isPresent());
     }
 
+    public UserInfoResponseDto getUserInfo(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException(NOT_FOUND_USER)
+        );
+        Long projectCount = projectRepository.countByUserId(userId);
+        Long feedbackCount = feedbackSubmitRepository.countByUserId(userId);
+        List<Project> projectList = projectRepository.findByUserId(userId);
+        Long likeCount = likeRepository.countByProjectIn(projectList);
+        List<Field> fieldList = fieldRepository.findAllByUserId(userId);
+        List<String> fieldNameList = fieldList.stream()
+                .map(Field::getName)
+                .collect(Collectors.toList());
+        Long needToFeedbackCount = Level.getRemainCountUntilNextLevel(feedbackCount);
+        UserInfoResponseDto responseDto = new UserInfoResponseDto(user.getNickname(),
+                Career.toString(user.getCareer()), user.getProfileImageUrl(), user.getBirthDay(),
+                user.getEmail(), fieldNameList, Level.toNumber(user.getLevel()), feedbackCount, needToFeedbackCount,
+                projectCount, likeCount);
+        return responseDto;
+    }
+
+    @Transactional
+    public UpdateUserInfoResponseDto updateUserInfo(Long userId, UpdateUserInfoRequestDto updateUserInfoRequestDto){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException(NOT_FOUND_USER)
+        );
+        user.update(updateUserInfoRequestDto);
+        fieldRepository.deleteByUserId(userId);
+        List<Field> fieldList = updateUserInfoRequestDto.field().stream()
+                .map(intersts -> Field.of(intersts, user))
+                .collect(Collectors.toList());
+        fieldRepository.saveAll(fieldList);
+        return new UpdateUserInfoResponseDto(updateUserInfoRequestDto.nickname(), updateUserInfoRequestDto.birthday(),
+                updateUserInfoRequestDto.career(), updateUserInfoRequestDto.field());
+    }
+
 
 
     public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow();
+        return userRepository.findById(userId).orElseThrow(
+                ()-> new NotFoundException(NOT_FOUND_USER)
+        );
     }
 }

@@ -2,6 +2,7 @@ package com.sendback.domain.user.entity;
 
 import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -59,6 +60,23 @@ public class User extends BaseEntity {
                 .build();
     }
 
+    public static User of(SocialType socialType, String socialId, String email, Level level, String socialName, Gender gender,
+                          String birthday, String profileImageUrl, Career career, String nickname){
+        return User.builder()
+                .socialType(socialType)
+                .socialId(socialId)
+                .email(email)
+                .socialname(socialName)
+                .level(level)
+                .socialname(socialName)
+                .gender(gender)
+                .birthday(birthday)
+                .profileImageUrl(profileImageUrl)
+                .career(career)
+                .nickname(nickname)
+                .build();
+    }
+
     public static User of(SigningAccount signingAccount, SignUpRequestDto signUpRequestDto) {
         return User.builder()
                 .socialType(SocialType.toEnum(signingAccount.socialType()))
@@ -75,5 +93,11 @@ public class User extends BaseEntity {
     }
     public void levelUp(Level level) {
         this.level = level;
+    }
+
+    public void update(UpdateUserInfoRequestDto updateUserInfoRequestDto){
+        this.nickname = updateUserInfoRequestDto.nickname();
+        this.birthDay = updateUserInfoRequestDto.birthday();
+        this.career = Career.toEnum(updateUserInfoRequestDto.career());
     }
 }
