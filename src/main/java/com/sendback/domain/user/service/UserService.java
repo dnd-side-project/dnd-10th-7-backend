@@ -44,8 +44,12 @@ import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_USE
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FeedbackSubmitRepository feedbackSubmitRepository;
     private final FieldService fieldService;
+    private final FieldRepository fieldRepository;
+    private final ProjectRepository projectRepository;
     private final JwtProvider jwtProvider;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public Token signUpUser(@RequestBody SignUpRequestDto signUpRequestDto) {
@@ -67,6 +71,28 @@ public class UserService {
         Optional<User> user =  userRepository.findByNickname(nickname);
         return new CheckUserNicknameResponseDto(user.isPresent());
     }
+
+    public UserInfoResponseDto getUserInfo(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException(NOT_FOUND_USER)
+        );
+        Long projectCount = projectRepository.countByUserId(userId);
+        Long feedbackCount = feedbackSubmitRepository.countByUserId(userId);
+        List<Project> projectList = projectRepository.findByUserId(userId);
+        Long likeCount = likeRepository.countByProjects(projectList);
+        List<Field> fieldList = fieldRepository.findAllByUserId(userId);
+        List<String> fieldNameList = fieldList.stream()
+                .map(Field::getName)
+                .collect(Collectors.toList());
+        Long needToFeedbackCount = Level.getRemainCountUntilNextLevel(feedbackCount);
+        UserInfoResponseDto responseDto = new UserInfoResponseDto(user.getNickname(),
+                Career.toString(user.getCareer()), user.getProfileImageUrl(), user.getBirthDay(),
+                user.getEmail(), fieldNameList, Level.toNumber(user.getLevel()), feedbackCount, needToFeedbackCount,
+                projectCount, likeCount);
+        return responseDto;
+    }
+
+
 
     public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(
