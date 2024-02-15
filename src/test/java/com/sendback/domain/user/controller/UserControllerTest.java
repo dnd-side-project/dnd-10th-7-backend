@@ -2,7 +2,9 @@ package com.sendback.domain.user.controller;
 
 import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
+import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
@@ -15,7 +17,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import java.util.Arrays;
 import java.util.List;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -209,6 +211,62 @@ public class UserControllerTest extends ControllerTest {
                                             .description("메시지")
                             )));
             verify(userService).getUserInfo(anyLong());
+        }
+    }
+
+    @Nested
+    @DisplayName("내 정보 수정")
+    class updateUserInfo {
+        @Test
+        @DisplayName("내 정보를 수정하면 200 상태코드와 함께 수정된 정보들도 반환한다.")
+        @WithMockCustomUser
+        void updateUserInfo_success() throws Exception {
+
+            // given
+            UpdateUserInfoRequestDto updateUserInfoRequestDto = new UpdateUserInfoRequestDto("테스트 사용자", "200.01.01", "backend",Arrays.asList("환경", "게임"));
+            UpdateUserInfoResponseDto updateUserInfoResponseDto = new UpdateUserInfoResponseDto("테스트 사용자", "2000.01.01", "backend",Arrays.asList("환경", "게임"));
+
+            given(userService.updateUserInfo(anyLong(), any(UpdateUserInfoRequestDto.class))).willReturn(updateUserInfoResponseDto);
+            String content = objectMapper.writeValueAsString(updateUserInfoRequestDto);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(put("/api/users/me")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(content).with(csrf())
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
+                    // HTTP 상태코드 200 (OK) 확인
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.nickname").value(updateUserInfoResponseDto.nickname()))
+                    .andExpect(jsonPath("$.data.career").value(updateUserInfoResponseDto.career()))
+                    .andExpect(jsonPath("$.data.birthday").value(updateUserInfoResponseDto.birthday()))
+                    .andExpect(jsonPath("$.data.field[0]").value("환경"))
+                    .andExpect(jsonPath("$.data.field[1]").value("게임"))
+                    .andDo(print());
+
+            // then
+            resultActions
+                    .andDo(document("updateUserInfo-success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
+                                    fieldWithPath("data.nickname").type(JsonFieldType.STRING)
+                                            .description("닉네임"),
+                                    fieldWithPath("data.career").type(JsonFieldType.STRING)
+                                            .description("직업"),
+                                    fieldWithPath("data.birthday").type(JsonFieldType.STRING)
+                                            .description("생일"),
+                                    fieldWithPath("data.field").type(JsonFieldType.ARRAY)
+                                            .description("관심사"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )));
+            verify(userService).updateUserInfo(anyLong(), any(UpdateUserInfoRequestDto.class));
         }
     }
 

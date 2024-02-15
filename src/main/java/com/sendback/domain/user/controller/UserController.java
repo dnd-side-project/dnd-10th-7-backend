@@ -1,6 +1,8 @@
 package com.sendback.domain.user.controller;
 
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
+import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.domain.user.service.UserService;
 import com.sendback.global.common.ApiResponse;
@@ -37,5 +39,10 @@ public class UserController {
     public ApiResponse<UserInfoResponseDto> getUserInfo(@UserId Long userId) {
         UserInfoResponseDto responseDto = userService.getUserInfo(userId);
         return ApiResponse.success(responseDto);
+    }
+
+    @PutMapping("/me")
+    public ApiResponse<UpdateUserInfoResponseDto> updateUserInfo(@UserId Long userId, @RequestBody UpdateUserInfoRequestDto updateUserInfoRequestDto) {
+        return ApiResponse.success(userService.updateUserInfo(userId, updateUserInfoRequestDto));
     }
 }
