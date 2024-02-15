@@ -9,8 +9,10 @@ import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.dto.SigningAccount;
+import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.domain.user.entity.Career;
 import com.sendback.domain.user.entity.Level;
@@ -81,6 +83,21 @@ public class UserService {
                 user.getEmail(), fieldNameList, Level.toNumber(user.getLevel()), feedbackCount, needToFeedbackCount,
                 projectCount, likeCount);
         return responseDto;
+    }
+
+    @Transactional
+    public UpdateUserInfoResponseDto updateUserInfo(Long userId, UpdateUserInfoRequestDto updateUserInfoRequestDto){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException(NOT_FOUND_USER)
+        );
+        user.update(updateUserInfoRequestDto);
+        fieldRepository.deleteByUserId(userId);
+        List<Field> fieldList = updateUserInfoRequestDto.field().stream()
+                .map(intersts -> Field.of(intersts, user))
+                .collect(Collectors.toList());
+        fieldRepository.saveAll(fieldList);
+        return new UpdateUserInfoResponseDto(updateUserInfoRequestDto.nickname(), updateUserInfoRequestDto.birthday(),
+                updateUserInfoRequestDto.career(), updateUserInfoRequestDto.field());
     }
 
 

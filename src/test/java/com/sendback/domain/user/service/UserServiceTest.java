@@ -8,7 +8,9 @@ import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
+import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
+import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.domain.user.entity.Career;
 import com.sendback.domain.user.entity.Level;
@@ -195,6 +197,35 @@ public class UserServiceTest extends ServiceTest {
             assertThat(responseDto.needToFeedbackCount()).isEqualTo(needToFeedbackCount);
             assertThat(responseDto.projectCount()).isEqualTo(projectCount);
             assertThat(responseDto.likeCount()).isEqualTo(likeCount);
+        }
+
+    }
+
+    @Nested
+    @DisplayName("내 정보 수정")
+    class updateUserInfo {
+
+        @Test
+        @DisplayName("성공하면 200과 함께 수정된 유저 정보를 반환한다.")
+        void getUserInfo_success() {
+            // given
+            Long mockUserId = 1L;
+            User user = createDummyUser_C();
+            UpdateUserInfoRequestDto requestDto = new UpdateUserInfoRequestDto("테스트",
+                    "2000.01.01", "backend", Arrays.asList("환경", "게임"));
+
+            given(userRepository.findById(mockUserId)).willReturn(Optional.of(user));
+            given(fieldRepository.deleteByUserId(mockUserId)).willReturn(1L);
+            given(fieldRepository.saveAll(anyCollection())).willReturn(Collections.emptyList());
+
+            // when
+            UpdateUserInfoResponseDto responseDto = userService.updateUserInfo(mockUserId, requestDto);
+
+            // then
+            assertThat(responseDto.nickname()).isEqualTo(requestDto.nickname());
+            assertThat(responseDto.career()).isEqualTo(requestDto.career());
+            assertThat(responseDto.birthday()).isEqualTo(requestDto.birthday());
+            assertThat(responseDto.field()).isEqualTo(requestDto.field());
         }
 
     }

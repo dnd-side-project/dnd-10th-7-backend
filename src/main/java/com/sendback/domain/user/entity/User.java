@@ -2,6 +2,7 @@ package com.sendback.domain.user.entity;
 
 import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -92,5 +93,11 @@ public class User extends BaseEntity {
     }
     public void levelUp(Level level) {
         this.level = level;
+    }
+
+    public void update(UpdateUserInfoRequestDto updateUserInfoRequestDto){
+        this.nickname = updateUserInfoRequestDto.nickname();
+        this.birthDay = updateUserInfoRequestDto.birthday();
+        this.career = Career.toEnum(updateUserInfoRequestDto.career());
     }
 }
