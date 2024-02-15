@@ -22,11 +22,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/me")
-    public ApiResponse<UserInfoResponseDto> getUserInfo(@UserId Long userId) {
-        UserInfoResponseDto responseDto = userService.getUserInfo(userId);
-        return ApiResponse.success(responseDto);
-    }
     @PostMapping("/signup")
     public ApiResponse<Token> signUpUser(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
         Token tokens = userService.signUpUser(signUpRequestDto);
@@ -36,5 +31,11 @@ public class UserController {
     @GetMapping("/check")
     public ApiResponse<CheckUserNicknameResponseDto> checkUserNickname(@RequestParam String nickname) {
         return ApiResponse.success(userService.checkUserNickname(nickname));
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<UserInfoResponseDto> getUserInfo(@UserId Long userId) {
+        UserInfoResponseDto responseDto = userService.getUserInfo(userId);
+        return ApiResponse.success(responseDto);
     }
 }
