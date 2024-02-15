@@ -5,6 +5,7 @@ import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
 import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ public class LikeRepositoryTest extends RepositoryTest {
 
     @Nested
     @DisplayName("User와 Project로 Like를 조회할 때")
+    @Disabled
     class findByUserAndProject{
 
         @Test

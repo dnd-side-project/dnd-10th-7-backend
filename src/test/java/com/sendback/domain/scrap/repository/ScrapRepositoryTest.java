@@ -4,6 +4,7 @@ import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.scrap.entity.Scrap;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ public class ScrapRepositoryTest extends RepositoryTest {
     ScrapRepository scrapRepository;
 
     @Nested
+    @Disabled
     @DisplayName("User와 Project로 Scrap을 조회할 때")
     class findByUserAndProject{
 

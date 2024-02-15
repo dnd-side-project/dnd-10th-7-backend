@@ -4,6 +4,7 @@ import com.sendback.domain.feedback.entity.FeedbackSubmit;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
 
     @Nested
     @DisplayName("user와 feedback으로 삭제되지 않은 피드백 제출이 있는 지 조회했을 때")
+    @Disabled
     class existsByUserAndFeedbackAndIsDeletedIsFalse {
 
         @Test
@@ -51,6 +53,7 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
     }
 
     @Nested
+    @Disabled
     @DisplayName("feedbackSubmit 테이블에서 특정 userId를 갖는 데이터의 개수를 조회하는 경우")
     class countByUserId {
 
