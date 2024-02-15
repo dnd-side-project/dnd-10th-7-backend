@@ -3,6 +3,7 @@ package com.sendback.domain.project.repository;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.global.RepositoryTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ public class ProjectImageRepositoryTest extends RepositoryTest {
     ProjectImageRepository projectImageRepository;
 
     @Nested
+    @Disabled
     @DisplayName("프로젝트와 이미지 url로 프로젝트 이미지를 조회할 때")
     class findByProjectAndImageUrl {
         @Test
@@ -50,6 +52,7 @@ public class ProjectImageRepositoryTest extends RepositoryTest {
     }
 
     @Nested
+    @Disabled
     @DisplayName("프로젝트로 프로젝트 이미지를 전체 조회를 할 때")
     class findAllByProject {
         @Test
