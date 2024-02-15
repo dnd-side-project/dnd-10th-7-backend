@@ -59,6 +59,23 @@ public class User extends BaseEntity {
                 .build();
     }
 
+    public static User of(SocialType socialType, String socialId, String email, Level level, String socialName, Gender gender,
+                          String birthday, String profileImageUrl, Career career, String nickname){
+        return User.builder()
+                .socialType(socialType)
+                .socialId(socialId)
+                .email(email)
+                .socialname(socialName)
+                .level(level)
+                .socialname(socialName)
+                .gender(gender)
+                .birthday(birthday)
+                .profileImageUrl(profileImageUrl)
+                .career(career)
+                .nickname(nickname)
+                .build();
+    }
+
     public static User of(SigningAccount signingAccount, SignUpRequestDto signUpRequestDto) {
         return User.builder()
                 .socialType(SocialType.toEnum(signingAccount.socialType()))

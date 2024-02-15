@@ -1,23 +1,37 @@
 package com.sendback.domain.user.service;
 
 import com.sendback.domain.auth.dto.Token;
+import com.sendback.domain.feedback.repository.FeedbackSubmitRepository;
+import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.field.service.FieldService;
+import com.sendback.domain.like.repository.LikeRepository;
+import com.sendback.domain.project.entity.Project;
+import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
+import com.sendback.domain.user.dto.response.UserInfoResponseDto;
+import com.sendback.domain.user.entity.Career;
+import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.ServiceTest;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.SignInException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import static com.sendback.domain.field.fixture.FieldFixture.mock_Fields;
+import static com.sendback.domain.project.fixture.ProjectFixture.createDummyProject;
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_SIGN_TOKEN;
 import static com.sendback.domain.user.fixture.UserFixture.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +49,25 @@ public class UserServiceTest extends ServiceTest {
     UserRepository userRepository;
 
     @Mock
+    ProjectRepository projectRepository;
+    @Mock
+    FeedbackSubmitRepository feedbackSubmitRepository;
+
+    @Mock
+    LikeRepository likeRepository;
+    @Mock
+    FieldRepository fieldRepository;
+
+    @Mock
     FieldService fieldService;
+
+    private User user;
+    private Project project;
+    @BeforeEach
+    public void setUp() {
+        this.user = spy(createDummyUser_C());
+        this.project = spy(createDummyProject(user));
+    }
 
     @Test
     @DisplayName("사용자 추가정보를 통해 회원가입을 진행한다. 성공하면 200과 함께 access token, refresh token을 반환한다.")
@@ -120,5 +152,50 @@ public class UserServiceTest extends ServiceTest {
                     .hasMessage(INVALID_NICKNAME.getMessage());
 
         }
+    }
+
+    @Nested
+    @DisplayName("내 정보 조회")
+    class getUserInfo {
+
+        @Test
+        @DisplayName("성공하면 200과 함께 유저 정보를 반환한다.")
+        void getUserInfo_success() {
+            // given
+            Long mockUserId = 1L;
+            Long projectCount = 2L;
+            Long feedbackCount = 2L;
+            Long likeCount = 3L;
+            Long needToFeedbackCount = Level.getRemainCountUntilNextLevel(feedbackCount);
+
+            given(userRepository.findById(mockUserId)).willReturn(Optional.of(user));
+            given(projectRepository.countByUserId(mockUserId)).willReturn(projectCount);
+            given(feedbackSubmitRepository.countByUserId(mockUserId)).willReturn(feedbackCount);
+            List<Project> projectList = new ArrayList<>();
+            projectList.add(project);
+            given(projectRepository.findByUserId(mockUserId)).willReturn(projectList);
+            given(likeRepository.countByProjects(projectList)).willReturn(likeCount);
+            given(fieldRepository.findAllByUserId(mockUserId)).willReturn(mock_Fields);
+            List<String> mock_fieldNameList = mock_Fields.stream()
+                    .map(Field::getName)
+                    .collect(Collectors.toList());
+
+            // when
+            UserInfoResponseDto responseDto = userService.getUserInfo(mockUserId);
+
+            // then
+            assertThat(responseDto.nickname()).isEqualTo(user.getNickname());
+            assertThat(responseDto.career()).isEqualTo(Career.toString(user.getCareer()));
+            assertThat(responseDto.profileImageUrl()).isEqualTo(user.getProfileImageUrl());
+            assertThat(responseDto.birthday()).isEqualTo(user.getBirthDay());
+            assertThat(responseDto.email()).isEqualTo(user.getEmail());
+            assertThat(responseDto.field()).isEqualTo(mock_fieldNameList);
+            assertThat(responseDto.level()).isEqualTo(Level.toNumber(user.getLevel()));
+            assertThat(responseDto.feedbackCount()).isEqualTo(feedbackCount);
+            assertThat(responseDto.needToFeedbackCount()).isEqualTo(needToFeedbackCount);
+            assertThat(responseDto.projectCount()).isEqualTo(projectCount);
+            assertThat(responseDto.likeCount()).isEqualTo(likeCount);
+        }
+
     }
 }
