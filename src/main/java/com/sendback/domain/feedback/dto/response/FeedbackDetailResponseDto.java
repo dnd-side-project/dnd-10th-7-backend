@@ -22,10 +22,10 @@ public record FeedbackDetailResponseDto(
         String endedAt,
         Long projectId,
         String projectTitle,
-        String field,
+        String fieldName,
         String progress
 ) {
-    public static FeedbackDetailResponseDto of(Feedback feedback) {
+    public static FeedbackDetailResponseDto from(Feedback feedback) {
         Project project = feedback.getProject();
         User user = project.getUser();
         return new FeedbackDetailResponseDto(
@@ -43,7 +43,7 @@ public record FeedbackDetailResponseDto(
                 feedback.getEndedAt().toString(),
                 project.getId(),
                 project.getTitle(),
-                project.getField().getName(),
+                project.getFieldName().getName(),
                 project.getProgress().toString()
         );
     }

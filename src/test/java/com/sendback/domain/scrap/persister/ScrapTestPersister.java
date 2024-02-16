@@ -17,25 +17,35 @@ public class ScrapTestPersister {
     private final UserTestPersister userTestPersister;
     private final ProjectTestPersister projectTestPersister;
 
-
-    private User user;
-    private Project project;
-
-    public ScrapTestPersister user(User user) {
-        this.user = user;
-        return this;
+    public ScrapBuilder builder() {
+        return new ScrapBuilder();
     }
 
-    public ScrapTestPersister project(Project project) {
-        this.project = project;
-        return this;
+    public final class ScrapBuilder {
+
+        private User user;
+        private Project project;
+
+        public ScrapBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public ScrapBuilder project(Project project) {
+            this.project = project;
+            return this;
+        }
+
+        public Scrap save() {
+            Scrap scrap = Scrap.of(
+                    (user == null ? userTestPersister.builder().save() : user),
+                    (project == null ? projectTestPersister.builder().save() : project)
+            );
+            return scrapRepository.save(scrap);
+        }
+
     }
 
-    public Scrap save() {
-        Scrap scrap = Scrap.of(
-                (user == null ? userTestPersister.save() : user),
-                (project == null ? projectTestPersister.save() : project)
-        );
-        return scrapRepository.save(scrap);
-    }
+
+
 }

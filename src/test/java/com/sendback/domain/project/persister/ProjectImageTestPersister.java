@@ -14,24 +14,33 @@ public class ProjectImageTestPersister {
     private final ProjectImageRepository projectImageRepository;
     private final ProjectTestPersister projectTestPersister;
 
-    private Project project;
-    private String imageUrl;
-
-    public ProjectImageTestPersister project(Project project) {
-        this.project = project;
-        return this;
+    public ProjectImageBuilder builder() {
+        return new ProjectImageBuilder();
     }
 
-    public ProjectImageTestPersister imageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-        return this;
+    public final class ProjectImageBuilder {
+
+        private Project project;
+        private String imageUrl;
+
+        public ProjectImageBuilder project(Project project) {
+            this.project = project;
+            return this;
+        }
+
+        public ProjectImageBuilder imageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+            return this;
+        }
+
+        public ProjectImage save() {
+            ProjectImage projectImage = ProjectImage.of(
+                    (project == null ? projectTestPersister.builder().save() : project),
+                    (imageUrl == null ? RandomStringUtils.random(10, true, true) : imageUrl)
+            );
+            return projectImageRepository.save(projectImage);
+        }
+
     }
 
-    public ProjectImage save() {
-        ProjectImage projectImage = ProjectImage.of(
-                (project == null ? projectTestPersister.save() : project),
-                (imageUrl == null ? RandomStringUtils.random(10, true, true) : imageUrl)
-        );
-        return projectImageRepository.save(projectImage);
-    }
 }

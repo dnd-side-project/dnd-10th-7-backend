@@ -17,30 +17,40 @@ public class FeedbackSubmitTestPersister {
     private final FeedbackTestPersister feedbackTestPersister;
     private final FeedbackSubmitRepository feedbackSubmitRepository;
 
-    private User user;
-    private Feedback feedback;
-    private String screenShotUrl;
-
-    public FeedbackSubmitTestPersister user(User user) {
-        this.user = user;
-        return this;
+    public FeedbackSubmitBuilder builder() {
+        return new FeedbackSubmitBuilder();
     }
 
-    public FeedbackSubmitTestPersister feedback(Feedback feedback) {
-        this.feedback = feedback;
-        return this;
+    public final class FeedbackSubmitBuilder {
+
+        private User user;
+        private Feedback feedback;
+        private String screenShotUrl;
+
+        public FeedbackSubmitBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public FeedbackSubmitBuilder feedback(Feedback feedback) {
+            this.feedback = feedback;
+            return this;
+        }
+
+        public FeedbackSubmitBuilder screenShotUrl(String screenShotUrl) {
+            this.screenShotUrl = screenShotUrl;
+            return this;
+        }
+
+        public FeedbackSubmit save() {
+            FeedbackSubmit feedbackSubmit = FeedbackSubmit.of(
+                    (user == null ? userTestPersister.builder().save() : user),
+                    (feedback == null ? feedbackTestPersister.builder().save() : feedback),
+                    (screenShotUrl == null ? RandomStringUtils.random(10, true, true) : screenShotUrl));
+            return feedbackSubmitRepository.save(feedbackSubmit);
+        }
+
     }
 
-    public FeedbackSubmitTestPersister screenShotUrl(String screenShotUrl) {
-        this.screenShotUrl = screenShotUrl;
-        return this;
-    }
 
-    public FeedbackSubmit save() {
-        FeedbackSubmit feedbackSubmit = FeedbackSubmit.of(
-                (user == null ? userTestPersister.save() : user),
-                (feedback == null ? feedbackTestPersister.save() : feedback),
-                (screenShotUrl == null ? RandomStringUtils.random(10, true, true) : screenShotUrl));
-        return feedbackSubmitRepository.save(feedbackSubmit);
-    }
 }

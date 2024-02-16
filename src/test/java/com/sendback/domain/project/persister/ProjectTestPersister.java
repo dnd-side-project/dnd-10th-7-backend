@@ -1,7 +1,5 @@
 package com.sendback.domain.project.persister;
 
-import com.sendback.domain.field.entity.Field;
-import com.sendback.domain.field.persister.FieldTestPersister;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
@@ -13,50 +11,51 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
+import static com.sendback.global.common.constants.FieldName.IT;
+
 @RequiredArgsConstructor
 @Persister
 public class ProjectTestPersister {
 
     private final ProjectRepository projectRepository;
     private final UserTestPersister userTestPersister;
-    private final FieldTestPersister fieldTestPersister;
 
-    private User user;
-    private Field field;
-    private SaveProjectRequestDto saveProjectRequestDto;
-
-    public ProjectTestPersister user(User user) {
-        this.user = user;
-        return this;
+    public ProjectBuilder builder() {
+        return new ProjectBuilder();
     }
 
-    public ProjectTestPersister field(Field field) {
-        this.field = field;
-        return this;
-    }
+    public final class ProjectBuilder {
 
-    public ProjectTestPersister saveProjectRequestDto(SaveProjectRequestDto saveProjectRequestDto) {
-        this.saveProjectRequestDto = saveProjectRequestDto;
-        return this;
-    }
+        private User user;
+        private SaveProjectRequestDto saveProjectRequestDto;
 
-    private static final String TITLE = "title";
-    private static final String FIELD = "edu";
-    private static final String CONTENT = "content";
-    private static final String SUMMARY = "summary";
-    private static final String DEMO_SITE_URL = "demoUrl";
-    private static final LocalDate START_DATE = LocalDate.of(2024, 1, 1);
-    private static final LocalDate END_DATE = LocalDate.of(2024, 1, 3);
-    private static final Progress PLANNING_PROGRESS = Progress.PLANNING;
+        public ProjectBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
 
-    public Project save() {
-        Project project = Project.of(
-                (user == null ? userTestPersister.save() : user),
-                (field == null ? fieldTestPersister.save() : field),
-                (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, FIELD, CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
-                        PLANNING_PROGRESS.toString(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
-        );
-        return projectRepository.save(project);
+        public ProjectBuilder saveProjectRequestDto(SaveProjectRequestDto saveProjectRequestDto) {
+            this.saveProjectRequestDto = saveProjectRequestDto;
+            return this;
+        }
+
+        private static final String TITLE = "title";
+        private static final String CONTENT = "content";
+        private static final String SUMMARY = "summary";
+        private static final String DEMO_SITE_URL = "demoUrl";
+        private static final LocalDate START_DATE = LocalDate.of(2024, 1, 1);
+        private static final LocalDate END_DATE = LocalDate.of(2024, 1, 3);
+        private static final Progress PLANNING_PROGRESS = Progress.PLANNING;
+
+        public Project save() {
+            Project project = Project.of(
+                    (user == null ? userTestPersister.builder().save() : user),
+                    (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, IT.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
+                            PLANNING_PROGRESS.getValue(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
+            );
+            return projectRepository.save(project);
+        }
+
     }
 
 }

@@ -1,6 +1,5 @@
 package com.sendback.domain.user.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -12,7 +11,7 @@ public record UpdateUserInfoRequestDto(
         String nickname,
         @Pattern(regexp = "\\d{4}\\.\\d{2}\\.\\d{2}", message = "생년월일은 'yyyy.MM.dd' 형식이어야 합니다.")
         String birthday,
-        @Pattern(regexp = "frontend|backend|designer|planner", message = "직업군은 '프론트엔드', '백엔드', '디자이너', '기획자' 중 하나여야 합니다.")
+        @Pattern(regexp = "프론트엔드|백엔드|디자이너|기획자", message = "직업군은 '프론트엔드', '백엔드', '디자이너', '기획자' 중 하나여야 합니다.")
         String career,
         @Size(min = 1, message = "분야는 최소 1개 이상 선택되어야 합니다.")
         List<@Pattern(regexp = "예술/대중문화|환경|건강|취미/실용|금융/핀테크|교육|게임|AI/머신러닝",

@@ -8,6 +8,7 @@
 
 ==== HTTP Requests
 include::{snippets}/feedback/detail/http-request.adoc[]
+- Path parameters +
 include::{snippets}/feedback/detail/path-parameters.adoc[]
 
 ==== HTTP Response

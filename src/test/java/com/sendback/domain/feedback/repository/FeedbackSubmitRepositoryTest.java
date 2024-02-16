@@ -1,10 +1,7 @@
 package com.sendback.domain.feedback.repository;
 
 import com.sendback.domain.feedback.entity.FeedbackSubmit;
-import com.sendback.domain.project.entity.Project;
-import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,14 +16,13 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
 
     @Nested
     @DisplayName("user와 feedback으로 삭제되지 않은 피드백 제출이 있는 지 조회했을 때")
-    @Disabled
     class existsByUserAndFeedbackAndIsDeletedIsFalse {
 
         @Test
         @DisplayName("값이 있으면 true를 반환한다.")
         public void success_true() throws Exception {
             //given
-            FeedbackSubmit feedbackSubmit = feedbackSubmitTestPersister.save();
+            FeedbackSubmit feedbackSubmit = feedbackSubmitTestPersister.builder().save();
 
             //when
             boolean exists = feedbackSubmitRepository.existsByUserAndFeedbackAndIsDeletedIsFalse(feedbackSubmit.getUser(), feedbackSubmit.getFeedback());
@@ -40,7 +36,7 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
         @DisplayName("삭제된 값이 있으면 false를 반환한다.")
         public void success_false() throws Exception {
             //given
-            FeedbackSubmit feedbackSubmit = feedbackSubmitTestPersister.save();
+            FeedbackSubmit feedbackSubmit = feedbackSubmitTestPersister.builder().save();
             feedbackSubmitRepository.delete(feedbackSubmit);
 
             //when
@@ -53,7 +49,6 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
     }
 
     @Nested
-    @Disabled
     @DisplayName("feedbackSubmit 테이블에서 특정 userId를 갖는 데이터의 개수를 조회하는 경우")
     class countByUserId {
 
@@ -61,11 +56,10 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
         @DisplayName("조건을 만족하는 피드백들의 개수를 반환한다.")
         public void success_true() {
             // given
-            User user = userTestPersister.save();
-            feedbackSubmitTestPersister.user(user).save();
+            FeedbackSubmit feedbackSubmit = feedbackSubmitTestPersister.builder().save();
 
             // when
-            Long feedBackCount = feedbackSubmitRepository.countByUserId(user.getId());
+            Long feedBackCount = feedbackSubmitRepository.countByUserId(feedbackSubmit.getUser().getId());
 
             // then
             assertThat(feedBackCount).isEqualTo(1);

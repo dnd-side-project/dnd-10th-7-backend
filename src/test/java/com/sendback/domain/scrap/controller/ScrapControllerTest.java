@@ -41,13 +41,13 @@ public class ScrapControllerTest extends ControllerTest {
         //when
         ResultActions resultActions = mockMvc.perform(put("/api/projects/{projectId}/scrap", projectId)
                         .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
-                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                 .andDo(print());
 
         //then
         resultActions
                 .andDo(document("scrap/click",
-                        preprocessRequest(prettyPrint()),
+                        customRequestPreprocessor(),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("projectId").description("프로젝트 ID")

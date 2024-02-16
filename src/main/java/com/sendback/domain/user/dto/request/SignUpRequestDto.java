@@ -2,7 +2,6 @@ package com.sendback.domain.user.dto.request;
 
 import jakarta.validation.constraints.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public record SignUpRequestDto(
@@ -13,10 +12,10 @@ public record SignUpRequestDto(
         @Pattern(regexp = "\\d{4}\\.\\d{2}\\.\\d{2}", message = "생년월일은 'yyyy.MM.dd' 형식이어야 합니다.")
         String birthday,
 
-        @Pattern(regexp = "male|female", message = "성별은 필수입니다.")
+        @Pattern(regexp = "남자|여자", message = "성별은 필수입니다.")
         String gender,
 
-        @Pattern(regexp = "frontend|backend|designer|planner", message = "직업군은 '프론트엔드', '백엔드', '디자이너', '기획자' 중 하나여야 합니다.")
+        @Pattern(regexp = "프론트엔드|백엔드|디자이너|기획자", message = "직업군은 '프론트엔드', '백엔드', '디자이너', '기획자' 중 하나여야 합니다.")
         String career,
 
         @Size(min = 1, message = "분야는 최소 1개 이상 선택되어야 합니다.")
