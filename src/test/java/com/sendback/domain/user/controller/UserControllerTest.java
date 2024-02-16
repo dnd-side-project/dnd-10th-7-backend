@@ -77,13 +77,13 @@ public class UserControllerTest extends ControllerTest {
                                     fieldWithPath("nickname").type(JsonFieldType.STRING)
                                             .description("닉네임"),
                                     fieldWithPath("birthday").type(JsonFieldType.STRING)
-                                            .description("닉네임"),
+                                            .description("생일"),
                                     fieldWithPath("gender").type(JsonFieldType.STRING)
-                                            .description("닉네임"),
+                                            .description("성별"),
                                     fieldWithPath("career").type(JsonFieldType.STRING)
-                                            .description("닉네임"),
+                                            .description("직업"),
                                     fieldWithPath("interests").type(JsonFieldType.ARRAY)
-                                            .description("닉네임"),
+                                            .description("관심사"),
                                     fieldWithPath("signToken").type(JsonFieldType.STRING)
                                             .description("sign 토큰")
                             ),
@@ -256,6 +256,16 @@ public class UserControllerTest extends ControllerTest {
                     .andDo(document("updateUserInfo-success",
                             customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
+                            requestFields(
+                                    fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                            .description("닉네임"),
+                                    fieldWithPath("career").type(JsonFieldType.STRING)
+                                            .description("직업"),
+                                    fieldWithPath("birthday").type(JsonFieldType.STRING)
+                                            .description("생일"),
+                                    fieldWithPath("field").type(JsonFieldType.ARRAY)
+                                            .description("관심사")
+                            ),
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
@@ -302,7 +312,7 @@ public class UserControllerTest extends ControllerTest {
 
             // when
             ResultActions resultActions = mockMvc.perform(get("/api/users/me/project")
-                            .with(csrf())
+                            .with(csrf().asHeader())
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .param("page", "1")
                             .param("size", "5")
@@ -329,6 +339,12 @@ public class UserControllerTest extends ControllerTest {
                     .andDo(document("getRegisteredProjects-success",
                             customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
+                            queryParameters(
+                                    parameterWithName("page").description("페이지"),
+                                    parameterWithName("size").description("사이즈"),
+                                    parameterWithName("sort").description("정렬 기준")
+
+                            ),
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("상태 코드"),
