@@ -2,6 +2,9 @@ package com.sendback.domain.user.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
+import com.sendback.domain.project.entity.Progress;
+import com.sendback.global.common.constants.FieldName;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,9 +30,9 @@ public record RegisteredProjectResponseDto (
     ) {
         this.projectId = projectId;
         this.title = title;
-        this.progress = progress;
+        this.progress = Progress.toKorean(progress);
         this.summary = summary;
-        this.field = field;
+        this.field = FieldName.toKorean(field);
         this.createdAt = createdAt;
         this.pullUpCnt = pullUpCnt;
     }

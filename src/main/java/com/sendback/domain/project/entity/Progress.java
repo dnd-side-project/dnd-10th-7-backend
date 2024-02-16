@@ -1,5 +1,6 @@
 package com.sendback.domain.project.entity;
 
+import com.querydsl.core.types.dsl.EnumPath;
 import com.sendback.global.exception.type.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,15 @@ public enum Progress {
             case "기획중" -> PLANNING;
             case "개발중" -> DEVELOPING;
             case "리팩토링중" -> REFACTORING;
+
+            default -> throw new NotFoundException(NOT_FOUND_PROGRESS);
+        };
+    }
+    public static String toKorean(String progress) {
+        return switch (progress) {
+            case "PLANNING" -> "기획중";
+            case "DEVELOPING" -> "개발중";
+            case "REFACTORING" -> "리팩토링중";
 
             default -> throw new NotFoundException(NOT_FOUND_PROGRESS);
         };

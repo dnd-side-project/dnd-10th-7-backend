@@ -1,6 +1,7 @@
 package com.sendback.domain.project.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sendback.domain.project.entity.Progress;
 import com.sendback.domain.user.dto.response.QRegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import lombok.RequiredArgsConstructor;
