@@ -7,21 +7,25 @@ import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.entity.Project;
-import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.domain.user.entity.Career;
 import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
+import com.sendback.global.common.CustomPage;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +44,7 @@ public class UserService {
     private final FeedbackSubmitRepository feedbackSubmitRepository;
     private final FieldService fieldService;
     private final FieldRepository fieldRepository;
-    private final ProjectRepository projectRepository;
+    private final com.sendback.domain.project.repository.ProjectRepository projectRepository;
     private final JwtProvider jwtProvider;
     private final LikeRepository likeRepository;
 
@@ -98,6 +102,16 @@ public class UserService {
         fieldRepository.saveAll(fieldList);
         return new UpdateUserInfoResponseDto(updateUserInfoRequestDto.nickname(), updateUserInfoRequestDto.birthday(),
                 updateUserInfoRequestDto.career(), updateUserInfoRequestDto.field());
+    }
+
+    public CustomPage<RegisteredProjectResponseDto> getRegisteredProjects(Long userId, int page, int size, int sort){
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        boolean isFinished = sort == 0 ? true : false;
+
+        Page<RegisteredProjectResponseDto> responseDtos = projectRepository.findAllProjectsByMe(pageable, userId, isFinished);
+
+        return CustomPage.of(responseDtos);
     }
 
 

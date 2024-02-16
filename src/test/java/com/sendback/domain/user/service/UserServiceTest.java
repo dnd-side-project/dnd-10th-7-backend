@@ -7,9 +7,9 @@ import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.entity.Project;
-import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
+import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.domain.user.entity.Career;
@@ -17,6 +17,7 @@ import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.ServiceTest;
+import com.sendback.global.common.CustomPage;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.SignInException;
@@ -26,6 +27,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import static com.sendback.domain.field.fixture.FieldFixture.mock_Fields;
@@ -51,7 +58,7 @@ public class UserServiceTest extends ServiceTest {
     UserRepository userRepository;
 
     @Mock
-    ProjectRepository projectRepository;
+    com.sendback.domain.project.repository.ProjectRepository projectRepository;
     @Mock
     FeedbackSubmitRepository feedbackSubmitRepository;
 
@@ -227,6 +234,37 @@ public class UserServiceTest extends ServiceTest {
             assertThat(responseDto.birthday()).isEqualTo(requestDto.birthday());
             assertThat(responseDto.field()).isEqualTo(requestDto.field());
         }
+
+    }
+
+    @Nested
+    @DisplayName("내가 등록한 프로젝트 정보 조회")
+    class getRegisteredProjects {
+
+        @Test
+        @DisplayName("성공하면 응답으로 200과 customPage 객체를 반환한다.")
+        void getUserInfo_success() {
+            // given
+            Long userId = 1L;
+            int page = 1;
+            int size = 5;
+            List<RegisteredProjectResponseDto> mockContent = new ArrayList<>();
+            mockContent.add(new RegisteredProjectResponseDto(1L, "Title", "Progress", "Summary", LocalDateTime.now(), 5L));
+            Page<RegisteredProjectResponseDto> mockPage = new PageImpl<>(mockContent, PageRequest.of(page, size), mockContent.size());
+
+            given(projectRepository.findAllProjectsByMe(PageRequest.of(0,size), userId, true)).willReturn(mockPage);
+
+            // when
+            CustomPage<RegisteredProjectResponseDto> customPage = userService.getRegisteredProjects(userId, page, size, 0);
+
+            // then
+            assertThat(customPage.getPage()).isEqualTo(page);
+            assertThat(customPage.getSize()).isEqualTo(size);
+            assertThat(customPage.getContent().get(0).title()).isEqualTo("Title");
+            assertThat(customPage.getContent().get(0).summary()).isEqualTo("Summary");
+        }
+
+
 
     }
 }
