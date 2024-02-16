@@ -105,7 +105,7 @@ public class Project extends BaseEntity {
         this.endedAt = endedAt;
         this.progress = progress;
         this.projectParticipantCount = new ProjectParticipantCount(plannerCount, frontendCount, backendCount, designCount);
-        this.projectPull = new ProjectPull(pullUpCnt, isPulledUp, pullEndAt);
+        this.projectPull = new ProjectPull(isPulledUp, pullUpCnt, pullEndAt);
         this.isFinished = isFinished;
     }
 

@@ -107,7 +107,7 @@ public class AuthControllerTest extends ControllerTest {
                                     fieldWithPath("data").type(JsonFieldType.OBJECT)
                                             .description("응답 데이터"),
                                     fieldWithPath("data.signToken").type(JsonFieldType.STRING)
-                                            .description("사인 토큰"),
+                                            .description("sign 토큰"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")
                             )));
@@ -227,7 +227,7 @@ public class AuthControllerTest extends ControllerTest {
             ResultActions resultActions = mockMvc.perform(
                             post("/api/auth/reissue")
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .content(content).with(csrf()))
+                                    .content(content).with(csrf().asHeader()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))

@@ -9,7 +9,6 @@ import com.sendback.domain.auth.dto.response.SignTokenResponseDto;
 import com.sendback.domain.auth.dto.response.TokensResponseDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
-import com.sendback.global.config.redis.RedisService;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.SignInException;
 import lombok.RequiredArgsConstructor;

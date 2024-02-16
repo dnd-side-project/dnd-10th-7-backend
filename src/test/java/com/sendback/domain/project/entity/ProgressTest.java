@@ -1,6 +1,7 @@
 package com.sendback.domain.project.entity;
 
 import com.sendback.global.exception.type.NotFoundException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

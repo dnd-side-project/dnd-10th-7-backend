@@ -17,6 +17,9 @@ import java.util.List;
 import static com.sendback.domain.project.entity.Progress.PLANNING;
 import static com.sendback.global.common.constants.FieldName.ART;
 
+import static com.sendback.domain.project.entity.Progress.PLANNING;
+import static com.sendback.global.common.constants.FieldName.ART;
+
 public class FeedbackFixture {
 
     private static final String TITLE = "title";

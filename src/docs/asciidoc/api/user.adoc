@@ -6,10 +6,12 @@
 === 성공
 ==== HTTP Requests
 include::{snippets}/signUpKakao-success/http-request.adoc[]
+- Request body
 include::{snippets}/signUpKakao-success/request-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/signUpKakao-success/http-response.adoc[]
+- Response body
 include::{snippets}/signUpKakao-success/response-fields.adoc[]
 
 '''
@@ -19,9 +21,57 @@ include::{snippets}/signUpKakao-success/response-fields.adoc[]
 === 성공
 ==== HTTP Requests
 include::{snippets}/checkUserNickname-success/http-request.adoc[]
+- Query parameters
 include::{snippets}/checkUserNickname-success/query-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/checkUserNickname-success/http-response.adoc[]
+- Response body
 include::{snippets}/checkUserNickname-success/response-fields.adoc[]
 
+'''
+
+[[get-userInfo]]
+== 내 정보 조회하기
+=== 성공
+==== HTTP Requests
+include::{snippets}/getUserInfo-success/http-request.adoc[]
+
+
+==== HTTP Response
+include::{snippets}/getUserInfo-success/http-response.adoc[]
+- Response body
+include::{snippets}/getUserInfo-success/response-fields.adoc[]
+
+
+'''
+
+[[get-updateInfo]]
+== 내 정보 수정하기
+=== 성공
+==== HTTP Requests
+include::{snippets}/updateUserInfo-success/http-request.adoc[]
+
+- Request body
+include::{snippets}/updateUserInfo-success/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/getUserInfo-success/http-response.adoc[]
+- Response body
+include::{snippets}/getUserInfo-success/response-fields.adoc[]
+
+'''
+
+[[get-registeredProjects]]
+== 내가 등록한 프로젝트들 조회
+=== 성공
+==== HTTP Requests
+include::{snippets}/getRegisteredProjects-success/http-request.adoc[]
+
+- Query parameters
+include::{snippets}/getRegisteredProjects-success/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/getRegisteredProjects-success/http-response.adoc[]
+- Response body
+include::{snippets}/getRegisteredProjects-success/response-fields.adoc[]

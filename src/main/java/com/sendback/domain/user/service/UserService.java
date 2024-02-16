@@ -12,24 +12,29 @@ import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
+import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
+import com.sendback.global.common.CustomPage;
 import com.sendback.global.common.constants.FieldName;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
-import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_USER;
+
+import static com.sendback.domain.user.exception.UserExceptionType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +51,9 @@ public class UserService {
 
     @Transactional
     public Token signUpUser(@RequestBody SignUpRequestDto signUpRequestDto) {
+        if(userRepository.findByNickname(signUpRequestDto.nickname()).isPresent()){
+            throw new BadRequestException(DUPLICATED_NICKNAME);
+        }
         jwtProvider.validateSignToken(signUpRequestDto.signToken());
         SigningAccount signingAccount = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
         User user = User.of(signingAccount, signUpRequestDto);
@@ -91,6 +99,9 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(NOT_FOUND_USER)
         );
+        if(userRepository.findByNickname(updateUserInfoRequestDto.nickname()).isPresent()){
+            throw new BadRequestException(DUPLICATED_NICKNAME);
+        }
         user.update(updateUserInfoRequestDto);
         fieldRepository.deleteByUserId(userId);
         List<Field> fieldList = updateUserInfoRequestDto.field().stream()
@@ -101,6 +112,15 @@ public class UserService {
                 updateUserInfoRequestDto.career(), updateUserInfoRequestDto.field());
     }
 
+    public CustomPage<RegisteredProjectResponseDto> getRegisteredProjects(Long userId, int page, int size, int sort){
+
+        Pageable pageable = PageRequest.of(page-1, size);
+        boolean isFinished = sort == 0 ? true : false;
+
+        Page<RegisteredProjectResponseDto> responseDtos = projectRepository.findAllProjectsByMe(pageable, userId, isFinished);
+
+        return CustomPage.of(responseDtos);
+    }
 
 
     public User getUserById(Long userId) {
