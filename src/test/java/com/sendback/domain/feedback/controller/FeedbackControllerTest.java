@@ -51,7 +51,7 @@ public class FeedbackControllerTest extends ControllerTest {
             given(feedbackService.saveFeedback(anyLong(), anyLong(), any())).willReturn(response);
 
             //when
-            ResultActions resultActions = mockMvc.perform(post("/api/projects/{projectId}/feedback", 1L)
+            ResultActions resultActions = mockMvc.perform(post("/api/projects/{projectId}/feedbacks", 1L)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(saveFeedbackRequestDto)).with(csrf()))
