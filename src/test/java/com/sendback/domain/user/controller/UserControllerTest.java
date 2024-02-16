@@ -156,8 +156,8 @@ public class UserControllerTest extends ControllerTest {
         void getUserInfo_success() throws Exception {
 
             // given
-            UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto("test", "backend", "mock_image_url",
-                    "2000.01.01", "mock@kakao.com", List.of("game", "health"), 1, 2l, 2l, 2l, 2l);
+            UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto("test", "백엔드", "mock_image_url",
+                    "2000.01.01", "mock@kakao.com", List.of("게임", "환경"), 1, 2l, 2l, 2l, 2l);
             given(userService.getUserInfo(anyLong())).willReturn(userInfoResponseDto);
 
             // when
@@ -168,12 +168,12 @@ public class UserControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
                     .andExpect(jsonPath("$.data.nickname").value("test"))
-                    .andExpect(jsonPath("$.data.career").value("backend"))
+                    .andExpect(jsonPath("$.data.career").value("백엔드"))
                     .andExpect(jsonPath("$.data.profileImageUrl").value("mock_image_url"))
                     .andExpect(jsonPath("$.data.birthday").value("2000.01.01"))
                     .andExpect(jsonPath("$.data.email").value("mock@kakao.com"))
-                    .andExpect(jsonPath("$.data.field[0]").value("game"))
-                    .andExpect(jsonPath("$.data.field[1]").value("health"))
+                    .andExpect(jsonPath("$.data.field[0]").value("게임"))
+                    .andExpect(jsonPath("$.data.field[1]").value("환경"))
                     .andExpect(jsonPath("$.data.level").value(1))
                     .andExpect(jsonPath("$.data.feedbackCount").value(2l))
                     .andExpect(jsonPath("$.data.needToFeedbackCount").value(2l))
@@ -229,8 +229,8 @@ public class UserControllerTest extends ControllerTest {
         void updateUserInfo_success() throws Exception {
 
             // given
-            UpdateUserInfoRequestDto updateUserInfoRequestDto = new UpdateUserInfoRequestDto("테스트 사용자", "200.01.01", "backend",Arrays.asList("환경", "게임"));
-            UpdateUserInfoResponseDto updateUserInfoResponseDto = new UpdateUserInfoResponseDto("테스트 사용자", "2000.01.01", "backend",Arrays.asList("환경", "게임"));
+            UpdateUserInfoRequestDto updateUserInfoRequestDto = new UpdateUserInfoRequestDto("테스트 사용자", "2000.01.01", "백엔드",Arrays.asList("환경", "게임"));
+            UpdateUserInfoResponseDto updateUserInfoResponseDto = new UpdateUserInfoResponseDto("테스트 사용자", "2000.01.01", "백엔드",Arrays.asList("환경", "게임"));
 
             given(userService.updateUserInfo(anyLong(), any(UpdateUserInfoRequestDto.class))).willReturn(updateUserInfoResponseDto);
             String content = objectMapper.writeValueAsString(updateUserInfoRequestDto);
@@ -326,7 +326,7 @@ public class UserControllerTest extends ControllerTest {
             // then
             resultActions
                     .andDo(document("getRegisteredProjects-success",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
