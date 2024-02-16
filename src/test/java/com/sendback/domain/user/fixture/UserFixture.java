@@ -27,18 +27,18 @@ public class UserFixture {
     private static final Gender GENDER = MALE;
     private static final String BIRTHDAY = "2000.01.01";
     private static final Career CAREER = BACKEND;
-    public static final SigningAccount mock_signingAccount = new SigningAccount("123", "mock",
+    public static final SigningAccount MOCK_SIGNING_ACCOUNT = new SigningAccount("123", "mock",
             "mock_profile", "mock@kakao.com", "kakao");
-    public static final SignUpRequestDto mock_signUpRequestDto = new SignUpRequestDto("mock_user", "2000.01.01",
+    public static final SignUpRequestDto MOCK_SIGN_UP_REQUEST_DTO = new SignUpRequestDto("mock_user", "2000.01.01",
             "남자", "백엔드", Arrays.asList("예술/대중문화", "게임"), "valid signToken");
 
-    public static final SignUpRequestDto mock_Invalid_SignToken_signUpRequestDto = new SignUpRequestDto("mock_user", "2000.01.01",
+    public static final SignUpRequestDto MOCK_INVALID_SIGN_TOKEN_SIGN_UP_REQUEST_DTO = new SignUpRequestDto("mock_user", "2000.01.01",
             "남자", "백엔드", Arrays.asList("예술/대중문화", "게임"), "Invalid signToken");
 
-    public static final User mock_user = User.of(mock_signingAccount, mock_signUpRequestDto);
+    public static final User mock_user = User.of(MOCK_SIGNING_ACCOUNT, MOCK_SIGN_UP_REQUEST_DTO);
 
     public static User createDummyUser() {
-        return User.of(SOCIAL_TYPE_KAKAO, SOCIAL_ID, EMAIL, NICKNAME, PROFILE_IMAGE_URL);
+        return User.of(MOCK_SIGNING_ACCOUNT, MOCK_SIGN_UP_REQUEST_DTO);
     }
 
     public static User createDummyUser_B() {
