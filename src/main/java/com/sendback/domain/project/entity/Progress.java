@@ -9,15 +9,22 @@ import static com.sendback.domain.project.exception.ProjectExceptionType.NOT_FOU
 @Getter
 @AllArgsConstructor
 public enum Progress {
-    PLANNING, DEVELOPING, REFACTORING;
+    PLANNING("기획중"),
+    DEVELOPING("개발중"),
+    REFACTORING("리팩토링중");
+
+    private final String value;
 
     public static Progress toEnum(String progress) {
-        return switch (progress.toUpperCase()) {
-            case "PLANNING" -> PLANNING;
-            case "DEVELOPING" -> DEVELOPING;
-            case "REFACTORING" -> REFACTORING;
+        for (Progress value : Progress.values()) {
+            if (value.value.equalsIgnoreCase(progress)) {
+                return value;
+            }
+        }
+        throw new NotFoundException(NOT_FOUND_PROGRESS);
+    }
 
-            default -> throw new NotFoundException(NOT_FOUND_PROGRESS);
-        };
+    public String toString() {
+        return value;
     }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ProjectPull {
 
-    private boolean pullUpCnt;
-    private long isPulledUp;
+    private Long pullUpCnt;
+    private boolean isPulledUp;
     private LocalDateTime pullEndAt;
 }

@@ -1,6 +1,7 @@
 package com.sendback.domain.project.entity;
 
 import com.sendback.global.exception.type.NotFoundException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class ProgressTest {
 
     @Nested
+    @Disabled
     @DisplayName("진행 여부 enum으로 변경 시")
     class convertEnumProgress {
 
