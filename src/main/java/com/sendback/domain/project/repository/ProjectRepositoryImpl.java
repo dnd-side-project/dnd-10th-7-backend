@@ -1,16 +1,13 @@
 package com.sendback.domain.project.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sendback.domain.project.entity.QProject;
 import com.sendback.domain.user.dto.response.QRegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
 import java.util.List;
-
 import static com.sendback.domain.project.entity.QProject.project;
 
 @RequiredArgsConstructor
@@ -27,6 +24,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
                        project.title,
                        project.progress.stringValue(),
                        project.summary,
+                       project.fieldName.stringValue(),
                        project.createdAt,
                        project.projectPull.pullUpCnt
                 ))

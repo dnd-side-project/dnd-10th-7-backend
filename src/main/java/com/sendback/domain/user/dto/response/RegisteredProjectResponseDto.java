@@ -10,7 +10,7 @@ public record RegisteredProjectResponseDto (
     String title,
     String progress,
     String summary,
-
+    String field,
     @JsonFormat(pattern = "yyyy.MM.dd")
     LocalDateTime createdAt,
     Long pullUpCnt
@@ -21,6 +21,7 @@ public record RegisteredProjectResponseDto (
             String title,
             String progress,
             String summary,
+            String field,
             LocalDateTime createdAt,
             Long pullUpCnt
     ) {
@@ -28,6 +29,7 @@ public record RegisteredProjectResponseDto (
         this.title = title;
         this.progress = progress;
         this.summary = summary;
+        this.field = field;
         this.createdAt = createdAt;
         this.pullUpCnt = pullUpCnt;
     }

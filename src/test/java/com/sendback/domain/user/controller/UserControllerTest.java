@@ -287,7 +287,7 @@ public class UserControllerTest extends ControllerTest {
             // given
             LocalDateTime mockDateTime = LocalDateTime.now();
             RegisteredProjectResponseDto responseDto = new RegisteredProjectResponseDto(1L, "mock_title", "개발중", "테스트 테스트",
-                    mockDateTime, 5L);
+                    "게임", mockDateTime, 5L);
             List<RegisteredProjectResponseDto> responseDtos = new ArrayList<>();
             responseDtos.add(responseDto);
 
@@ -319,6 +319,7 @@ public class UserControllerTest extends ControllerTest {
                         .andExpect(jsonPath("$.data.content[0].title").value("mock_title"))
                         .andExpect(jsonPath("$.data.content[0].progress").value("개발중"))
                         .andExpect(jsonPath("$.data.content[0].summary").value("테스트 테스트"))
+                        .andExpect(jsonPath("$.data.content[0].field").value("게임"))
                         .andExpect(jsonPath("$.data.content[0].createdAt").value(mockDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
                         .andExpect(jsonPath("$.data.content[0].pullUpCnt").value(5))
                     .andDo(print());
@@ -353,6 +354,8 @@ public class UserControllerTest extends ControllerTest {
                                             .description("프로젝트 진행 상태"),
                                     fieldWithPath("data.content[].summary").type(JsonFieldType.STRING)
                                             .description("프로젝트 요약"),
+                                    fieldWithPath("data.content[].field").type(JsonFieldType.STRING)
+                                            .description("프로젝트 분야"),
                                     fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING)
                                             .attributes(Attributes.key("format").value("yyyy.MM.dd"))
                                             .description("프로젝트 등록일"),
