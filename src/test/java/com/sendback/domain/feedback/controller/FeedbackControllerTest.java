@@ -79,6 +79,8 @@ public class FeedbackControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
                                     fieldWithPath("data.feedbackId").type(JsonFieldType.NUMBER)
                                             .description("피드백 ID"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
@@ -122,6 +124,7 @@ public class FeedbackControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                                     fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("유저 ID"),
                                     fieldWithPath("data.username").type(JsonFieldType.STRING).description("유저 이름"),
                                     fieldWithPath("data.userLevel").type(JsonFieldType.STRING).description("유저 레벨"),
@@ -205,8 +208,8 @@ public class FeedbackControllerTest extends ControllerTest {
                                     headerWithName("Authorization").description("JWT 엑세스 토큰")
                             ),
                             responseFields(
-                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                            .description("코드"),
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                                     fieldWithPath("data.level").type(JsonFieldType.STRING).description("유저 레벨"),
                                     fieldWithPath("data.isLevelUp").type(JsonFieldType.BOOLEAN).description("레벨업 했는지 여부"),
                                     fieldWithPath("data.remainFeedbackCount").type(JsonFieldType.NUMBER).description("레벨업까지 남은 피드백 횟수"),

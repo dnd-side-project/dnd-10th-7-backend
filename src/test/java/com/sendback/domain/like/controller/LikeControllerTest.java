@@ -60,6 +60,8 @@ public class LikeControllerTest extends ControllerTest {
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터"),
                                 fieldWithPath("data.isReacted").type(JsonFieldType.BOOLEAN)
                                         .description("데이터"),
                                 fieldWithPath("message").type(JsonFieldType.STRING)
