@@ -2,6 +2,7 @@ package com.sendback.domain.project.controller;
 
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
@@ -15,8 +16,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.sendback.domain.project.fixture.ProjectFixture.MOCK_SAVE_PROJECT_REQUEST_DTO;
-import static com.sendback.domain.project.fixture.ProjectFixture.MOCK_UPDATE_PROJECT_REQUEST_DTO;
+import static com.sendback.domain.project.fixture.ProjectFixture.*;
 import static org.mockito.ArgumentMatchers.*;
 
 
@@ -27,6 +27,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -38,6 +39,92 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ProjectControllerTest extends ControllerTest {
+
+    @Nested
+    @DisplayName("project 상세 조회 시")
+    class getProjectDetail {
+
+        ProjectDetailResponseDto projectDetailResponseDto = MOCK_PROJECT_DETAIL_RESPONSE_DTO;
+
+        @Test
+        @DisplayName("정상적인 요청일 시 성공을 반환한다.")
+        @WithMockCustomUser
+        public void success() throws Exception {
+            //given
+            Long projectId = 1L;
+            given(projectService.getProjectDetail(any(), any())).willReturn(projectDetailResponseDto);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}", projectId).with(csrf()))
+                    .andDo(print());
+
+            //then
+            resultActions
+                    .andDo(document("project/detail",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("projectId").description("프로젝트 ID")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("유저 ID"),
+                                    fieldWithPath("data.username").type(JsonFieldType.STRING).description("유저 이름"),
+                                    fieldWithPath("data.userLevel").type(JsonFieldType.STRING).description("유저 레벨"),
+                                    fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 주소"),
+                                    fieldWithPath("data.projectId").type(JsonFieldType.NUMBER).description("프로젝트 ID"),
+                                    fieldWithPath("data.title").type(JsonFieldType.STRING).description("제목"),
+                                    fieldWithPath("data.fieldName").type(JsonFieldType.STRING).description("분야"),
+                                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("내용"),
+                                    fieldWithPath("data.demoSiteUrl").type(JsonFieldType.STRING).description("데모 사이트 주소"),
+                                    fieldWithPath("data.progress").type(JsonFieldType.STRING).description("진행 정도"),
+                                    fieldWithPath("data.projectImageUrl").type(JsonFieldType.ARRAY).description("프로젝트 사진"),
+                                    fieldWithPath("data.frontendCount").type(JsonFieldType.NUMBER).description("프론트엔드 인원"),
+                                    fieldWithPath("data.backendCount").type(JsonFieldType.NUMBER).description("백엔드 인원"),
+                                    fieldWithPath("data.designerCount").type(JsonFieldType.NUMBER).description("디자이너 인원"),
+                                    fieldWithPath("data.plannerCount").type(JsonFieldType.NUMBER).description("기획자 인원"),
+                                    fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
+                                    fieldWithPath("data.scrapCount").type(JsonFieldType.NUMBER).description("스크랩 수"),
+                                    fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("댓글 수"),
+                                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("글 생성 날짜"),
+                                    fieldWithPath("data.startedAt").type(JsonFieldType.STRING).description("시작 날짜"),
+                                    fieldWithPath("data.endedAt").type(JsonFieldType.STRING).description("끝나는 날짜"),
+                                    fieldWithPath("data.isAuthor").type(JsonFieldType.BOOLEAN).description("작성자인지 여부"),
+                                    fieldWithPath("data.isCheckedLike").type(JsonFieldType.BOOLEAN).description("좋아요 체크 여부"),
+                                    fieldWithPath("data.isCheckedScrap").type(JsonFieldType.BOOLEAN).description("스크랩 체크 여부"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )))
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.userId").value(projectDetailResponseDto.userId()))
+                    .andExpect(jsonPath("$.data.username").value(projectDetailResponseDto.username()))
+                    .andExpect(jsonPath("$.data.userLevel").value(projectDetailResponseDto.userLevel()))
+                    .andExpect(jsonPath("$.data.profileImageUrl").value(projectDetailResponseDto.profileImageUrl()))
+                    .andExpect(jsonPath("$.data.projectId").value(projectDetailResponseDto.projectId()))
+                    .andExpect(jsonPath("$.data.title").value(projectDetailResponseDto.title()))
+                    .andExpect(jsonPath("$.data.fieldName").value(projectDetailResponseDto.fieldName()))
+                    .andExpect(jsonPath("$.data.content").value(projectDetailResponseDto.content()))
+                    .andExpect(jsonPath("$.data.demoSiteUrl").value(projectDetailResponseDto.demoSiteUrl()))
+                    .andExpect(jsonPath("$.data.progress").value(projectDetailResponseDto.progress()))
+                    .andExpect(jsonPath("$.data.frontendCount").value(projectDetailResponseDto.frontendCount()))
+                    .andExpect(jsonPath("$.data.backendCount").value(projectDetailResponseDto.backendCount()))
+                    .andExpect(jsonPath("$.data.designerCount").value(projectDetailResponseDto.designerCount()))
+                    .andExpect(jsonPath("$.data.plannerCount").value(projectDetailResponseDto.plannerCount()))
+                    .andExpect(jsonPath("$.data.likeCount").value(projectDetailResponseDto.likeCount()))
+                    .andExpect(jsonPath("$.data.scrapCount").value(projectDetailResponseDto.scrapCount()))
+                    .andExpect(jsonPath("$.data.commentCount").value(projectDetailResponseDto.commentCount()))
+                    .andExpect(jsonPath("$.data.createdAt").value(projectDetailResponseDto.createdAt()))
+                    .andExpect(jsonPath("$.data.startedAt").value(projectDetailResponseDto.startedAt()))
+                    .andExpect(jsonPath("$.data.endedAt").value(projectDetailResponseDto.endedAt()))
+                    .andExpect(jsonPath("$.data.isAuthor").value(projectDetailResponseDto.isAuthor()))
+                    .andExpect(jsonPath("$.data.isCheckedLike").value(projectDetailResponseDto.isCheckedLike()))
+                    .andExpect(jsonPath("$.data.isCheckedScrap").value(projectDetailResponseDto.isCheckedScrap()))
+                    .andExpect(status().isOk());
+
+        }
+    }
 
     @Nested
     @DisplayName("project 등록 요청 시")
