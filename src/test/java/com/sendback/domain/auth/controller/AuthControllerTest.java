@@ -286,7 +286,7 @@ public class AuthControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
-                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                    fieldWithPath("data").type(JsonFieldType.NULL)
                                             .description("응답 데이터"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")
