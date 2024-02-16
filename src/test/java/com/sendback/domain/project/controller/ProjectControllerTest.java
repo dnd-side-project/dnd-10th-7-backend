@@ -69,6 +69,7 @@ public class ProjectControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                                     fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("유저 ID"),
                                     fieldWithPath("data.username").type(JsonFieldType.STRING).description("유저 이름"),
                                     fieldWithPath("data.userLevel").type(JsonFieldType.STRING).description("유저 레벨"),
@@ -187,6 +188,8 @@ public class ProjectControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
                                     fieldWithPath("data.projectId").type(JsonFieldType.NUMBER)
                                             .description("프로젝트 ID"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
@@ -314,6 +317,8 @@ public class ProjectControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
                                     fieldWithPath("data.projectId").type(JsonFieldType.NUMBER)
                                             .description("프로젝트 ID"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
@@ -360,7 +365,7 @@ public class ProjectControllerTest extends ControllerTest {
                                             .description("코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("에러 메시지"),
-                                    fieldWithPath("data").type(JsonFieldType.NULL)
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
                                             .description("데이터")
                             )))
                     .andExpect(jsonPath("$.code").value("302"))
@@ -401,7 +406,7 @@ public class ProjectControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
-                                    fieldWithPath("data").type(JsonFieldType.NULL)
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
                                             .description("데이터"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")

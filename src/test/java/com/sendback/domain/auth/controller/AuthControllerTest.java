@@ -107,7 +107,7 @@ public class AuthControllerTest extends ControllerTest {
                                     fieldWithPath("data").type(JsonFieldType.OBJECT)
                                             .description("응답 데이터"),
                                     fieldWithPath("data.signToken").type(JsonFieldType.STRING)
-                                            .description("사인 토큰"),
+                                            .description("sign 토큰"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")
                             )));
@@ -286,7 +286,7 @@ public class AuthControllerTest extends ControllerTest {
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
                                             .description("코드"),
-                                    fieldWithPath("data").type(JsonFieldType.NULL)
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
                                             .description("응답 데이터"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")

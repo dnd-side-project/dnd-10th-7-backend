@@ -333,6 +333,8 @@ public class UserControllerTest extends ControllerTest {
                                             .description("상태 코드"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("응답 데이터"),
                                     fieldWithPath("data.page").type(JsonFieldType.NUMBER)
                                             .description("페이지 번호"),
                                     fieldWithPath("data.size").type(JsonFieldType.NUMBER)
