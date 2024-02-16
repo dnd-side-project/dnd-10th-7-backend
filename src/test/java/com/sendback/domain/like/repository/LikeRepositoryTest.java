@@ -52,6 +52,39 @@ public class LikeRepositoryTest extends RepositoryTest {
     }
 
     @Nested
+    @DisplayName("프로젝트에 좋아요 여부를 조회할 때")
+    class existsByUserAndProjectAndIsDeletedIsFalse {
+
+        @Test
+        @DisplayName("없으면 false를 반환한다.")
+        public void success_false() throws Exception {
+            //given
+            User user = userTestPersister.builder().save();
+            Project project = projectTestPersister.builder().save();
+
+            //when
+            boolean exists = likeRepository.existsByUserAndProjectAndIsDeletedIsFalse(user, project);
+
+            //then
+            assertThat(exists).isFalse();
+        }
+
+        @Test
+        @DisplayName("있으면 true를 반환한다.")
+        public void success_true() throws Exception {
+            //given
+            Like like = likeTestPersister.builder().save();
+
+            //when
+            boolean exists = likeRepository.existsByUserAndProjectAndIsDeletedIsFalse(like.getUser(), like.getProject());
+
+            //then
+            assertThat(exists).isTrue();
+        }
+
+    }
+
+    @Nested
     @DisplayName("특정 프로젝트 리스트들이 받은 좋아요 개수를 조회하는 경우")
     class countByProjects{
         @Test
