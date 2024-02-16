@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
-import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_USER;
+
+import static com.sendback.domain.user.exception.UserExceptionType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +51,9 @@ public class UserService {
 
     @Transactional
     public Token signUpUser(@RequestBody SignUpRequestDto signUpRequestDto) {
+        if(userRepository.findByNickname(signUpRequestDto.nickname()).isPresent()){
+            throw new BadRequestException(DUPLICATED_NICKNAME);
+        }
         jwtProvider.validateSignToken(signUpRequestDto.signToken());
         SigningAccount signingAccount = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
         User user = User.of(signingAccount, signUpRequestDto);
