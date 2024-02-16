@@ -38,7 +38,8 @@ public class SecurityConfig {
 
     private final String[] GET_METHOD_PERMITTED_URLS = {
             "/api/projects/{projectId}/feedbacks/{feedbackId}",
-            "/api/projects/{projectId}"
+            "/api/projects/{projectId}",
+            "/api/projects/{projectId}/feedbacks"
     };
 
     @Bean
