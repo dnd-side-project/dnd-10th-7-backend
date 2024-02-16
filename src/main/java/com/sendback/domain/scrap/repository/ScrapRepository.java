@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     Optional<Scrap> findByUserAndProject(User user, Project project);
+
+    boolean existsByUserAndProjectAndIsDeletedIsFalse(User user, Project project);
 }
