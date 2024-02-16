@@ -4,17 +4,23 @@ import com.sendback.domain.auth.dto.Token;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
+import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
+import com.sendback.global.common.CustomPage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.ResultActions;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
@@ -267,6 +273,93 @@ public class UserControllerTest extends ControllerTest {
                                             .description("메시지")
                             )));
             verify(userService).updateUserInfo(anyLong(), any(UpdateUserInfoRequestDto.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 등록한 프로젝트 리스트 조회")
+    class getRegisteredProjects {
+        @Test
+        @DisplayName("200 상태코드와 함께 내가 등록한 프로젝트 정보들을 반환한다.")
+        @WithMockCustomUser
+        void getRegisteredProjects_success() throws Exception {
+
+            // given
+            LocalDateTime mockDateTime = LocalDateTime.now();
+            RegisteredProjectResponseDto responseDto = new RegisteredProjectResponseDto(1L, "mock_title", "개발중", "테스트 테스트",
+                    mockDateTime, 5L);
+            List<RegisteredProjectResponseDto> responseDtos = new ArrayList<>();
+            responseDtos.add(responseDto);
+
+            CustomPage<RegisteredProjectResponseDto> customPage = CustomPage.<RegisteredProjectResponseDto>builder()
+                    .page(1)
+                    .size(5)
+                    .totalElements(100L)
+                    .totalPages(10)
+                    .content(responseDtos)  // Add your mocked content here if needed
+                    .build();
+            given(userService.getRegisteredProjects(anyLong(), anyInt(), anyInt(), anyInt())).willReturn(customPage);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get("/api/users/me/project")
+                            .with(csrf())
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
+                            .param("page", "1")
+                            .param("size", "5")
+                            .param("sort", "0"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.code").value("200"))
+                        .andExpect(jsonPath("$.message").value("성공"))
+                        .andExpect(jsonPath("$.data.page").value(customPage.getPage()))
+                        .andExpect(jsonPath("$.data.size").value(customPage.getSize()))
+                        .andExpect(jsonPath("$.data.totalElements").value(customPage.getTotalElements()))
+                        .andExpect(jsonPath("$.data.totalPages").value(customPage.getTotalPages()))
+                        .andExpect(jsonPath("$.data.content").isArray())
+                        .andExpect(jsonPath("$.data.content[0].projectId").value(1))
+                        .andExpect(jsonPath("$.data.content[0].title").value("mock_title"))
+                        .andExpect(jsonPath("$.data.content[0].progress").value("개발중"))
+                        .andExpect(jsonPath("$.data.content[0].summary").value("테스트 테스트"))
+                        .andExpect(jsonPath("$.data.content[0].createdAt").value(mockDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
+                        .andExpect(jsonPath("$.data.content[0].pullUpCnt").value(5))
+                    .andDo(print());
+
+            // then
+            resultActions
+                    .andDo(document("getRegisteredProjects-success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("상태 코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지"),
+                                    fieldWithPath("data.page").type(JsonFieldType.NUMBER)
+                                            .description("페이지 번호"),
+                                    fieldWithPath("data.size").type(JsonFieldType.NUMBER)
+                                            .description("페이지 크기"),
+                                    fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER)
+                                            .description("전체 요소 수"),
+                                    fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER)
+                                            .description("전체 페이지 수"),
+                                    fieldWithPath("data.content").type(JsonFieldType.ARRAY)
+                                            .description("프로젝트 목록"),
+                                    fieldWithPath("data.content[].projectId").type(JsonFieldType.NUMBER)
+                                            .description("프로젝트 ID"),
+                                    fieldWithPath("data.content[].title").type(JsonFieldType.STRING)
+                                            .description("프로젝트 제목"),
+                                    fieldWithPath("data.content[].progress").type(JsonFieldType.STRING)
+                                            .description("프로젝트 진행 상태"),
+                                    fieldWithPath("data.content[].summary").type(JsonFieldType.STRING)
+                                            .description("프로젝트 요약"),
+                                    fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING)
+                                            .attributes(Attributes.key("format").value("yyyy.MM.dd"))
+                                            .description("프로젝트 등록일"),
+                                    fieldWithPath("data.content[].pullUpCnt").type(JsonFieldType.NUMBER)
+                                            .description("Pull Up 수")
+
+                            )));
+            verify(userService).getRegisteredProjects(anyLong(), anyInt(), anyInt(), anyInt());
+
         }
     }
 
