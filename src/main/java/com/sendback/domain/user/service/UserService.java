@@ -99,6 +99,9 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(NOT_FOUND_USER)
         );
+        if(userRepository.findByNickname(updateUserInfoRequestDto.nickname()).isPresent()){
+            throw new BadRequestException(DUPLICATED_NICKNAME);
+        }
         user.update(updateUserInfoRequestDto);
         fieldRepository.deleteByUserId(userId);
         List<Field> fieldList = updateUserInfoRequestDto.field().stream()
