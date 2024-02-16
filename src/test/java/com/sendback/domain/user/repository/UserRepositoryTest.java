@@ -1,7 +1,5 @@
 package com.sendback.domain.user.repository;
 
-import com.sendback.domain.project.entity.Project;
-import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
@@ -11,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static com.sendback.domain.user.fixture.UserFixture.createDummyUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -28,7 +24,7 @@ public class UserRepositoryTest extends RepositoryTest {
         @DisplayName("db에 존재하는 유저를 닉네임을 통해 조회한다. ")
         public void findByNickname_success() {
             //given
-            User user = userTestPersister.save();
+            User user = userTestPersister.builder().save();
 
             //when
             Optional<User> findUser = userRepository.findByNickname(user.getNickname());

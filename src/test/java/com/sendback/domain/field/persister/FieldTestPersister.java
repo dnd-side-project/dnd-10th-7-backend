@@ -21,26 +21,36 @@ public class FieldTestPersister {
     private final UserTestPersister userTestPersister;
     private final FieldRepository fieldRepository;
 
-    private FieldName fieldName;
-    private User user;
-
-    public FieldTestPersister fieldName(FieldName fieldName) {
-        this.fieldName = fieldName;
-        return this;
+    public FieldBuilder builder() {
+        return new FieldBuilder();
     }
 
-    public FieldTestPersister user(User user) {
-        this.user = user;
-        return this;
+    public final class FieldBuilder {
+
+        private FieldName fieldName;
+        private User user;
+
+        public FieldBuilder fieldName(FieldName fieldName) {
+            this.fieldName = fieldName;
+            return this;
+        }
+
+        public FieldBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        private final List<FieldName> fieldNames
+                = List.of(ART, FINANCE, ENVIRONMENT, EDU, HEALTH, IT, HOBBY, GAME);
+
+        public Field save() {
+            Field field = Field.of(
+                    (fieldName == null ? fieldNames.get((int) (Math.random() * 100) % fieldNames.size()) : fieldName),
+                    (user == null ? userTestPersister.builder().save() : user));
+            return fieldRepository.save(field);
+        }
+
     }
 
-    private final List<FieldName> fieldNames
-            = List.of(ART, FINANCE, ENVIRONMENT, EDU, HEALTH, IT, HOBBY, GAME);
 
-    public Field save() {
-        Field field = Field.of(
-                (fieldName == null ? fieldNames.get((int) (Math.random() * 100) % fieldNames.size()) : fieldName),
-                (user == null ? userTestPersister.save() : user));
-        return fieldRepository.save(field);
-    }
 }
