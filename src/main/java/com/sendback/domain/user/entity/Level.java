@@ -17,6 +17,16 @@ public enum Level {
         this.feedbackSubmitCount = feedbackSubmitCount;
     }
 
+    public static int toNumber(Level level) {
+        return switch (level) {
+            case ONE -> 1;
+            case TWO -> 2;
+            case THREE -> 3;
+            case FOUR -> 4;
+            case FIVE -> 5;
+        };
+    }
+
     public static Level getLevelByFeedbackSubmitCount(Long feedbackSubmitCount) {
         if (TWO.feedbackSubmitCount > feedbackSubmitCount) {
             return ONE;
