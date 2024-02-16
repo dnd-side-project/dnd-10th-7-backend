@@ -29,6 +29,9 @@ include::{snippets}/project/save/response-fields.adoc[]
 include::{snippets}/project/detail/http-request.adoc[]
 - Path parameters +
 include::{snippets}/project/detail/path-parameters.adoc[]
+- Header +
+로그인 한 사용자면 보내주시고 아니면 안보내주셔도 됩니다
+include::{snippets}/project/detail/request-headers.adoc[]
 
 ==== HTTP Response
 include::{snippets}/project/detail/http-response.adoc[]
