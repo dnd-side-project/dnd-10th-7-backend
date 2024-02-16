@@ -8,7 +8,10 @@
 
 ==== HTTP Requests
 include::{snippets}/scrap/click/http-request.adoc[]
+- Path parameters +
+include::{snippets}/scrap/click/path-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/scrap/click/http-response.adoc[]
+- Response body +
 include::{snippets}/scrap/click/response-fields.adoc[]

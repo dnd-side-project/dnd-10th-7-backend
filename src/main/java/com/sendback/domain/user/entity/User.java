@@ -68,7 +68,6 @@ public class User extends BaseEntity {
                 .email(email)
                 .socialname(socialName)
                 .level(level)
-                .socialname(socialName)
                 .gender(gender)
                 .birthday(birthday)
                 .profileImageUrl(profileImageUrl)
@@ -91,6 +90,7 @@ public class User extends BaseEntity {
                 .nickname(signUpRequestDto.nickname())
                 .build();
     }
+
     public void levelUp(Level level) {
         this.level = level;
     }

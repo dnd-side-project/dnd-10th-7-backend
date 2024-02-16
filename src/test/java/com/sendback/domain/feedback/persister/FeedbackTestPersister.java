@@ -20,32 +20,39 @@ public class FeedbackTestPersister {
     private final ProjectTestPersister projectTestPersister;
     private final FeedbackRepository feedbackRepository;
 
-    private User user;
-    private Project project;
-
-    private SaveFeedbackRequestDto saveFeedbackRequestDto;
-
-    public FeedbackTestPersister user(User user) {
-        this.user = user;
-        return this;
+    public FeedbackBuilder builder() {
+        return new FeedbackBuilder();
     }
 
-    public FeedbackTestPersister project(Project project) {
-        this.project = project;
-        return this;
-    }
+    public final class FeedbackBuilder {
+        private User user;
+        private Project project;
 
-    public FeedbackTestPersister saveFeedbackRequestDto(SaveFeedbackRequestDto saveFeedbackRequestDto) {
-        this.saveFeedbackRequestDto = saveFeedbackRequestDto;
-        return this;
-    }
+        private SaveFeedbackRequestDto saveFeedbackRequestDto;
 
-    public Feedback save() {
-        Feedback feedback = Feedback.of(
-                (user == null ? userTestPersister.save() : user),
-                (project == null ? projectTestPersister.save() : project),
-                (saveFeedbackRequestDto == null) ? MOCK_SAVE_FEEDBACK_REQUEST : saveFeedbackRequestDto
-        );
-        return feedbackRepository.save(feedback);
+        public FeedbackBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public FeedbackBuilder project(Project project) {
+            this.project = project;
+            return this;
+        }
+
+        public FeedbackBuilder saveFeedbackRequestDto(SaveFeedbackRequestDto saveFeedbackRequestDto) {
+            this.saveFeedbackRequestDto = saveFeedbackRequestDto;
+            return this;
+        }
+
+        public Feedback save() {
+            Feedback feedback = Feedback.of(
+                    (user == null ? userTestPersister.builder().save() : user),
+                    (project == null ? projectTestPersister.builder().save() : project),
+                    (saveFeedbackRequestDto == null) ? MOCK_SAVE_FEEDBACK_REQUEST : saveFeedbackRequestDto
+            );
+            return feedbackRepository.save(feedback);
+        }
+
     }
 }

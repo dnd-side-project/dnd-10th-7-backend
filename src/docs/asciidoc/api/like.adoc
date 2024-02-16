@@ -6,7 +6,10 @@
 === 성공
 ==== HTTP Requests
 include::{snippets}/like/react/http-request.adoc[]
+- Path parameters +
+include::{snippets}/like/react/path-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/like/react/http-response.adoc[]
+- Response body +
 include::{snippets}/like/react/response-fields.adoc[]

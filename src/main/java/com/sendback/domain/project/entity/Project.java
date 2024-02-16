@@ -1,10 +1,13 @@
 package com.sendback.domain.project.entity;
 
-import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.comment.entity.Comment;
+import com.sendback.domain.like.entity.Like;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.scrap.entity.Scrap;
 import com.sendback.domain.user.entity.User;
 import com.sendback.global.common.BaseEntity;
+import com.sendback.global.common.constants.FieldName;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,6 +17,8 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,9 +35,8 @@ public class Project extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "field_id")
-    private Field field;
+    @Enumerated(EnumType.STRING)
+    private FieldName fieldName;
 
     private String title;
 
@@ -59,10 +63,22 @@ public class Project extends BaseEntity {
 
     private boolean isDeleted = false;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Scrap> scraps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectImage> projectImages = new ArrayList<>();
+
     @Builder
     private Project(
             final User user,
-            final Field field,
+            final FieldName fieldName,
             final String title,
             final String content,
             final String summary,
@@ -80,7 +96,7 @@ public class Project extends BaseEntity {
             final boolean isFinished
     ) {
         this.user = user;
-        this.field = field;
+        this.fieldName = fieldName;
         this.title = title;
         this.content = content;
         this.summary = summary;
@@ -93,10 +109,10 @@ public class Project extends BaseEntity {
         this.isFinished = isFinished;
     }
 
-    public static Project of(User user, Field field, SaveProjectRequestDto saveProjectRequestDto) {
+    public static Project of(User user, SaveProjectRequestDto saveProjectRequestDto) {
         return Project.builder()
                 .user(user)
-                .field(field)
+                .fieldName(FieldName.toEnum(saveProjectRequestDto.fieldName()))
                 .title(saveProjectRequestDto.title())
                 .content(saveProjectRequestDto.content())
                 .summary(saveProjectRequestDto.summary())
@@ -112,8 +128,8 @@ public class Project extends BaseEntity {
                 .build();
     }
 
-    public void updateProject(Field field, UpdateProjectRequestDto updateProjectRequestDto) {
-        this.field = field;
+    public void updateProject(FieldName fieldName, UpdateProjectRequestDto updateProjectRequestDto) {
+        this.fieldName = fieldName;
         this.title = updateProjectRequestDto.title();
         this.content = updateProjectRequestDto.content();
         this.summary = updateProjectRequestDto.summary();

@@ -12,11 +12,11 @@ import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
-import com.sendback.domain.user.entity.Career;
 import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.ServiceTest;
+import com.sendback.global.common.constants.FieldName;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.SignInException;
@@ -28,11 +28,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import java.util.*;
 import java.util.stream.Collectors;
-import static com.sendback.domain.field.fixture.FieldFixture.mock_Fields;
+
+import static com.sendback.domain.field.fixture.FieldFixture.createMockFields;
 import static com.sendback.domain.project.fixture.ProjectFixture.createDummyProject;
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_NICKNAME;
 import static com.sendback.domain.user.exception.UserExceptionType.INVALID_SIGN_TOKEN;
 import static com.sendback.domain.user.fixture.UserFixture.*;
+import static com.sendback.domain.user.fixture.UserFixture.createDummyUser_C;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertNotNull;
@@ -63,8 +65,10 @@ public class UserServiceTest extends ServiceTest {
     @Mock
     FieldService fieldService;
 
-    private User user;
+    private User user = createDummyUser_C();
     private Project project;
+    List<Field> mock_Fields = createMockFields(user);
+
     @BeforeEach
     public void setUp() {
         this.user = spy(createDummyUser_C());
@@ -77,13 +81,13 @@ public class UserServiceTest extends ServiceTest {
         // given
         String signToken = "valid signToken";
         doNothing().when(jwtProvider).validateSignToken(any());
-        given(jwtProvider.getSignUserInfo(signToken)).willReturn(mock_signingAccount);
+        given(jwtProvider.getSignUserInfo(signToken)).willReturn(MOCK_SIGNING_ACCOUNT);
         given(userRepository.save(any(User.class))).willReturn(mock_user);
         given(jwtProvider.issueToken(mock_user.getId()))
                 .willReturn(new Token("valid accessToken", "valid refreshToken"));
 
         // when
-        Token resultToken = userService.signUpUser(mock_signUpRequestDto);
+        Token resultToken = userService.signUpUser(MOCK_SIGN_UP_REQUEST_DTO);
 
         // then
         verify(jwtProvider).validateSignToken(any());
@@ -104,7 +108,7 @@ public class UserServiceTest extends ServiceTest {
                 .when(jwtProvider).validateSignToken(signToken);
 
         // when, then
-        assertThatThrownBy(() -> userService.signUpUser(mock_Invalid_SignToken_signUpRequestDto))
+        assertThatThrownBy(() -> userService.signUpUser(MOCK_INVALID_SIGN_TOKEN_SIGN_UP_REQUEST_DTO))
                 .isInstanceOf(SignInException.class)
                 .hasMessage(INVALID_SIGN_TOKEN.getMessage());
     }
@@ -180,6 +184,7 @@ public class UserServiceTest extends ServiceTest {
             given(fieldRepository.findAllByUserId(mockUserId)).willReturn(mock_Fields);
             List<String> mock_fieldNameList = mock_Fields.stream()
                     .map(Field::getName)
+                    .map(FieldName::getName)
                     .collect(Collectors.toList());
 
             // when
@@ -187,7 +192,7 @@ public class UserServiceTest extends ServiceTest {
 
             // then
             assertThat(responseDto.nickname()).isEqualTo(user.getNickname());
-            assertThat(responseDto.career()).isEqualTo(Career.toString(user.getCareer()));
+            assertThat(responseDto.career()).isEqualTo(user.getCareer().getValue());
             assertThat(responseDto.profileImageUrl()).isEqualTo(user.getProfileImageUrl());
             assertThat(responseDto.birthday()).isEqualTo(user.getBirthDay());
             assertThat(responseDto.email()).isEqualTo(user.getEmail());
@@ -212,7 +217,7 @@ public class UserServiceTest extends ServiceTest {
             Long mockUserId = 1L;
             User user = createDummyUser_C();
             UpdateUserInfoRequestDto requestDto = new UpdateUserInfoRequestDto("테스트",
-                    "2000.01.01", "backend", Arrays.asList("환경", "게임"));
+                    "2000.01.01", "백엔드", Arrays.asList("환경", "게임"));
 
             given(userRepository.findById(mockUserId)).willReturn(Optional.of(user));
             given(fieldRepository.deleteByUserId(mockUserId)).willReturn(1L);

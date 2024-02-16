@@ -46,7 +46,7 @@ public class UserControllerTest extends ControllerTest {
             String accessToken = "valid accessToken";
             String refreshToken = "valid refreshToken";
             SignUpRequestDto signUpRequestDto = new SignUpRequestDto("user", "2000.01.01",
-                    "male", "backend", Arrays.asList("환경", "게임"), "valid signToken");
+                    "남자", "백엔드", Arrays.asList("환경", "게임"), "valid signToken");
             given(userService.signUpUser(signUpRequestDto)).willReturn(new Token(accessToken, refreshToken));
 
             String content = objectMapper.writeValueAsString(signUpRequestDto);

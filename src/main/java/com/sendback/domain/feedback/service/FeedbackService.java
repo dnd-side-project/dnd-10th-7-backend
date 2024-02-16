@@ -52,7 +52,7 @@ public class FeedbackService {
         projectService.getProjectById(projectId);
         Feedback feedback = getFeedback(feedbackId);
 
-        return FeedbackDetailResponseDto.of(feedback);
+        return FeedbackDetailResponseDto.from(feedback);
     }
 
     public Feedback getFeedback(Long feedbackId) {

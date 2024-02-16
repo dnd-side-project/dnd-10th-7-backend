@@ -10,14 +10,30 @@
 ==== HTTP Requests
 include::{snippets}/project/save/http-request.adoc[]
 
-- *body*
+- Request body +
 include::{snippets}/project/save/request-parts.adoc[]
 data
 include::{snippets}/project/save/request-part-data-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/project/save/http-response.adoc[]
+- Response body +
 include::{snippets}/project/save/response-fields.adoc[]
+
+[[project-detail]]
+== 프로젝트 상세 조회
+
+=== 성공
+
+==== HTTP Requests
+include::{snippets}/project/detail/http-request.adoc[]
+- Path parameters +
+include::{snippets}/project/detail/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/project/detail/http-response.adoc[]
+- Response body +
+include::{snippets}/project/detail/response-fields.adoc[]
 
 [[project-update]]
 == 프로젝트 수정
@@ -27,13 +43,14 @@ include::{snippets}/project/save/response-fields.adoc[]
 ==== HTTP Requests
 include::{snippets}/project/update/http-request.adoc[]
 
-- *body*
+- Request body +
 include::{snippets}/project/update/request-parts.adoc[]
 data
 include::{snippets}/project/update/request-part-data-fields.adoc[]
 
 ==== HTTP Response
 include::{snippets}/project/update/http-response.adoc[]
+- Response body +
 include::{snippets}/project/update/response-fields.adoc[]
 
 [[project-delete]]
@@ -47,4 +64,5 @@ include::{snippets}/project/delete/http-request.adoc[]
 
 ==== HTTP Response
 include::{snippets}/project/delete/http-response.adoc[]
+- Response body +
 include::{snippets}/project/delete/response-fields.adoc[]

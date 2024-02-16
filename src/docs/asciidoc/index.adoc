@@ -10,7 +10,8 @@ endif::[]
 :sectlinks:
 
 include::api/auth.adoc[]
+include::api/user.adoc[]
 include::api/project.adoc[]
+include::api/feedback.adoc[]
 include::api/like.adoc[]
 include::api/scrap.adoc[]
-include::api/user.adoc[]

@@ -22,7 +22,7 @@ public class FeedbackController {
 
     private final FeedbackService feedbackService;
 
-    @PostMapping("/{projectId}/feedback")
+    @PostMapping("/{projectId}/feedbacks")
     public ApiResponse<FeedbackIdResponseDto> saveFeedback(
             @UserId Long userId,
             @PathVariable Long projectId,

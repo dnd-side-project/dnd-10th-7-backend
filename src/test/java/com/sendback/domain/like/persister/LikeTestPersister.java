@@ -18,24 +18,33 @@ public class LikeTestPersister {
     private final ProjectTestPersister projectTestPersister;
 
 
-    private User user;
-    private Project project;
-
-    public LikeTestPersister user(User user) {
-        this.user = user;
-        return this;
+    public LikeBuilder builder() {
+        return new LikeBuilder();
     }
 
-    public LikeTestPersister project(Project project) {
-        this.project = project;
-        return this;
+    public final class LikeBuilder {
+
+        private User user;
+        private Project project;
+
+        public LikeBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public LikeBuilder project(Project project) {
+            this.project = project;
+            return this;
+        }
+
+        public Like save() {
+            Like like = Like.of(
+                    (user == null ? userTestPersister.builder().save() : user),
+                    (project == null ? projectTestPersister.builder().save() : project)
+            );
+            return likeRepository.save(like);
+        }
+
     }
 
-    public Like save() {
-        Like like = Like.of(
-                (user == null ? userTestPersister.save() : user),
-                (project == null ? projectTestPersister.save() : project)
-        );
-        return likeRepository.save(like);
-    }
 }

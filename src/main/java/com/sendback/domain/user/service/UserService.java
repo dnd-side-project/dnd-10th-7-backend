@@ -14,10 +14,10 @@ import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
 import com.sendback.domain.user.dto.response.UserInfoResponseDto;
-import com.sendback.domain.user.entity.Career;
 import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
+import com.sendback.global.common.constants.FieldName;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
@@ -51,7 +51,7 @@ public class UserService {
         User user = User.of(signingAccount, signUpRequestDto);
         User savedUser = userRepository.save(user);
         List<Field> fieldList = signUpRequestDto.interests().stream()
-                .map(intersts -> Field.of(intersts, user))
+                .map(interests -> Field.of(FieldName.toEnum(interests), user))
                 .collect(Collectors.toList());
         fieldService.saveAll(fieldList);
         return jwtProvider.issueToken(savedUser.getId());
@@ -76,10 +76,11 @@ public class UserService {
         List<Field> fieldList = fieldRepository.findAllByUserId(userId);
         List<String> fieldNameList = fieldList.stream()
                 .map(Field::getName)
-                .collect(Collectors.toList());
+                .map(FieldName::getName)
+                .toList();
         Long needToFeedbackCount = Level.getRemainCountUntilNextLevel(feedbackCount);
         UserInfoResponseDto responseDto = new UserInfoResponseDto(user.getNickname(),
-                Career.toString(user.getCareer()), user.getProfileImageUrl(), user.getBirthDay(),
+                user.getCareer().getValue(), user.getProfileImageUrl(), user.getBirthDay(),
                 user.getEmail(), fieldNameList, Level.toNumber(user.getLevel()), feedbackCount, needToFeedbackCount,
                 projectCount, likeCount);
         return responseDto;
@@ -93,7 +94,7 @@ public class UserService {
         user.update(updateUserInfoRequestDto);
         fieldRepository.deleteByUserId(userId);
         List<Field> fieldList = updateUserInfoRequestDto.field().stream()
-                .map(intersts -> Field.of(intersts, user))
+                .map(intersts -> Field.of(FieldName.toEnum(intersts), user))
                 .collect(Collectors.toList());
         fieldRepository.saveAll(fieldList);
         return new UpdateUserInfoResponseDto(updateUserInfoRequestDto.nickname(), updateUserInfoRequestDto.birthday(),
