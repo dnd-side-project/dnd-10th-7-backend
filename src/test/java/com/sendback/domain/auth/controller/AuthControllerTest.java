@@ -227,7 +227,7 @@ public class AuthControllerTest extends ControllerTest {
             ResultActions resultActions = mockMvc.perform(
                             post("/api/auth/reissue")
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .content(content).with(csrf()))
+                                    .content(content).with(csrf().asHeader()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
