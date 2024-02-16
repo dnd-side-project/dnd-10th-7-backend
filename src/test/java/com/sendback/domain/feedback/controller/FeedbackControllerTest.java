@@ -3,6 +3,7 @@ package com.sendback.domain.feedback.controller;
 import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
 import com.sendback.domain.feedback.dto.response.FeedbackDetailResponseDto;
 import com.sendback.domain.feedback.dto.response.FeedbackIdResponseDto;
+import com.sendback.domain.feedback.dto.response.GetFeedbacksResponse;
 import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
@@ -221,6 +222,72 @@ public class FeedbackControllerTest extends ControllerTest {
                     .andExpect(status().isOk());
 
 
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트에 따라 최신 순으로 피드백 3개 이하를 조회할 때")
+    class getFeedbacks {
+
+        GetFeedbacksResponse getFeedbacksResponse = MOCK_GET_FEEDBACK_RESPONSE;
+
+        @Test
+        @DisplayName("정상적인 접근 시 값을 반환한다.")
+        @WithMockCustomUser
+        public void success() throws Exception {
+            //given
+            Long projectId = 1L;
+            given(feedbackService.getFeedbacks(any(), anyLong())).willReturn(getFeedbacksResponse);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}/feedbacks", projectId)
+                    .with(csrf().asHeader()))
+                    .andDo(print());
+
+            //then
+            resultActions
+                    .andDo(document("feedback/list",
+                            customRequestPreprocessor(),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("projectId").description("프로젝트 ID")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
+                                    fieldWithPath("data.feedbacks").type(JsonFieldType.ARRAY).description("피드백 리스트"),
+                                    fieldWithPath("data.feedbacks[].feedbackId").type(JsonFieldType.NUMBER).description("피드백 ID"),
+                                    fieldWithPath("data.feedbacks[].title").type(JsonFieldType.STRING).description("제목"),
+                                    fieldWithPath("data.feedbacks[].rewardMessage").type(JsonFieldType.STRING).description("추가 리워드"),
+                                    fieldWithPath("data.feedbacks[].startedAt").type(JsonFieldType.STRING).description("시작 날짜"),
+                                    fieldWithPath("data.feedbacks[].endedAt").type(JsonFieldType.STRING).description("끝나는 날짜"),
+                                    fieldWithPath("data.feedbacks[].isFinished").type(JsonFieldType.BOOLEAN).description("피드백 종료 여부"),
+                                    fieldWithPath("data.feedbacks[].isAuthor").type(JsonFieldType.BOOLEAN).description("작성자 여부"),
+                                    fieldWithPath("data.feedbacks[].isSubmitted").type(JsonFieldType.BOOLEAN).description("제출 여부"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )))
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.feedbacks").isArray())
+                    .andExpect(jsonPath("$.data.feedbacks[0].feedbackId").value(MOCK_FEEDBACK_RESPONSE_A.feedbackId()))
+                    .andExpect(jsonPath("$.data.feedbacks[0].title").value(MOCK_FEEDBACK_RESPONSE_A.title()))
+                    .andExpect(jsonPath("$.data.feedbacks[0].rewardMessage").value(MOCK_FEEDBACK_RESPONSE_A.rewardMessage()))
+                    .andExpect(jsonPath("$.data.feedbacks[0].startedAt").value(MOCK_FEEDBACK_RESPONSE_A.startedAt()))
+                    .andExpect(jsonPath("$.data.feedbacks[0].endedAt").value(MOCK_FEEDBACK_RESPONSE_A.endedAt()))
+                    .andExpect(jsonPath("$.data.feedbacks[0].isFinished").value(MOCK_FEEDBACK_RESPONSE_A.isFinished()))
+                    .andExpect(jsonPath("$.data.feedbacks[0].isAuthor").value(MOCK_FEEDBACK_RESPONSE_A.isAuthor()))
+                    .andExpect(jsonPath("$.data.feedbacks[0].isSubmitted").value(MOCK_FEEDBACK_RESPONSE_A.isSubmitted()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].feedbackId").value(MOCK_FEEDBACK_RESPONSE_B.feedbackId()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].title").value(MOCK_FEEDBACK_RESPONSE_B.title()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].rewardMessage").value(MOCK_FEEDBACK_RESPONSE_B.rewardMessage()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].startedAt").value(MOCK_FEEDBACK_RESPONSE_B.startedAt()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].endedAt").value(MOCK_FEEDBACK_RESPONSE_B.endedAt()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].isFinished").value(MOCK_FEEDBACK_RESPONSE_B.isFinished()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].isAuthor").value(MOCK_FEEDBACK_RESPONSE_B.isAuthor()))
+                    .andExpect(jsonPath("$.data.feedbacks[1].isSubmitted").value(MOCK_FEEDBACK_RESPONSE_B.isSubmitted()))
+                    .andExpect(status().isOk());
         }
     }
 }
