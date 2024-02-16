@@ -13,8 +13,8 @@ include::{snippets}/login-kakao-success/http-request.adoc[]
 include::{snippets}/login-kakao-success/query-parameters.adoc[]
 
 ==== HTTP Response
-- Response body
 include::{snippets}/login-kakao-success/http-response.adoc[]
+- Response body
 include::{snippets}/login-kakao-success/response-fields.adoc[]
 
 
@@ -30,8 +30,8 @@ include::{snippets}/login-kakao-failure/query-parameters.adoc[]
 
 
 ==== HTTP Response
-- Response body
 include::{snippets}/login-kakao-failure/http-response.adoc[]
+- Response body
 include::{snippets}/login-kakao-failure/response-fields.adoc[]
 
 '''

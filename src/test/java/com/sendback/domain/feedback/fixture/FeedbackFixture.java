@@ -11,6 +11,9 @@ import com.sendback.global.common.constants.Level;
 
 import java.time.LocalDate;
 
+import static com.sendback.domain.project.entity.Progress.PLANNING;
+import static com.sendback.global.common.constants.FieldName.ART;
+
 public class FeedbackFixture {
 
     private static final String TITLE = "title";
@@ -27,7 +30,7 @@ public class FeedbackFixture {
     public static final FeedbackDetailResponseDto MOCK_FEEDBACK_DETAIL_RESPONSE = new FeedbackDetailResponseDto(
             1L, "유저 닉네임", Level.ONE.getName(), "프로필 이미지 url", 1L, "피드백 제목", "피드백 링크",
             "피드백 내용", "추가 리워드 메시지", "yyyy-MM-dd HH:mm", LocalDate.of(2024, 1, 12).toString(),
-            LocalDate.of(2024, 1, 15).toString(),1L, "프로젝트 ID", "art", "PLANNING");
+            LocalDate.of(2024, 1, 15).toString(),1L, "프로젝트 ID", ART.getName(), PLANNING.getValue());
 
     public static final SubmitFeedbackResponseDto MOCK_SUBMIT_FEEDBACK_RESPONSE = new SubmitFeedbackResponseDto(
             Level.ONE.getName(), false, 4L);
