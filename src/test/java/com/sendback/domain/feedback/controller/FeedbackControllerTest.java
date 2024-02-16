@@ -54,13 +54,13 @@ public class FeedbackControllerTest extends ControllerTest {
             ResultActions resultActions = mockMvc.perform(post("/api/projects/{projectId}/feedbacks", 1L)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(saveFeedbackRequestDto)).with(csrf()))
+                            .content(objectMapper.writeValueAsString(saveFeedbackRequestDto)).with(csrf().asHeader()))
                     .andDo(print());
 
             //then
             resultActions
                     .andDo(document("feedback/save",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID")
@@ -107,13 +107,13 @@ public class FeedbackControllerTest extends ControllerTest {
             given(feedbackService.getFeedbackDetail(anyLong(), anyLong())).willReturn(mockFeedbackDetailResponseDto);
 
             //when
-            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}/feedbacks/{feedbackId}", projectId, feedbackId).with(csrf()))
-                    .andDo(print());
+            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}/feedbacks/{feedbackId}", projectId, feedbackId)
+                            .with(csrf().asHeader())).andDo(print());
 
             //then
             resultActions
                     .andDo(document("feedback/detail",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID"),
@@ -189,14 +189,13 @@ public class FeedbackControllerTest extends ControllerTest {
             ResultActions resultActions = mockMvc.perform(multipart("/api/projects/{projectId}/feedbacks/{feedbackId}", projectId, feedbackId)
                     .file(mockMultipartFile)
                     .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
-                    .contentType(MediaType.MULTIPART_FORM_DATA).with(csrf()));
-            resultActions
-                    .andDo(print());
+                    .contentType(MediaType.MULTIPART_FORM_DATA).with(csrf().asHeader()));
 
             //then
             resultActions
+                    .andDo(print())
                     .andDo(document("feedback/submit",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID"),
