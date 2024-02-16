@@ -2,6 +2,7 @@ package com.sendback.domain.project.controller;
 
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
 import com.sendback.domain.project.service.ProjectService;
 import com.sendback.global.common.ApiResponse;
@@ -9,6 +10,8 @@ import com.sendback.global.common.UserId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +25,20 @@ import static com.sendback.global.common.ApiResponse.success;
 public class ProjectController {
 
     private final ProjectService projectService;
+
+    @GetMapping("/{projectId}")
+    private ApiResponse<ProjectDetailResponseDto> getProjectDetail(
+            @PathVariable Long projectId
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.getPrincipal() == "anonymousUser") {
+            return success(projectService.getProjectDetail(null , projectId));
+        }
+
+        Long userId = (Long) authentication.getPrincipal();
+        return success(projectService.getProjectDetail(userId, projectId));
+    }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse<ProjectIdResponseDto> saveProject(
