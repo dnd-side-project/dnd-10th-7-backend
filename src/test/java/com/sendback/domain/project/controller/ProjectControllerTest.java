@@ -55,7 +55,9 @@ public class ProjectControllerTest extends ControllerTest {
             given(projectService.getProjectDetail(any(), any())).willReturn(projectDetailResponseDto);
 
             //when
-            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}", projectId).with(csrf().asHeader()))
+            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}", projectId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
+                            .with(csrf().asHeader()))
                     .andDo(print());
 
             //then
@@ -63,6 +65,9 @@ public class ProjectControllerTest extends ControllerTest {
                     .andDo(document("project/detail",
                             customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰").optional()
+                            ),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID")
                             ),

@@ -244,6 +244,7 @@ public class FeedbackControllerTest extends ControllerTest {
 
             //when
             ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}/feedbacks", projectId)
+                    .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                     .with(csrf().asHeader()))
                     .andDo(print());
 
@@ -254,6 +255,9 @@ public class FeedbackControllerTest extends ControllerTest {
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID")
+                            ),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰").optional()
                             ),
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
