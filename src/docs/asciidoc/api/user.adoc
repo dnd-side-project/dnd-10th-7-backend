@@ -46,7 +46,7 @@ include::{snippets}/getUserInfo-success/response-fields.adoc[]
 
 '''
 
-[[get-userInfo]]
+[[get-updateInfo]]
 == 내 정보 수정하기
 === 성공
 ==== HTTP Requests
