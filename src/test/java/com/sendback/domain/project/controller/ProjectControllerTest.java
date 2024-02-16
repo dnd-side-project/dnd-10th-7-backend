@@ -55,13 +55,13 @@ public class ProjectControllerTest extends ControllerTest {
             given(projectService.getProjectDetail(any(), any())).willReturn(projectDetailResponseDto);
 
             //when
-            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}", projectId).with(csrf()))
+            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}", projectId).with(csrf().asHeader()))
                     .andDo(print());
 
             //then
             resultActions
                     .andDo(document("project/detail",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID")
@@ -151,7 +151,7 @@ public class ProjectControllerTest extends ControllerTest {
                             .file(data)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                            .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
                     .andExpect(jsonPath("$.data.projectId").value(1))
@@ -160,7 +160,7 @@ public class ProjectControllerTest extends ControllerTest {
             //then
             resultActions
                     .andDo(document("project/save",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
                                     headerWithName("Authorization").description("JWT 엑세스 토큰")
@@ -211,7 +211,7 @@ public class ProjectControllerTest extends ControllerTest {
                             .file(data)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX+"AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                            .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                     .andDo(print())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
@@ -228,13 +228,13 @@ public class ProjectControllerTest extends ControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                            .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                     .andDo(print());
 
             //then
             resultActions
                     .andDo(document("project/save/failByNotExistData",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
                                     headerWithName("Authorization").description("JWT 엑세스 토큰")
@@ -277,13 +277,13 @@ public class ProjectControllerTest extends ControllerTest {
                             })
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                            .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                     .andDo(print());
 
             //then
             resultActions
                     .andDo(document("project/update",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID")
@@ -341,13 +341,13 @@ public class ProjectControllerTest extends ControllerTest {
                             })
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                            .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                     .andDo(print());
 
             //then
             resultActions
                     .andDo(document("project/update/failByNotExistData",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID")
@@ -384,13 +384,13 @@ public class ProjectControllerTest extends ControllerTest {
             //when
             ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/projects/{projectId}", projectId)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
-                            .accept(MediaType.APPLICATION_JSON).with(csrf()))
+                            .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                     .andDo(print());
 
             //then
             resultActions
                     .andDo(document("project/delete",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
                                     parameterWithName("projectId").description("프로젝트 ID")

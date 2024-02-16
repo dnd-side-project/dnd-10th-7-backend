@@ -57,7 +57,7 @@ public class AuthControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.accessToken").value(accessToken))
                     .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
                     .andDo(document("login-kakao-success",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
                                     parameterWithName("code").description("인가 코드")
@@ -96,7 +96,7 @@ public class AuthControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.message").value("추가 정보를 입력하세요."))
                     .andExpect(jsonPath("$.data.signToken").value("test_sign_token"))
                     .andDo(document("login-kakao-failure",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
                                     parameterWithName("code").description("인가 코드")
@@ -143,7 +143,7 @@ public class AuthControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.refreshToken").value(refreshToken))
                     .andDo(print())
                     .andDo(document("login-google-success",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
                                     parameterWithName("code").description("인가 코드")
@@ -185,7 +185,7 @@ public class AuthControllerTest extends ControllerTest {
 
             // then
             resultActions.andDo(document("login-google-failure",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
                                     parameterWithName("code").description("인가 코드")
@@ -237,7 +237,7 @@ public class AuthControllerTest extends ControllerTest {
 
             // then
             resultActions.andDo(document("reissue-token",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             requestFields(
                                     fieldWithPath("refreshToken").type(JsonFieldType.STRING)
@@ -272,7 +272,7 @@ public class AuthControllerTest extends ControllerTest {
             ResultActions resultActions = mockMvc.perform(post("/api/auth/logout")
                             // 인증정보 설정
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken").with(csrf()))
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken").with(csrf().asHeader()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
@@ -281,7 +281,7 @@ public class AuthControllerTest extends ControllerTest {
             // then
             resultActions
                     .andDo(document("logout-social",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)

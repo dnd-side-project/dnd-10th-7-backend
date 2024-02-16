@@ -55,7 +55,7 @@ public class UserControllerTest extends ControllerTest {
             ResultActions resultActions = mockMvc.perform(
                             post("/api/users/signup")
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .content(content).with(csrf()))
+                                    .content(content).with(csrf().asHeader()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
@@ -65,7 +65,7 @@ public class UserControllerTest extends ControllerTest {
 
             // then
             resultActions.andDo(document("signUpKakao-success",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             requestFields(
                                     fieldWithPath("nickname").type(JsonFieldType.STRING)
@@ -122,7 +122,7 @@ public class UserControllerTest extends ControllerTest {
             // then
             resultActions
                     .andDo(document("checkUserNickname-success",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
                                     parameterWithName("nickname").description("닉네임")
@@ -156,7 +156,7 @@ public class UserControllerTest extends ControllerTest {
 
             // when
             ResultActions resultActions = mockMvc.perform(get("/api/users/me")
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken").with(csrf()))
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken").with(csrf().asHeader()))
                     // HTTP 상태코드 200 (OK) 확인
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
@@ -178,7 +178,7 @@ public class UserControllerTest extends ControllerTest {
             // then
             resultActions
                     .andDo(document("getUserInfo-success",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -232,7 +232,7 @@ public class UserControllerTest extends ControllerTest {
             // when
             ResultActions resultActions = mockMvc.perform(put("/api/users/me")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(content).with(csrf())
+                            .content(content).with(csrf().asHeader())
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
                     // HTTP 상태코드 200 (OK) 확인
                     .andExpect(status().isOk())
@@ -248,7 +248,7 @@ public class UserControllerTest extends ControllerTest {
             // then
             resultActions
                     .andDo(document("updateUserInfo-success",
-                            preprocessRequest(prettyPrint()),
+                            customRequestPreprocessor(),
                             preprocessResponse(prettyPrint()),
                             responseFields(
                                     fieldWithPath("code").type(JsonFieldType.NUMBER)
