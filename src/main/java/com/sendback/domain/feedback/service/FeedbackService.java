@@ -1,9 +1,7 @@
 package com.sendback.domain.feedback.service;
 
 import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
-import com.sendback.domain.feedback.dto.response.FeedbackDetailResponseDto;
-import com.sendback.domain.feedback.dto.response.FeedbackIdResponseDto;
-import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponseDto;
+import com.sendback.domain.feedback.dto.response.*;
 import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.feedback.entity.FeedbackSubmit;
 import com.sendback.domain.feedback.repository.FeedbackRepository;
@@ -20,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.sendback.domain.feedback.exception.FeedbackExceptionType.DUPLICATE_FEEDBACK_SUBMIT;
 import static com.sendback.domain.feedback.exception.FeedbackExceptionType.NOT_FOUND_FEEDBACK;
@@ -53,6 +53,30 @@ public class FeedbackService {
         Feedback feedback = getFeedback(feedbackId);
 
         return FeedbackDetailResponseDto.from(feedback);
+    }
+
+    public GetFeedbacksResponse getFeedbacks(Long userId, Long projectId) {
+        Project project = projectService.getProjectById(projectId);
+        List<Feedback> feedbacks = feedbackRepository.findTop3ByProjectAndIsDeletedIsFalseOrderByIdDesc(project);
+
+        if (userId == null) {
+            List<FeedbackResponse> feedbackResponses = feedbacks.stream()
+                    .map(feedback -> FeedbackResponse.of(feedback, false, false)).toList();
+            return new GetFeedbacksResponse(feedbackResponses);
+        }
+
+        User loginUser = userService.getUserById(userId);
+        boolean isAuthor = project.isAuthor(loginUser);
+
+        List<FeedbackResponse> feedbackResponses = feedbacks.stream()
+                .map(feedback -> FeedbackResponse.of(feedback, isAuthor, checkSubmit(loginUser, feedback)))
+                .toList();
+
+        return new GetFeedbacksResponse(feedbackResponses);
+    }
+
+    private boolean checkSubmit(User loginUser, Feedback feedback) {
+        return feedbackSubmitRepository.existsByUserAndFeedbackAndIsDeletedIsFalse(loginUser, feedback);
     }
 
     public Feedback getFeedback(Long feedbackId) {
