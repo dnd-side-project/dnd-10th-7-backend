@@ -4,6 +4,7 @@ import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -392,7 +393,7 @@ public class ProjectControllerTest extends ControllerTest {
             doNothing().when(projectService).deleteProject(anyLong(), anyLong());
 
             //when
-            ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/projects/{projectId}", projectId)
+            ResultActions resultActions = mockMvc.perform(delete("/api/projects/{projectId}", projectId)
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
                     .andDo(print());
@@ -417,6 +418,55 @@ public class ProjectControllerTest extends ControllerTest {
                                             .description("메시지")
                             )))
                     .andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 끌올 시")
+    class pullUpProject {
+
+        PullUpProjectResponseDto pullUpProjectResponseDto = new PullUpProjectResponseDto(true);
+
+        @Test
+        @DisplayName("정상적인 요청이라면 프로젝트를 삭제한다.")
+        @WithMockCustomUser
+        public void success() throws Exception {
+            //given
+            Long projectId = 1L;
+            given(projectService.pullUpProject(anyLong(), anyLong())).willReturn(pullUpProjectResponseDto);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(put("/api/projects/{projectId}/pull-up", projectId)
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
+                            .accept(MediaType.APPLICATION_JSON).with(csrf().asHeader()))
+                    .andDo(print());
+
+            //then
+            resultActions
+                    .andDo(document("project/pull-up",
+                            customRequestPreprocessor(),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("projectId").description("프로젝트 ID")
+                            ),
+                            requestHeaders(
+                                    headerWithName("Authorization").description("JWT 엑세스 토큰")
+                            ),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("코드"),
+                                    fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                            .description("데이터"),
+                                    fieldWithPath("data.isPulledUp").type(JsonFieldType.BOOLEAN)
+                                                    .description("끌올 여부 결과"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지")
+                            )))
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.isPulledUp").value(true))
+                    .andExpect(status().isOk());
+
         }
     }
 

@@ -5,6 +5,7 @@ import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.project.repository.ProjectImageRepository;
@@ -277,6 +278,108 @@ public class ProjectServiceTest extends ServiceTest {
 
             //when - then
             assertDoesNotThrow(() -> projectService.deleteProject(1L, 1L));
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 끌올 시")
+    class pullUpProject {
+
+        @Test
+        @DisplayName("프로젝트가 존재하지 않으면 예외를 발생한다.")
+        public void fail_notFoundProject() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(projectRepository.findById(anyLong())).willReturn(Optional.empty());
+
+            //when - then
+            assertThatThrownBy(() -> projectService.pullUpProject(1L, 1L))
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessage(NOT_FOUND_PROJECT.getMessage());
+        }
+
+        @Test
+        @DisplayName("프로젝트 작성자와 끌올 요청자가 다르면 오류를 발생한다.")
+        public void fail_notAuthor() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
+            given(project.isAuthor(user)).willReturn(false);
+
+            //when - then
+            assertThatThrownBy(() -> projectService.pullUpProject(1L, 1L))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(NOT_PROJECT_AUTHOR.getMessage());
+        }
+
+        @Test
+        @DisplayName("끌올한지 3일이 안지났으면 오류를 일으킨다.")
+        public void fail_needToTime() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
+            given(project.isAuthor(user)).willReturn(true);
+            given(project.isAvailablePulledUp()).willReturn(false);
+
+            //when - then
+            assertThatThrownBy(() -> projectService.pullUpProject(1L, 1L))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(NEED_TO_TIME_FOR_PULL_UP.getMessage());
+        }
+
+        @Test
+        @DisplayName("프로젝트 끌올 횟수를 넘기면 오류를 일으킨다.")
+        public void fail_overProjectPullUpCnt() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
+            given(project.isAuthor(user)).willReturn(true);
+            given(project.isAvailablePulledUp()).willReturn(true);
+            given(project.isOverPullUpCnt()).willReturn(true);
+            given(user.isOverPullUpCnt()).willReturn(false);
+
+            //when - then
+            assertThatThrownBy(() -> projectService.pullUpProject(1L, 1L))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(OVER_PROJECT_PULL_UP_CNT.getMessage());
+        }
+
+        @Test
+        @DisplayName("유저 끌올 횟수를 넘기면 오류를 일으킨다.")
+        public void fail_overUserPullUpCnt() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
+            given(project.isAuthor(user)).willReturn(true);
+            given(project.isAvailablePulledUp()).willReturn(true);
+            given(project.isOverPullUpCnt()).willReturn(false);
+            given(user.isOverPullUpCnt()).willReturn(true);
+
+            //when - then
+            assertThatThrownBy(() -> projectService.pullUpProject(1L, 1L))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(OVER_USER_PULL_UP_CNT.getMessage());
+        }
+
+        @Test
+        @DisplayName("정상적인 요청이라면 성공을 반환한다.")
+        public void success() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
+            given(project.isAuthor(user)).willReturn(true);
+            given(project.isAvailablePulledUp()).willReturn(true);
+            given(project.isOverPullUpCnt()).willReturn(false);
+            given(user.isOverPullUpCnt()).willReturn(false);
+            doNothing().when(user).actPullUp();
+            doNothing().when(project).pullUp();
+
+            //when
+            PullUpProjectResponseDto response = projectService.pullUpProject(1L, 1L);
+
+            //then
+            assertThat(response.isPulledUp()).isTrue();
+
         }
     }
 
