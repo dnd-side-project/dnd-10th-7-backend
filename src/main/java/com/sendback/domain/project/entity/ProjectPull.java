@@ -16,5 +16,11 @@ public class ProjectPull {
 
     private Long pullUpCnt;
     private boolean isPulledUp;
-    private LocalDateTime pullEndAt;
+    private LocalDateTime pulledAt;
+
+    public void pullUp() {
+        this.pulledAt = LocalDateTime.now();
+        this.isPulledUp = true;
+        this.pullUpCnt += 1;
+    }
 }

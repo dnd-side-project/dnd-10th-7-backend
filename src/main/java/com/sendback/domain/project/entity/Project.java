@@ -90,9 +90,9 @@ public class Project extends BaseEntity {
             final long frontendCount,
             final long backendCount,
             final long designCount,
-            final boolean pullUpCnt,
-            final long isPulledUp,
-            final LocalDateTime pullEndAt,
+            final long pullUpCnt,
+            final boolean isPulledUp,
+            final LocalDateTime pulledAt,
             final boolean isFinished
     ) {
         this.user = user;
@@ -105,7 +105,7 @@ public class Project extends BaseEntity {
         this.endedAt = endedAt;
         this.progress = progress;
         this.projectParticipantCount = new ProjectParticipantCount(plannerCount, frontendCount, backendCount, designCount);
-        this.projectPull = new ProjectPull(isPulledUp, pullUpCnt, pullEndAt);
+        this.projectPull = new ProjectPull(pullUpCnt, isPulledUp, pulledAt);
         this.isFinished = isFinished;
     }
 
@@ -124,6 +124,9 @@ public class Project extends BaseEntity {
                 .frontendCount(saveProjectRequestDto.frontendCount())
                 .backendCount(saveProjectRequestDto.backendCount())
                 .designCount(saveProjectRequestDto.designCount())
+                .pullUpCnt(0L)
+                .isPulledUp(false)
+                .pulledAt(LocalDateTime.now())
                 .isFinished(false)
                 .build();
     }
@@ -142,6 +145,19 @@ public class Project extends BaseEntity {
 
     public boolean isAuthor(final User user) {
         return Objects.equals(this.user, user);
+    }
+
+    public boolean isAvailablePulledUp() {
+        return (this.projectPull.getPulledAt().isBefore(LocalDateTime.now().minusDays(3))
+                || !this.getProjectPull().isPulledUp());
+    }
+
+    public boolean isOverPullUpCnt() {
+        return (this.projectPull.getPullUpCnt() > 15);
+    }
+
+    public void pullUp() {
+        this.projectPull.pullUp();
     }
 
 }
