@@ -75,3 +75,18 @@ include::{snippets}/getRegisteredProjects-success/query-parameters.adoc[]
 include::{snippets}/getRegisteredProjects-success/http-response.adoc[]
 - Response body
 include::{snippets}/getRegisteredProjects-success/response-fields.adoc[]
+
+
+[[get-scrappedProjects]]
+== 내가 스크랩한 프로젝트들 조회
+=== 성공
+==== HTTP Requests
+include::{snippets}/getScrappedProjects-success/http-request.adoc[]
+
+- Query parameters
+include::{snippets}/getScrappedProjects-success/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/getScrappedProjects-success/http-response.adoc[]
+- Response body
+include::{snippets}/getScrappedProjects-success/response-fields.adoc[]
