@@ -86,12 +86,12 @@ public class FeedbackServiceTest extends ServiceTest {
 
             //then
             assertThat(response.feedbacks().size()).isEqualTo(1L);
-            FeedbackResponse feedbackResponse = response.feedbacks().get(0);
-            assertThat(feedbackResponse.feedbackId()).isEqualTo(1L);
-            assertThat(feedbackResponse.title()).isEqualTo(feedback.getTitle());
-            assertThat(feedbackResponse.rewardMessage()).isEqualTo(feedback.getRewardMessage());
-            assertThat(feedbackResponse.isAuthor()).isEqualTo(false);
-            assertThat(feedbackResponse.isSubmitted()).isEqualTo(false);
+            FeedbackResponseDto feedbackResponseDto = response.feedbacks().get(0);
+            assertThat(feedbackResponseDto.feedbackId()).isEqualTo(1L);
+            assertThat(feedbackResponseDto.title()).isEqualTo(feedback.getTitle());
+            assertThat(feedbackResponseDto.rewardMessage()).isEqualTo(feedback.getRewardMessage());
+            assertThat(feedbackResponseDto.isAuthor()).isEqualTo(false);
+            assertThat(feedbackResponseDto.isSubmitted()).isEqualTo(false);
 
         }
 
@@ -111,12 +111,12 @@ public class FeedbackServiceTest extends ServiceTest {
 
             //then
             assertThat(response.feedbacks().size()).isEqualTo(1L);
-            FeedbackResponse feedbackResponse = response.feedbacks().get(0);
-            assertThat(feedbackResponse.feedbackId()).isEqualTo(1L);
-            assertThat(feedbackResponse.title()).isEqualTo(feedback.getTitle());
-            assertThat(feedbackResponse.rewardMessage()).isEqualTo(feedback.getRewardMessage());
-            assertThat(feedbackResponse.isAuthor()).isEqualTo(true);
-            assertThat(feedbackResponse.isSubmitted()).isEqualTo(true);
+            FeedbackResponseDto feedbackResponseDto = response.feedbacks().get(0);
+            assertThat(feedbackResponseDto.feedbackId()).isEqualTo(1L);
+            assertThat(feedbackResponseDto.title()).isEqualTo(feedback.getTitle());
+            assertThat(feedbackResponseDto.rewardMessage()).isEqualTo(feedback.getRewardMessage());
+            assertThat(feedbackResponseDto.isAuthor()).isEqualTo(true);
+            assertThat(feedbackResponseDto.isSubmitted()).isEqualTo(true);
 
 
         }

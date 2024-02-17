@@ -60,19 +60,19 @@ public class FeedbackService {
         List<Feedback> feedbacks = feedbackRepository.findTop3ByProjectAndIsDeletedIsFalseOrderByIdDesc(project);
 
         if (userId == null) {
-            List<FeedbackResponse> feedbackResponses = feedbacks.stream()
-                    .map(feedback -> FeedbackResponse.of(feedback, false, false)).toList();
-            return new GetFeedbacksResponse(feedbackResponses);
+            List<FeedbackResponseDto> feedbackResponsDtos = feedbacks.stream()
+                    .map(feedback -> FeedbackResponseDto.of(feedback, false, false)).toList();
+            return new GetFeedbacksResponse(feedbackResponsDtos);
         }
 
         User loginUser = userService.getUserById(userId);
         boolean isAuthor = project.isAuthor(loginUser);
 
-        List<FeedbackResponse> feedbackResponses = feedbacks.stream()
-                .map(feedback -> FeedbackResponse.of(feedback, isAuthor, checkSubmit(loginUser, feedback)))
+        List<FeedbackResponseDto> feedbackResponsDtos = feedbacks.stream()
+                .map(feedback -> FeedbackResponseDto.of(feedback, isAuthor, checkSubmit(loginUser, feedback)))
                 .toList();
 
-        return new GetFeedbacksResponse(feedbackResponses);
+        return new GetFeedbacksResponse(feedbackResponsDtos);
     }
 
     private boolean checkSubmit(User loginUser, Feedback feedback) {
