@@ -9,13 +9,12 @@ import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
-import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
-import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
-import com.sendback.domain.user.dto.response.UserInfoResponseDto;
+import com.sendback.domain.user.dto.response.*;
 import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
 import com.sendback.global.ServiceTest;
+import com.sendback.global.common.CustomPage;
 import com.sendback.global.common.constants.FieldName;
 import com.sendback.global.config.jwt.JwtProvider;
 import com.sendback.global.exception.type.BadRequestException;
@@ -26,6 +25,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -233,5 +237,55 @@ public class UserServiceTest extends ServiceTest {
             assertThat(responseDto.field()).isEqualTo(requestDto.field());
         }
 
+    }
+
+    @Nested
+    @DisplayName("내가 등록한 프로젝트 조회")
+    class getRegisteredProjects {
+
+        @Test
+        @DisplayName("성공하면 200과 함께 프로젝트 리스트 정보들이 반환된다.")
+        void getRegisteredProjects_success() {
+            // given
+            Long userId = 1L;
+            int page = 1;
+            int size = 5;
+            int sort = 0;
+            Page<RegisteredProjectResponseDto> mockResponseDtoPage = mock(Page.class);
+            Pageable pageable = PageRequest.of(page - 1, size);
+            boolean isFinished = sort == 0;
+            given(projectRepository.findAllRegisteredProjectsByMe(pageable, userId, isFinished)).willReturn(mockResponseDtoPage);
+
+            // when
+            CustomPage<RegisteredProjectResponseDto> responseDtoPage = userService.getRegisteredProjects(userId, page, size, sort);
+
+            // then
+            assert responseDtoPage != null;
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 스크랩한 프로젝트 조회")
+    class getScrappedProjects {
+
+        @Test
+        @DisplayName("성공하면 200과 함께 프로젝트 리스트 정보들이 반환된다.")
+        void getScrappedProjects_success() {
+            // given
+            Long userId = 1L;
+            int page = 1;
+            int size = 5;
+            int sort = 0;
+            Page<ScrappedProjectResponseDto> mockResponseDtoPage = mock(Page.class);
+            Pageable pageable = PageRequest.of(page - 1, size);
+            boolean isFinished = sort == 0;
+            given(projectRepository.findAllScrappedProjectsByMe(pageable, userId, isFinished)).willReturn(mockResponseDtoPage);
+
+            // when
+            CustomPage<ScrappedProjectResponseDto> responseDtoPage = userService.getScrappedProjects(userId, page, size, sort);
+
+            // then
+            assert responseDtoPage != null;
+        }
     }
 }
