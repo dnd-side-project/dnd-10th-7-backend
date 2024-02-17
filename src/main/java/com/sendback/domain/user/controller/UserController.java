@@ -2,9 +2,7 @@ package com.sendback.domain.user.controller;
 
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
-import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
-import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
-import com.sendback.domain.user.dto.response.UserInfoResponseDto;
+import com.sendback.domain.user.dto.response.*;
 import com.sendback.domain.user.service.UserService;
 import com.sendback.global.common.ApiResponse;
 import com.sendback.global.common.CustomPage;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.sendback.domain.auth.dto.Token;
-import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,9 +45,15 @@ public class UserController {
         return ApiResponse.success(userService.updateUserInfo(userId, updateUserInfoRequestDto));
     }
 
-    @GetMapping("/me/project")
+    @GetMapping("/me/projects")
     public ApiResponse<CustomPage<RegisteredProjectResponseDto>> getRegisteredProjects(@UserId Long userId, @RequestParam int page,
                                                                                        @RequestParam int size, @RequestParam int sort) {
         return ApiResponse.success(userService.getRegisteredProjects(userId, page, size, sort));
+    }
+
+    @GetMapping("/me/scraps")
+    public ApiResponse<CustomPage<ScrappedProjectResponseDto>> getScrappedProjects(@UserId Long userId, @RequestParam int page,
+                                                                                     @RequestParam int size, @RequestParam int sort) {
+        return ApiResponse.success(userService.getScrappedProjects(userId, page, size, sort));
     }
 }
