@@ -2,6 +2,8 @@ package com.sendback.domain.feedback.fixture;
 
 import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
 import com.sendback.domain.feedback.dto.response.FeedbackDetailResponseDto;
+import com.sendback.domain.feedback.dto.response.FeedbackResponseDto;
+import com.sendback.domain.feedback.dto.response.GetFeedbacksResponse;
 import com.sendback.domain.feedback.dto.response.SubmitFeedbackResponseDto;
 import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.feedback.entity.FeedbackSubmit;
@@ -10,6 +12,7 @@ import com.sendback.domain.user.entity.User;
 import com.sendback.global.common.constants.Level;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.sendback.domain.project.entity.Progress.PLANNING;
 import static com.sendback.global.common.constants.FieldName.ART;
@@ -34,6 +37,22 @@ public class FeedbackFixture {
 
     public static final SubmitFeedbackResponseDto MOCK_SUBMIT_FEEDBACK_RESPONSE = new SubmitFeedbackResponseDto(
             Level.ONE.getName(), false, 4L);
+
+    public static final FeedbackResponseDto MOCK_FEEDBACK_RESPONSE_DTO_A = new FeedbackResponseDto(
+            1L, "기획 피드백 부탁해요", "아메리카노 5개",
+            LocalDate.of(2024, 1, 12).toString(),
+            LocalDate.of(2024, 1, 15).toString(), false, false, false
+    );
+
+    public static final FeedbackResponseDto MOCK_FEEDBACK_RESPONSE_DTO_B = new FeedbackResponseDto(
+            2L, "와이어 프레임 피드백 부탁해요", "빙수 5개",
+            LocalDate.of(2024, 1, 15).toString(),
+            LocalDate.of(2024, 1, 18).toString(), true, true, false
+    );
+
+    public static final GetFeedbacksResponse MOCK_GET_FEEDBACK_RESPONSE = new GetFeedbacksResponse(
+            List.of(MOCK_FEEDBACK_RESPONSE_DTO_A, MOCK_FEEDBACK_RESPONSE_DTO_B)
+    );
 
     public static FeedbackSubmit createDummyFeedbackSubmit(User user, Feedback feedback) {
         return FeedbackSubmit.of(user, feedback, SCREEN_SHOT_URL);

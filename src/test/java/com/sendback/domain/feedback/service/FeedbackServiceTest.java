@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static com.sendback.domain.feedback.exception.FeedbackExceptionType.DUPLICATE_FEEDBACK_SUBMIT;
@@ -68,46 +69,59 @@ public class FeedbackServiceTest extends ServiceTest {
         this.feedback = spy(createDummyFeedback(user, project));
     }
 
-//    @Nested
-//    @DisplayName("특정 프로젝트 피드백 리스트 조회 시")
-//    class getFeedbacks {
-//
-//        @Test
-//        @DisplayName("로그인 안한 유저가 정상적인 요청시 값을 반환한다.")
-//        public void success_anonymous() throws Exception {
-//            //given
-//            given(projectService.getProjectById(anyLong())).willReturn(project);
-//            given(feedbackRepository.findTop3ByProjectIsDeletedIsFalseOrderByIdDesc(any(Project.class))).willReturn(List.of(feedback));
-//            given(feedback.getId()).willReturn(1L);
-//
-//            //when
-//            GetFeedbacksResponse response = feedbackService.getFeedbacks(null, 1L);
-//
-//            //then
-//            assertThat(response.feedbacks().size()).isEqualTo(1L);
-//            FeedbackResponse feedbackResponse = response.feedbacks().get(0);
-//            assertThat(feedbackResponse.feedbackId()).isEqualTo(1L);
-//            assertThat(feedbackResponse.title()).isEqualTo(feedback.getTitle());
-//            assertThat(feedbackResponse.rewardMessage()).isEqualTo(feedback.getRewardMessage());
-//            assertThat(feedbackResponse.isAuthor()).isEqualTo(false);
-//            assertThat(feedbackResponse.isSubmitted()).isEqualTo(false);
-//
-//        }
+    @Nested
+    @DisplayName("특정 프로젝트 피드백 리스트 조회 시")
+    class getFeedbacks {
 
-//        @Test
-//        @DisplayName("로그인 한 유저가 정상적인 접근 시 값을 반환한다.")
-//        public void success() throws Exception {
-//            //given
-//            given(projectService.getProjectById(anyLong())).willReturn(project);
-//            given(feedbackRepository.findTop3ByProjectIsDeletedIsFalseOrderByIdDesc(any(Project.class))).willReturn(List.of(feedback));
-//
-//            //when
-//
-//            //then
-//
-//        }
-//
-//    }
+        @Test
+        @DisplayName("로그인 안한 유저가 정상적인 요청시 값을 반환한다.")
+        public void success_anonymous() throws Exception {
+            //given
+            given(projectService.getProjectById(anyLong())).willReturn(project);
+            given(feedbackRepository.findTop3ByProjectAndIsDeletedIsFalseOrderByIdDesc(any(Project.class))).willReturn(List.of(feedback));
+            given(feedback.getId()).willReturn(1L);
+
+            //when
+            GetFeedbacksResponse response = feedbackService.getFeedbacks(null, 1L);
+
+            //then
+            assertThat(response.feedbacks().size()).isEqualTo(1L);
+            FeedbackResponseDto feedbackResponseDto = response.feedbacks().get(0);
+            assertThat(feedbackResponseDto.feedbackId()).isEqualTo(1L);
+            assertThat(feedbackResponseDto.title()).isEqualTo(feedback.getTitle());
+            assertThat(feedbackResponseDto.rewardMessage()).isEqualTo(feedback.getRewardMessage());
+            assertThat(feedbackResponseDto.isAuthor()).isEqualTo(false);
+            assertThat(feedbackResponseDto.isSubmitted()).isEqualTo(false);
+
+        }
+
+        @Test
+        @DisplayName("로그인 한 유저가 정상적인 접근 시 값을 반환한다.")
+        public void success() throws Exception {
+            //given
+            given(projectService.getProjectById(anyLong())).willReturn(project);
+            given(feedbackRepository.findTop3ByProjectAndIsDeletedIsFalseOrderByIdDesc(any(Project.class))).willReturn(List.of(feedback));
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(project.isAuthor(user)).willReturn(true);
+            given(feedbackSubmitRepository.existsByUserAndFeedbackAndIsDeletedIsFalse(any(User.class), any(Feedback.class))).willReturn(true);
+            given(feedback.getId()).willReturn(1L);
+
+            //when
+            GetFeedbacksResponse response = feedbackService.getFeedbacks(1L, 1L);
+
+            //then
+            assertThat(response.feedbacks().size()).isEqualTo(1L);
+            FeedbackResponseDto feedbackResponseDto = response.feedbacks().get(0);
+            assertThat(feedbackResponseDto.feedbackId()).isEqualTo(1L);
+            assertThat(feedbackResponseDto.title()).isEqualTo(feedback.getTitle());
+            assertThat(feedbackResponseDto.rewardMessage()).isEqualTo(feedback.getRewardMessage());
+            assertThat(feedbackResponseDto.isAuthor()).isEqualTo(true);
+            assertThat(feedbackResponseDto.isSubmitted()).isEqualTo(true);
+
+
+        }
+
+    }
 
     @Nested
     @DisplayName("피드백 등록 시")
