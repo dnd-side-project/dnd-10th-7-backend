@@ -1,10 +1,12 @@
 package com.sendback.domain.feedback.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
 
-import static com.sendback.global.util.CustomDateUtil.customDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record FeedbackDetailResponseDto(
 
@@ -17,9 +19,12 @@ public record FeedbackDetailResponseDto(
         String linkUrl,
         String content,
         String rewardMessage,
-        String createdAt,
-        String startedAt,
-        String endedAt,
+        @JsonFormat(pattern = "yyyy.MM.dd hh:mm")
+        LocalDateTime createdAt,
+        @JsonFormat(pattern = "yyyy.MM.dd")
+        LocalDate startedAt,
+        @JsonFormat(pattern = "yyyy.MM.dd")
+        LocalDate endedAt,
         Long projectId,
         String projectTitle,
         String fieldName,
@@ -38,9 +43,9 @@ public record FeedbackDetailResponseDto(
                 feedback.getLinkUrl(),
                 feedback.getContent(),
                 feedback.getRewardMessage(),
-                customDateFormat(feedback.getCreatedAt()),
-                feedback.getStartedAt().toString(),
-                feedback.getEndedAt().toString(),
+                feedback.getCreatedAt(),
+                feedback.getStartedAt(),
+                feedback.getEndedAt(),
                 project.getId(),
                 project.getTitle(),
                 project.getFieldName().getName(),

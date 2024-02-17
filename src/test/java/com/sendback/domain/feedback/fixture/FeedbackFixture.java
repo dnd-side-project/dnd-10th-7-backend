@@ -12,6 +12,7 @@ import com.sendback.domain.user.entity.User;
 import com.sendback.global.common.constants.Level;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.sendback.domain.project.entity.Progress.PLANNING;
@@ -32,22 +33,22 @@ public class FeedbackFixture {
 
     public static final FeedbackDetailResponseDto MOCK_FEEDBACK_DETAIL_RESPONSE = new FeedbackDetailResponseDto(
             1L, "유저 닉네임", Level.ONE.getName(), "프로필 이미지 url", 1L, "피드백 제목", "피드백 링크",
-            "피드백 내용", "추가 리워드 메시지", "yyyy-MM-dd HH:mm", LocalDate.of(2024, 1, 12).toString(),
-            LocalDate.of(2024, 1, 15).toString(),1L, "프로젝트 ID", ART.getName(), PLANNING.getValue());
+            "피드백 내용", "추가 리워드 메시지", LocalDateTime.now(), LocalDate.of(2024, 1, 12),
+            LocalDate.of(2024, 1, 15),1L, "프로젝트 ID", ART.getName(), PLANNING.getValue());
 
     public static final SubmitFeedbackResponseDto MOCK_SUBMIT_FEEDBACK_RESPONSE = new SubmitFeedbackResponseDto(
             Level.ONE.getName(), false, 4L);
 
     public static final FeedbackResponseDto MOCK_FEEDBACK_RESPONSE_DTO_A = new FeedbackResponseDto(
             1L, "기획 피드백 부탁해요", "아메리카노 5개",
-            LocalDate.of(2024, 1, 12).toString(),
-            LocalDate.of(2024, 1, 15).toString(), false, false, false
+            LocalDate.of(2024, 1, 12),
+            LocalDate.of(2024, 1, 15), false, false, false
     );
 
     public static final FeedbackResponseDto MOCK_FEEDBACK_RESPONSE_DTO_B = new FeedbackResponseDto(
             2L, "와이어 프레임 피드백 부탁해요", "빙수 5개",
-            LocalDate.of(2024, 1, 15).toString(),
-            LocalDate.of(2024, 1, 18).toString(), true, true, false
+            LocalDate.of(2024, 1, 15),
+            LocalDate.of(2024, 1, 18), true, true, false
     );
 
     public static final GetFeedbacksResponse MOCK_GET_FEEDBACK_RESPONSE = new GetFeedbacksResponse(

@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.sendback.domain.project.fixture.ProjectFixture.*;
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.*;
 
 
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -94,9 +96,12 @@ public class ProjectControllerTest extends ControllerTest {
                                     fieldWithPath("data.likeCount").type(JsonFieldType.NUMBER).description("좋아요 수"),
                                     fieldWithPath("data.scrapCount").type(JsonFieldType.NUMBER).description("스크랩 수"),
                                     fieldWithPath("data.commentCount").type(JsonFieldType.NUMBER).description("댓글 수"),
-                                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("글 생성 날짜"),
-                                    fieldWithPath("data.startedAt").type(JsonFieldType.STRING).description("시작 날짜"),
-                                    fieldWithPath("data.endedAt").type(JsonFieldType.STRING).description("끝나는 날짜"),
+                                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("글 생성 날짜")
+                                            .attributes(Attributes.key("format").value("yyyy.MM.dd hh:mm")),
+                                    fieldWithPath("data.startedAt").type(JsonFieldType.STRING).description("시작 날짜")
+                                            .attributes(Attributes.key("format").value("yyyy.MM.dd")),
+                                    fieldWithPath("data.endedAt").type(JsonFieldType.STRING).description("끝나는 날짜")
+                                            .attributes(Attributes.key("format").value("yyyy.MM.dd")),
                                     fieldWithPath("data.isAuthor").type(JsonFieldType.BOOLEAN).description("작성자인지 여부"),
                                     fieldWithPath("data.isCheckedLike").type(JsonFieldType.BOOLEAN).description("좋아요 체크 여부"),
                                     fieldWithPath("data.isCheckedScrap").type(JsonFieldType.BOOLEAN).description("스크랩 체크 여부"),
@@ -122,9 +127,9 @@ public class ProjectControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.likeCount").value(projectDetailResponseDto.likeCount()))
                     .andExpect(jsonPath("$.data.scrapCount").value(projectDetailResponseDto.scrapCount()))
                     .andExpect(jsonPath("$.data.commentCount").value(projectDetailResponseDto.commentCount()))
-                    .andExpect(jsonPath("$.data.createdAt").value(projectDetailResponseDto.createdAt()))
-                    .andExpect(jsonPath("$.data.startedAt").value(projectDetailResponseDto.startedAt()))
-                    .andExpect(jsonPath("$.data.endedAt").value(projectDetailResponseDto.endedAt()))
+                    .andExpect(jsonPath("$.data.createdAt").value(projectDetailResponseDto.createdAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd hh:mm"))))
+                    .andExpect(jsonPath("$.data.startedAt").value(projectDetailResponseDto.startedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
+                    .andExpect(jsonPath("$.data.endedAt").value(projectDetailResponseDto.endedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
                     .andExpect(jsonPath("$.data.isAuthor").value(projectDetailResponseDto.isAuthor()))
                     .andExpect(jsonPath("$.data.isCheckedLike").value(projectDetailResponseDto.isCheckedLike()))
                     .andExpect(jsonPath("$.data.isCheckedScrap").value(projectDetailResponseDto.isCheckedScrap()))

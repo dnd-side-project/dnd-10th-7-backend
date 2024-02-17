@@ -1,12 +1,13 @@
 package com.sendback.domain.project.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.user.entity.User;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-
-import static com.sendback.global.util.CustomDateUtil.customDateFormat;
 
 public record ProjectDetailResponseDto(
         Long userId,
@@ -27,9 +28,12 @@ public record ProjectDetailResponseDto(
         Long likeCount,
         Long scrapCount,
         Long commentCount,
-        String createdAt,
-        String startedAt,
-        String endedAt,
+        @JsonFormat(pattern = "yyyy.MM.dd hh:mm")
+        LocalDateTime createdAt,
+        @JsonFormat(pattern = "yyyy.MM.dd")
+        LocalDate startedAt,
+        @JsonFormat(pattern = "yyyy.MM.dd")
+        LocalDate endedAt,
         boolean isAuthor,
         boolean isCheckedLike,
         boolean isCheckedScrap
@@ -55,9 +59,9 @@ public record ProjectDetailResponseDto(
                 project.getLikes().stream().filter(like -> !like.isDeleted()).count(),
                 project.getScraps().stream().filter(scrap -> !scrap.isDeleted()).count(),
                 project.getComments().stream().filter(comment -> !comment.isDeleted()).count(),
-                customDateFormat(project.getCreatedAt()),
-                project.getStartedAt().toString(),
-                project.getEndedAt().toString(),
+                project.getCreatedAt(),
+                project.getStartedAt(),
+                project.getEndedAt(),
                 isAuthor,
                 isCheckedLike,
                 isCheckedScrap
