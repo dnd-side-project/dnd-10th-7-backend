@@ -4,6 +4,7 @@ import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.domain.project.service.ProjectService;
 import com.sendback.global.common.ApiResponse;
 import com.sendback.global.common.UserId;
@@ -45,6 +46,7 @@ public class ProjectController {
             @UserId Long userId,
             @RequestPart(value = "data") @Valid SaveProjectRequestDto saveProjectRequestDto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
         return success(projectService.saveProject(userId, saveProjectRequestDto, images));
     }
 
@@ -54,6 +56,7 @@ public class ProjectController {
             @PathVariable Long projectId,
             @RequestPart(value = "data") @Valid UpdateProjectRequestDto updateProjectRequestDto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
         return success(projectService.updateProject(userId, projectId, updateProjectRequestDto, images));
     }
 
@@ -65,5 +68,13 @@ public class ProjectController {
         projectService.deleteProject(userId, projectId);
 
         return success(null);
+    }
+
+    @PutMapping("/{projectId}/pull-up")
+    public ApiResponse<PullUpProjectResponseDto> pullUpProject(
+            @UserId Long userId,
+            @PathVariable Long projectId) {
+
+        return success(projectService.pullUpProject(userId, projectId));
     }
 }

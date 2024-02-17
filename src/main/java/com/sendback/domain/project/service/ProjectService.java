@@ -5,6 +5,7 @@ import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.project.repository.ProjectImageRepository;
@@ -112,6 +113,42 @@ public class ProjectService {
         if (project.isDeleted())
             throw new BadRequestException(DELETED_PROJECT);
         return project;
+    }
+
+    @Transactional
+    public PullUpProjectResponseDto pullUpProject(Long userId, Long projectId) {
+        User loginUser = userService.getUserById(userId);
+        Project project = getProjectById(projectId);
+
+        validateProjectAuthor(loginUser, project);
+        validateAvailablePulledUp(project);
+        validatePullUpCnt(loginUser, project);
+
+        pullUp(loginUser, project);
+
+        return new PullUpProjectResponseDto(true);
+    }
+
+    private void pullUp(User loginUser, Project project) {
+        loginUser.actPullUp();
+        project.pullUp();
+    }
+
+    private void validatePullUpCnt(User loginUser, Project project) {
+        boolean isOverProjectPullUpCnt = project.isOverPullUpCnt();
+        boolean isOverUserPullUpCnt = loginUser.isOverPullUpCnt();
+
+        if (isOverProjectPullUpCnt)
+            throw new BadRequestException(OVER_PROJECT_PULL_UP_CNT);
+
+        if (isOverUserPullUpCnt)
+            throw new BadRequestException(OVER_USER_PULL_UP_CNT);
+    }
+
+    private void validateAvailablePulledUp(Project project) {
+        boolean isAvailablePulledUp = project.isAvailablePulledUp();
+        if (!isAvailablePulledUp)
+            throw new BadRequestException(NEED_TO_TIME_FOR_PULL_UP);
     }
 
     private void uploadProjectImage(Project project, List<MultipartFile> images) {
