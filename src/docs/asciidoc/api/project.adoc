@@ -45,6 +45,8 @@ include::{snippets}/project/detail/response-fields.adoc[]
 
 ==== HTTP Requests
 include::{snippets}/project/update/http-request.adoc[]
+- Path parameters +
+include::{snippets}/project/update/path-parameters.adoc[]
 
 - Request body +
 include::{snippets}/project/update/request-parts.adoc[]
@@ -63,9 +65,27 @@ include::{snippets}/project/update/response-fields.adoc[]
 
 ==== HTTP Requests
 include::{snippets}/project/delete/http-request.adoc[]
+- Path parameters +
+include::{snippets}/project/delete/path-parameters.adoc[]
 
 
 ==== HTTP Response
 include::{snippets}/project/delete/http-response.adoc[]
 - Response body +
 include::{snippets}/project/delete/response-fields.adoc[]
+
+[[project-pull-up]]
+== 프로젝트 끌올
+
+=== 성공
+
+==== HTTP Requests
+include::{snippets}/project/pull-up/http-request.adoc[]
+
+- Path parameters +
+include::{snippets}/project/pull-up/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/project/pull-up/http-response.adoc[]
+- Response body +
+include::{snippets}/project/pull-up/response-fields.adoc[]
