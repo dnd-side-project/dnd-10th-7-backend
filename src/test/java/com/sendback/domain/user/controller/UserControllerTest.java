@@ -503,7 +503,7 @@ public class UserControllerTest extends ControllerTest {
             given(userService.getSubmittedFeedback(anyLong(), anyInt(), anyInt(), anyInt())).willReturn(customPage);
 
             // when
-            ResultActions resultActions = mockMvc.perform(get("/api/users/me/feedback")
+            ResultActions resultActions = mockMvc.perform(get("/api/users/me/feedbacks")
                             .with(csrf().asHeader())
                             .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken")
                             .param("page", "1")
