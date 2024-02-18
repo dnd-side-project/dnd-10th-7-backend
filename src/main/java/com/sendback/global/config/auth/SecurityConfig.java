@@ -80,7 +80,8 @@ public class SecurityConfig {
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
         configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-
+        configuration.addAllowedHeader("http://localhost:3000");
+        configuration.addAllowedHeader("https://sendback.co.kr");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
