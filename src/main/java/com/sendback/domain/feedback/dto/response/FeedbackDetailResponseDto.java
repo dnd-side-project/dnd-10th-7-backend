@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public record FeedbackDetailResponseDto(
 
         Long userId,
-        String username,
+        String nickname,
         String userLevel,
         String profileImageUrl,
         Long feedbackId,
@@ -27,7 +27,7 @@ public record FeedbackDetailResponseDto(
         LocalDate endedAt,
         Long projectId,
         String projectTitle,
-        String fieldName,
+        String field,
         String progress
 ) {
     public static FeedbackDetailResponseDto from(Feedback feedback) {

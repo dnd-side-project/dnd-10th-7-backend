@@ -11,12 +11,12 @@ import java.util.List;
 
 public record ProjectDetailResponseDto(
         Long userId,
-        String username,
+        String nickname,
         String userLevel,
         String profileImageUrl,
         Long projectId,
         String title,
-        String fieldName,
+        String field,
         String content,
         String demoSiteUrl,
         String progress,

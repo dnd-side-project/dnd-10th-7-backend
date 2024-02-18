@@ -130,7 +130,7 @@ public class FeedbackControllerTest extends ControllerTest {
                                             .description("코드"),
                                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                                     fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("유저 ID"),
-                                    fieldWithPath("data.username").type(JsonFieldType.STRING).description("유저 이름"),
+                                    fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("유저 이름"),
                                     fieldWithPath("data.userLevel").type(JsonFieldType.STRING).description("유저 레벨"),
                                     fieldWithPath("data.profileImageUrl").type(JsonFieldType.STRING).description("프로필 이미지 주소"),
                                     fieldWithPath("data.feedbackId").type(JsonFieldType.NUMBER).description("피드백 ID"),
@@ -146,14 +146,14 @@ public class FeedbackControllerTest extends ControllerTest {
                                             .attributes(Attributes.key("format").value("yyyy.MM.dd")),
                                     fieldWithPath("data.projectId").type(JsonFieldType.NUMBER).description("프로젝트 ID"),
                                     fieldWithPath("data.projectTitle").type(JsonFieldType.STRING).description("프로젝트 제목"),
-                                    fieldWithPath("data.fieldName").type(JsonFieldType.STRING).description("분야"),
+                                    fieldWithPath("data.field").type(JsonFieldType.STRING).description("분야"),
                                     fieldWithPath("data.progress").type(JsonFieldType.STRING).description("진행 정도"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")
                             )))
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
-                    .andExpect(jsonPath("$.data.username").value(mockFeedbackDetailResponseDto.username()))
+                    .andExpect(jsonPath("$.data.nickname").value(mockFeedbackDetailResponseDto.nickname()))
                     .andExpect(jsonPath("$.data.userLevel").value(mockFeedbackDetailResponseDto.userLevel()))
                     .andExpect(jsonPath("$.data.profileImageUrl").value(mockFeedbackDetailResponseDto.profileImageUrl()))
                     .andExpect(jsonPath("$.data.feedbackId").value(mockFeedbackDetailResponseDto.feedbackId()))
@@ -166,7 +166,7 @@ public class FeedbackControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.endedAt").value(mockFeedbackDetailResponseDto.endedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
                     .andExpect(jsonPath("$.data.projectId").value(mockFeedbackDetailResponseDto.projectId()))
                     .andExpect(jsonPath("$.data.projectTitle").value(mockFeedbackDetailResponseDto.projectTitle()))
-                    .andExpect(jsonPath("$.data.fieldName").value(mockFeedbackDetailResponseDto.fieldName()))
+                    .andExpect(jsonPath("$.data.field").value(mockFeedbackDetailResponseDto.field()))
                     .andExpect(jsonPath("$.data.progress").value(mockFeedbackDetailResponseDto.progress()))
                     .andExpect(status().isOk());
         }

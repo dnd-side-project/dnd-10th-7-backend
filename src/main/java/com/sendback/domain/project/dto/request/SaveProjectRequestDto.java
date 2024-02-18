@@ -11,7 +11,7 @@ public record SaveProjectRequestDto(
         @NotBlank(message = "제목은 비워둘 수 없습니다.")
         String title,
         @NotBlank(message = "분야는 비워둘 수 없습니다.")
-        String fieldName,
+        String field,
         @Size(max = 1_000, message = "설명은 글자 수가 최대 1,000자 입니다.")
         @NotBlank(message = "설명은 비워둘 수 없습니다.")
         String content,

@@ -196,7 +196,7 @@ public class UserServiceTest extends ServiceTest {
             assertThat(responseDto.profileImageUrl()).isEqualTo(user.getProfileImageUrl());
             assertThat(responseDto.birthday()).isEqualTo(user.getBirthDay());
             assertThat(responseDto.email()).isEqualTo(user.getEmail());
-            assertThat(responseDto.field()).isEqualTo(mock_fieldNameList);
+            assertThat(responseDto.fields()).isEqualTo(mock_fieldNameList);
             assertThat(responseDto.level()).isEqualTo(Level.toNumber(user.getLevel()));
             assertThat(responseDto.feedbackCount()).isEqualTo(feedbackCount);
             assertThat(responseDto.needToFeedbackCount()).isEqualTo(needToFeedbackCount);
@@ -230,7 +230,7 @@ public class UserServiceTest extends ServiceTest {
             assertThat(responseDto.nickname()).isEqualTo(requestDto.nickname());
             assertThat(responseDto.career()).isEqualTo(requestDto.career());
             assertThat(responseDto.birthday()).isEqualTo(requestDto.birthday());
-            assertThat(responseDto.field()).isEqualTo(requestDto.field());
+            assertThat(responseDto.fields()).isEqualTo(requestDto.fields());
         }
 
     }
