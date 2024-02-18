@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleException(final Exception e) {
         log.error("[" + e.getClass() + "] : " + e.getMessage());
         return ResponseEntity.internalServerError()
-                .body(ExceptionResponse.of(100, "알 수 없는 서버 에러가 발생했습니다."));
+                .body(ExceptionResponse.of(100, e.getMessage()));
     }
 
     //valid 검증
