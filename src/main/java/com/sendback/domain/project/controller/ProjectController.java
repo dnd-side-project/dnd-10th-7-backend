@@ -4,6 +4,7 @@ import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.sendback.domain.project.service.ProjectService;
 import com.sendback.global.common.ApiResponse;
 import com.sendback.global.common.UserId;
@@ -65,5 +66,15 @@ public class ProjectController {
         projectService.deleteProject(userId, projectId);
 
         return success(null);
+    }
+
+    @GetMapping("/recommend")
+    public ApiResponse<List<RecommendedProjectResponseDto>> getRecommendedProject(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() == "anonymousUser") {
+            return success(projectService.getRecommendedProject(null));
+        }
+        Long userId = (Long) authentication.getPrincipal();
+        return success(projectService.getRecommendedProject(userId));
     }
 }
