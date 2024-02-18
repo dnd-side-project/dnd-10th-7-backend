@@ -4,22 +4,20 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import com.sendback.domain.project.entity.Progress;
 import com.sendback.global.common.constants.FieldName;
-
 import java.time.LocalDateTime;
-import java.util.List;
 
-public record RegisteredProjectResponseDto (
-    Long projectId,
-    String title,
-    String progress,
-    String summary,
-    String field,
-    @JsonFormat(pattern = "yyyy.MM.dd")
-    LocalDateTime createdAt,
-    Long pullUpCnt
-){
+public record ScrappedProjectResponseDto (
+        Long projectId,
+        String title,
+        String progress,
+        String summary,
+        String field,
+        @JsonFormat(pattern = "yyyy.MM.dd")
+        LocalDateTime createdAt,
+        Long pullUpCnt
+) {
     @QueryProjection
-    public RegisteredProjectResponseDto(
+    public ScrappedProjectResponseDto(
             Long projectId,
             String title,
             String progress,

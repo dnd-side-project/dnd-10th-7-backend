@@ -10,11 +10,8 @@ import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.dto.SigningAccount;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
-import com.sendback.domain.user.dto.response.CheckUserNicknameResponseDto;
+import com.sendback.domain.user.dto.response.*;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
-import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
-import com.sendback.domain.user.dto.response.UpdateUserInfoResponseDto;
-import com.sendback.domain.user.dto.response.UserInfoResponseDto;
 import com.sendback.domain.user.entity.Level;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
@@ -117,7 +114,26 @@ public class UserService {
         Pageable pageable = PageRequest.of(page-1, size);
         boolean isFinished = sort == 0 ? true : false;
 
-        Page<RegisteredProjectResponseDto> responseDtos = projectRepository.findAllProjectsByMe(pageable, userId, isFinished);
+        Page<RegisteredProjectResponseDto> responseDtos = projectRepository.findAllRegisteredProjectsByMe(pageable, userId, isFinished);
+
+        return CustomPage.of(responseDtos);
+    }
+
+    public CustomPage<ScrappedProjectResponseDto> getScrappedProjects(Long userId, int page, int size, int sort){
+
+        Pageable pageable = PageRequest.of(page-1, size);
+        boolean isFinished = sort == 0 ? true : false;
+
+        Page<ScrappedProjectResponseDto> responseDtos = projectRepository.findAllScrappedProjectsByMe(pageable, userId, isFinished);
+
+        return CustomPage.of(responseDtos);
+    }
+
+    public CustomPage<SubmittedFeedbackResponseDto> getSubmittedFeedback(Long userId, int page, int size, int sort){
+        Pageable pageable = PageRequest.of(page-1, size);
+        boolean isFinished = sort == 0 ? true : false;
+
+        Page<SubmittedFeedbackResponseDto> responseDtos = projectRepository.findAllSubmittedProjectsByMe(pageable, userId, isFinished);
 
         return CustomPage.of(responseDtos);
     }

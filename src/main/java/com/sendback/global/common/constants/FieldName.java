@@ -4,8 +4,8 @@ import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import static com.sendback.domain.field.exception.FieldExceptionType.NOT_FOUND_FIELD;
+
 
 @Getter
 @AllArgsConstructor
@@ -51,8 +51,5 @@ public enum FieldName {
 
             default -> throw new NotFoundException(NOT_FOUND_FIELD);
         };
-
-
     }
-
 }
