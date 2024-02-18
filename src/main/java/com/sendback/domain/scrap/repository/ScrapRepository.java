@@ -5,6 +5,7 @@ import com.sendback.domain.scrap.entity.Scrap;
 import com.sendback.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
@@ -12,4 +13,6 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     Optional<Scrap> findByUserAndProject(User user, Project project);
 
     boolean existsByUserAndProjectAndIsDeletedIsFalse(User user, Project project);
+
+    List<Scrap> findAllByUserAndIsDeletedIsFalse(User user);
 }

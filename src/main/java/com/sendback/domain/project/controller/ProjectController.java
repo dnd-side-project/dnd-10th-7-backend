@@ -2,14 +2,19 @@ package com.sendback.domain.project.controller;
 
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.project.dto.response.GetProjectsResponseDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
 import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
+import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.domain.project.service.ProjectService;
 import com.sendback.global.common.ApiResponse;
+import com.sendback.global.common.CustomPage;
 import com.sendback.global.common.UserId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,8 +32,26 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    @GetMapping
+    public ApiResponse<CustomPage<GetProjectsResponseDto>> getProjects(
+            @PageableDefault(page = 1, size = 5) Pageable pageable,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String field,
+            @RequestParam(name = "is-finished", required = false) Boolean isFinished,
+            @RequestParam(required = false) Long sort
+            ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication.getPrincipal() == "anonymousUser") {
+            return success(projectService.getProjects(null , pageable, keyword, field, isFinished, sort));
+        }
+
+        Long userId = (Long) authentication.getPrincipal();
+        return success(projectService.getProjects(userId, pageable, keyword, field, isFinished, sort));
+    }
+
     @GetMapping("/{projectId}")
-    private ApiResponse<ProjectDetailResponseDto> getProjectDetail(
+    public ApiResponse<ProjectDetailResponseDto> getProjectDetail(
             @PathVariable Long projectId
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -46,6 +69,7 @@ public class ProjectController {
             @UserId Long userId,
             @RequestPart(value = "data") @Valid SaveProjectRequestDto saveProjectRequestDto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
         return success(projectService.saveProject(userId, saveProjectRequestDto, images));
     }
 
@@ -55,6 +79,7 @@ public class ProjectController {
             @PathVariable Long projectId,
             @RequestPart(value = "data") @Valid UpdateProjectRequestDto updateProjectRequestDto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+
         return success(projectService.updateProject(userId, projectId, updateProjectRequestDto, images));
     }
 
@@ -68,13 +93,21 @@ public class ProjectController {
         return success(null);
     }
 
+
     @GetMapping("/recommend")
-    public ApiResponse<List<RecommendedProjectResponseDto>> getRecommendedProject(){
+    public ApiResponse<List<RecommendedProjectResponseDto>> getRecommendedProject() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() == "anonymousUser") {
             return success(projectService.getRecommendedProject(null));
         }
         Long userId = (Long) authentication.getPrincipal();
         return success(projectService.getRecommendedProject(userId));
+    }
+    @PutMapping("/{projectId}/pull-up")
+    public ApiResponse<PullUpProjectResponseDto> pullUpProject(
+            @UserId Long userId,
+            @PathVariable Long projectId) {
+
+        return success(projectService.pullUpProject(userId, projectId));
     }
 }

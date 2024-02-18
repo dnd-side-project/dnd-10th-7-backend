@@ -20,7 +20,8 @@ public record SignUpRequestDto(
 
         @Size(min = 1, message = "분야는 최소 1개 이상 선택되어야 합니다.")
         List<@Pattern(regexp = "예술/대중문화|환경|건강|취미/실용|금융/핀테크|교육|게임|AI/머신러닝",
-                message = "분야는 '예술/대중문화', '환경', '건강', '취미/실용', '금융/핀테크', '교육', '게임', 'AI/머신러닝' 중 하나여야 합니다.") String> interests,
+                message = "분야는 '예술/대중문화', '환경', '건강', '취미/실용', '금융/핀테크', '교육', '게임', 'AI/머신러닝' 중 하나여야 합니다.") String>
+                fields,
 
         @NotBlank(message = "sign token이 필요합니다.")
         String signToken

@@ -18,7 +18,8 @@ public enum FieldName {
     HEALTH("건강"),
     IT("AI/머신러닝"),
     HOBBY("취미/실용"),
-    GAME("게임");
+    GAME("게임"),
+    ETC("기타");
 
     private final String name;
 
@@ -32,7 +33,7 @@ public enum FieldName {
             case "AI/머신러닝" -> IT;
             case "취미/실용" -> HOBBY;
             case "게임" -> GAME;
-
+            case "기타" -> ETC;
             default -> throw new BadRequestException(NOT_FOUND_FIELD);
         };
     }
