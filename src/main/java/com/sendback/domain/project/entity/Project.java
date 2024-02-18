@@ -1,6 +1,7 @@
 package com.sendback.domain.project.entity;
 
 import com.sendback.domain.comment.entity.Comment;
+import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.like.entity.Like;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
@@ -67,6 +68,9 @@ public class Project extends BaseEntity {
     @Formula("(select count(*) from likes where likes.project_id=id and likes.is_deleted = false)")
     private int likeCount;
 
+    @Formula("(select count(*) from feedback where feedback.project_id=id and feedback.is_finished = false and feedback.is_deleted = false)")
+    private int feedbackCount;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<>();
 
@@ -78,6 +82,9 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectImage> projectImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Feedback> feedbacks = new ArrayList<>();
 
     @Builder
     private Project(
