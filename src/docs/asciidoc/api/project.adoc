@@ -12,7 +12,15 @@ include::{snippets}/project/select/http-request.adoc[]
 
 - Query parameters
 include::{snippets}/project/select/query-parameters.adoc[]
+page : default(1 페이지)
+
 field 종류 : 예술/대중문화, 금융/핀테크, 환경, 교육, 건강, AI/머신러닝, 취미/실용, 게임, *(아무것도 안보내면 전체)*
+
+keyword : (default 검색 키워드가 없는 것으로 간주)
+
+is-finished : false(피드백 중) or true(피드백 중인게 없는) (default : false)
+
+sort : 0 (최신순) or 1 (인기순) (default : 0)
 
 - Header +
 로그인 한 사용자면 보내주시고 아니면 안보내주셔도 됩니다
