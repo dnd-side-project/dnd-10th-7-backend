@@ -96,9 +96,9 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
 
     private BooleanExpression specifyIsFinished(Boolean isFinished) {
         if (isFinished == null || !isFinished) {
-            return project.isFinished.eq(false);
+            return project.feedbackCount.gt(0);
         }
-        return project.isFinished.eq(true);
+        return project.feedbackCount.eq(0);
     }
 
     private OrderSpecifier<?> specifySort(Long sort) {

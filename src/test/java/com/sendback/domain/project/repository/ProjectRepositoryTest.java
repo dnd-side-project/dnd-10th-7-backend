@@ -1,5 +1,6 @@
 package com.sendback.domain.project.repository;
 
+import com.sendback.domain.feedback.persister.FeedbackTestPersister;
 import com.sendback.domain.like.persister.LikeTestPersister;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.persister.ProjectTestPersister;
@@ -54,34 +55,34 @@ public class ProjectRepositoryTest extends RepositoryTest {
     class findAllByPageableAndFieldAndIsFinishedAndSort {
 
         @Test
-        @DisplayName("예술/대중문화 - 최신순 - 끝나지 않은 1page 조회")
+        @DisplayName("예술/대중문화 - 최신순 - 끝난 1page 조회")
         public void success_artField() throws Exception {
             //given
             ProjectTestPersister.ProjectBuilder projectBuilder = projectTestPersister.builder();
             projectBuilder.save();
             projectBuilder.save();
             projectBuilder.save();  //dummy
-            Project project_seventh = projectBuilder.save(FieldName.ART, false);
-            Project project_sixth = projectBuilder.save(FieldName.ART, false);
-            Project project_fifth = projectBuilder.save(FieldName.ART, true);
-            Project project_fourth = projectBuilder.save(FieldName.ART, false);
-            Project project_third = projectBuilder.save(FieldName.ART, false);
-            Project project_second = projectBuilder.save(FieldName.ART, false);
-            Project project_first = projectBuilder.save(FieldName.ART, false);
+            Project project_seventh = projectBuilder.save(FieldName.ART);
+            Project project_sixth = projectBuilder.save(FieldName.ART);
+            Project project_fifth = projectBuilder.save(FieldName.ART);
+            Project project_fourth = projectBuilder.save(FieldName.ART);
+            Project project_third = projectBuilder.save(FieldName.ART);
+            Project project_second = projectBuilder.save(FieldName.ART);
+            Project project_first = projectBuilder.save(FieldName.ART);
             Pageable pageable = PageRequest.of(0, 5);
 
             //when
             Page<Project> response = projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(
-                    pageable, null, FieldName.ART.getName(), false, 0L);
+                    pageable, null, FieldName.ART.getName(), true, 0L);
 
             //then
-            assertThat(response.getTotalElements()).isEqualTo(6);
+            assertThat(response.getTotalElements()).isEqualTo(7);
             assertThat(response.getTotalPages()).isEqualTo(2);
             assertThat(response.getContent().get(0)).usingRecursiveComparison().isEqualTo(project_first);
             assertThat(response.getContent().get(1)).usingRecursiveComparison().isEqualTo(project_second);
             assertThat(response.getContent().get(2)).usingRecursiveComparison().isEqualTo(project_third);
             assertThat(response.getContent().get(3)).usingRecursiveComparison().isEqualTo(project_fourth);
-            assertThat(response.getContent().get(4)).usingRecursiveComparison().isEqualTo(project_sixth);
+            assertThat(response.getContent().get(4)).usingRecursiveComparison().isEqualTo(project_fifth);
         }
 
         @Test
@@ -89,15 +90,34 @@ public class ProjectRepositoryTest extends RepositoryTest {
         public void success_allField_notFinished() throws Exception {
             //given
             ProjectTestPersister.ProjectBuilder projectBuilder = projectTestPersister.builder();
+            FeedbackTestPersister.FeedbackBuilder feedbackBuilder = feedbackTestPersister.builder();
             Project project_ninth = projectBuilder.save();
+            feedbackBuilder.project(project_ninth).save();
+
             Project project_eighth = projectBuilder.save();
+            feedbackBuilder.project(project_eighth).save();
+
             Project project_seventh = projectBuilder.save();
-            Project project_sixth = projectBuilder.save(FieldName.ART, false);
-            Project project_fifth = projectBuilder.save(FieldName.ART, false);
-            Project project_fourth = projectBuilder.save(FieldName.ART, false);
-            Project project_third = projectBuilder.save(FieldName.ART, false);
-            Project project_second = projectBuilder.save(FieldName.ART, false);
-            Project project_first = projectBuilder.save(FieldName.ART, false);
+            feedbackBuilder.project(project_seventh).save();
+
+            Project project_sixth = projectBuilder.save(FieldName.ART);
+            feedbackBuilder.project(project_sixth).save();
+
+            Project project_fifth = projectBuilder.save(FieldName.ART);
+            feedbackBuilder.project(project_fifth).save();
+
+            Project project_fourth = projectBuilder.save(FieldName.ART);
+            feedbackBuilder.project(project_fourth).save();
+
+            Project project_third = projectBuilder.save(FieldName.ART);
+            feedbackBuilder.project(project_third).save();
+
+            Project project_second = projectBuilder.save(FieldName.ART);
+            feedbackBuilder.project(project_second).save();
+
+            Project project_first = projectBuilder.save(FieldName.ART);
+            feedbackBuilder.project(project_first).save();
+
             Pageable pageable = PageRequest.of(0, 5);
             Pageable secondPageable = PageRequest.of(1, 5);
 
@@ -129,12 +149,12 @@ public class ProjectRepositoryTest extends RepositoryTest {
             Project project_ninth = projectBuilder.save();
             Project project_eighth = projectBuilder.save();
             Project project_seventh = projectBuilder.save();
-            Project project_sixth = projectBuilder.save(FieldName.ART, true);
-            Project project_fifth = projectBuilder.save(FieldName.ART, true);
-            Project project_fourth = projectBuilder.save(FieldName.ART, true);
-            Project project_third = projectBuilder.save(FieldName.ART, true);
-            Project project_second = projectBuilder.save(FieldName.ART,true);
-            Project project_first = projectBuilder.save(FieldName.ART, true);
+            Project project_sixth = projectBuilder.save(FieldName.ART);
+            Project project_fifth = projectBuilder.save(FieldName.ART);
+            Project project_fourth = projectBuilder.save(FieldName.ART);
+            Project project_third = projectBuilder.save(FieldName.ART);
+            Project project_second = projectBuilder.save(FieldName.ART);
+            Project project_first = projectBuilder.save(FieldName.ART);
             Pageable pageable = PageRequest.of(0, 5);
             Pageable secondPageable = PageRequest.of(1, 5);
 
@@ -145,7 +165,7 @@ public class ProjectRepositoryTest extends RepositoryTest {
                     secondPageable, null, null, true, 0L);
 
             //then
-            assertThat(response.getTotalElements()).isEqualTo(6);
+            assertThat(response.getTotalElements()).isEqualTo(9);
             assertThat(response.getTotalPages()).isEqualTo(2);
             assertThat(response.getContent().get(0)).usingRecursiveComparison().isEqualTo(project_first);
             assertThat(response.getContent().get(1)).usingRecursiveComparison().isEqualTo(project_second);
@@ -156,19 +176,19 @@ public class ProjectRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("분야 전체 - 인기순 - 안 끝난 1page 조회")
+        @DisplayName("분야 전체 - 인기순 - 끝난 1page 조회")
         public void success_allField_orderByLikeCnt_finished() throws Exception {
             //given
             ProjectTestPersister.ProjectBuilder projectBuilder = projectTestPersister.builder();
             Project project_ninth = projectBuilder.save();
             Project project_eighth = projectBuilder.save();
             Project project_seventh = projectBuilder.save();
-            Project project_sixth = projectBuilder.save(FieldName.ART, false);
-            Project project_fifth = projectBuilder.save(FieldName.ART, false);
-            Project project_fourth = projectBuilder.save(FieldName.ART, false);
-            Project project_third = projectBuilder.save(FieldName.ART, false);
-            Project project_second = projectBuilder.save(FieldName.ART,false);
-            Project project_first = projectBuilder.save(FieldName.ART, false);
+            Project project_sixth = projectBuilder.save(FieldName.ART);
+            Project project_fifth = projectBuilder.save(FieldName.ART);
+            Project project_fourth = projectBuilder.save(FieldName.ART);
+            Project project_third = projectBuilder.save(FieldName.ART);
+            Project project_second = projectBuilder.save(FieldName.ART);
+            Project project_first = projectBuilder.save(FieldName.ART);
             LikeTestPersister.LikeBuilder likeBuilder = likeTestPersister.builder();
             for (int cnt = 0 ; cnt < 5 ; cnt ++) {
                 likeBuilder.project(project_fifth).save();
@@ -189,9 +209,9 @@ public class ProjectRepositoryTest extends RepositoryTest {
 
             //when
             Page<Project> response = projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(
-                    pageable, null, null, null, 1L);
+                    pageable, null, null, true, 1L);
             Page<Project> secondResponse = projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(
-                    secondPageable, null, null, null, 1L);
+                    secondPageable, null, null, true, 1L);
 
             //then
             assertThat(response.getTotalElements()).isEqualTo(9);
@@ -208,15 +228,35 @@ public class ProjectRepositoryTest extends RepositoryTest {
         public void success_allField_orderByLikeCnt_keyword_finished() throws Exception {
             //given
             ProjectTestPersister.ProjectBuilder projectBuilder = projectTestPersister.builder();
+            FeedbackTestPersister.FeedbackBuilder feedbackBuilder = feedbackTestPersister.builder();
+
             Project project_ninth = projectBuilder.save();
+            feedbackBuilder.project(project_ninth).save();
+
             Project project_eighth = projectBuilder.save();
+            feedbackBuilder.project(project_eighth).save();
+
             Project project_seventh = projectBuilder.save();
-            Project project_sixth = projectBuilder.save("재있미다", FieldName.ART, false);
-            Project project_fifth = projectBuilder.save("너무 재미있다",FieldName.ART, false);
-            Project project_fourth = projectBuilder.save("z재미z", FieldName.ART, false);
-            Project project_third = projectBuilder.save("난 조회 안됐으면 해", FieldName.ART, false);
-            Project project_second = projectBuilder.save("z재미",FieldName.ART,false);
-            Project project_first = projectBuilder.save("재미z",FieldName.ART, false);
+            feedbackBuilder.project(project_seventh).save();
+
+            Project project_sixth = projectBuilder.save("재있미다", FieldName.ART);
+            feedbackBuilder.project(project_sixth).save();
+
+            Project project_fifth = projectBuilder.save("너무 재미있다",FieldName.ART);
+            feedbackBuilder.project(project_fifth).save();
+
+            Project project_fourth = projectBuilder.save("z재미z", FieldName.ART);
+            feedbackBuilder.project(project_fourth).save();
+
+            Project project_third = projectBuilder.save("난 조회 안됐으면 해", FieldName.ART);
+            feedbackBuilder.project(project_third).save();
+
+            Project project_second = projectBuilder.save("z재미",FieldName.ART);
+            feedbackBuilder.project(project_second).save();
+
+            Project project_first = projectBuilder.save("재미z",FieldName.ART);
+            feedbackBuilder.project(project_first).save();
+
 
             Pageable pageable = PageRequest.of(0, 5);
 
