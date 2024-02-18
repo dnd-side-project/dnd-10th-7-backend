@@ -56,4 +56,10 @@ public class UserController {
                                                                                      @RequestParam int size, @RequestParam int sort) {
         return ApiResponse.success(userService.getScrappedProjects(userId, page, size, sort));
     }
+
+    @GetMapping("/me/feedback")
+    public ApiResponse<CustomPage<SubmittedFeedbackResponseDto>> getSubmittedProjects(@UserId Long userId, @RequestParam int page,
+                                                                                      @RequestParam int size, @RequestParam int sort) {
+        return ApiResponse.success(userService.getSubmittedFeedback(userId, page, size, sort));
+    }
 }
