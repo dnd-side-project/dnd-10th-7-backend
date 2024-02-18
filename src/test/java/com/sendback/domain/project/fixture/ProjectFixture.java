@@ -4,6 +4,7 @@ import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.GetProjectsResponseDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
+import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.sendback.domain.project.entity.Progress;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.entity.User;
@@ -34,6 +35,8 @@ public class ProjectFixture {
     private static final Progress PLANNING_PROGRESS = Progress.PLANNING;
     private static final Progress DEVELOPING_PROGRESS = Progress.DEVELOPING;
 
+    public static LocalDateTime MOCK_LOCAL_DATE_TIME = LocalDateTime.now();
+
     public static final SaveProjectRequestDto MOCK_SAVE_PROJECT_REQUEST_DTO = new SaveProjectRequestDto(TITLE, FIELD_NAME.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE,
             END_DATE, PLANNING_PROGRESS.getValue(), 1L,2L,3L,4L);
 
@@ -48,9 +51,14 @@ public class ProjectFixture {
             LocalDateTime.now(), LocalDate.of(2024, 1, 12), LocalDate.of(2024, 1, 15),
             false, false, false);
 
+    public static final RecommendedProjectResponseDto MOCK_RECOMMEND_PROJECT_RESPONSE_DTO = new RecommendedProjectResponseDto(
+            1L, "DEVELOPING", "GAME", "테스트 타이틀", "테스트 요약" ,"철수",  MOCK_LOCAL_DATE_TIME, "프로필 사진 url"
+    );
+
     public static final GetProjectsResponseDto MOCK_GET_PROJECTS_RESPONSE_DTO = new GetProjectsResponseDto(
             "닉네임", "프로필 이미지", 1L, "제목", "한 줄 요약", Progress.REFACTORING.getValue(),
             FieldName.ART.getName(), LocalDateTime.now(), 1L, 2L, 3L, true);
+
 
     public static Project createDummyProject(User user) {
         return Project.of(user, MOCK_SAVE_PROJECT_REQUEST_DTO);

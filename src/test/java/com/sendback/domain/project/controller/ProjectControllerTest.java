@@ -5,6 +5,7 @@ import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.GetProjectsResponseDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
@@ -20,17 +21,15 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.ResultActions;
-
 import static com.sendback.domain.project.fixture.ProjectFixture.*;
 import static org.mockito.ArgumentMatchers.*;
-
-
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -549,6 +548,69 @@ public class ProjectControllerTest extends ControllerTest {
     }
 
     @Nested
+    @DisplayName("추천 프로젝트 리스트 조회")
+    class getRecommendedProject {
+
+        RecommendedProjectResponseDto recommendedProjectResponseDto = MOCK_RECOMMEND_PROJECT_RESPONSE_DTO;
+
+        @Test
+        @DisplayName("200 상태코드와 함께 추천 프로젝트를 반환한다.")
+        @WithMockCustomUser
+        public void getRecommended_success() throws Exception {
+            // given
+            List<RecommendedProjectResponseDto> responseDtos = new ArrayList<>();
+            responseDtos.add(recommendedProjectResponseDto);
+
+            given(projectService.getRecommendedProject(anyLong())).willReturn(responseDtos);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get("/api/projects/recommend")
+                            .with(csrf().asHeader()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data[0].projectId").value(responseDtos.get(0).projectId()))
+                    .andExpect(jsonPath("$.data[0].progress").value(responseDtos.get(0).progress()))
+                    .andExpect(jsonPath("$.data[0].field").value(responseDtos.get(0).field()))
+                    .andExpect(jsonPath("$.data[0].title").value(responseDtos.get(0).title()))
+                    .andExpect(jsonPath("$.data[0].summary").value(responseDtos.get(0).summary()))
+                    .andExpect(jsonPath("$.data[0].createdBy").value(responseDtos.get(0).createdBy()))
+                    .andExpect(jsonPath("$.data[0].createdAt").value(MOCK_LOCAL_DATE_TIME.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
+                    .andExpect(jsonPath("$.data[0].profileImageUrl").value(responseDtos.get(0).profileImageUrl()))
+                    .andDo(print());
+
+            // then
+            resultActions
+                    .andDo(document("getRecommendedProjects-success",
+                            customRequestPreprocessor(),
+                            preprocessResponse(prettyPrint()),
+                            responseFields(
+                                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                            .description("상태 코드"),
+                                    fieldWithPath("message").type(JsonFieldType.STRING)
+                                            .description("메시지"),
+                                    fieldWithPath("data[].projectId").type(JsonFieldType.NUMBER)
+                                            .description("프로젝트 ID"),
+                                    fieldWithPath("data[].progress").type(JsonFieldType.STRING)
+                                            .description("진행 상태"),
+                                    fieldWithPath("data[].field").type(JsonFieldType.STRING)
+                                            .description("분야"),
+                                    fieldWithPath("data[].title").type(JsonFieldType.STRING)
+                                            .description("타이틀"),
+                                    fieldWithPath("data[].summary").type(JsonFieldType.STRING)
+                                            .description("줄거리"),
+                                    fieldWithPath("data[].createdAt").type(JsonFieldType.STRING)
+                                            .description("등록한 날짜"),
+                                    fieldWithPath("data[].createdBy").type(JsonFieldType.STRING)
+                                            .description("등록한 사람"),
+                                    fieldWithPath("data[].profileImageUrl").type(JsonFieldType.STRING)
+                                            .description("프로필 이미지")
+                            )));
+            verify(projectService).getRecommendedProject(anyLong());
+        }
+    }
+    @Nested
+
     @DisplayName("프로젝트 끌올 시")
     class pullUpProject {
 
@@ -585,7 +647,7 @@ public class ProjectControllerTest extends ControllerTest {
                                     fieldWithPath("data").type(JsonFieldType.OBJECT)
                                             .description("데이터"),
                                     fieldWithPath("data.isPulledUp").type(JsonFieldType.BOOLEAN)
-                                                    .description("끌올 여부 결과"),
+                                            .description("끌올 여부 결과"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")
                             )))

@@ -5,6 +5,7 @@ import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.GetProjectsResponseDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.domain.project.service.ProjectService;
 import com.sendback.global.common.ApiResponse;
@@ -92,6 +93,16 @@ public class ProjectController {
         return success(null);
     }
 
+
+    @GetMapping("/recommend")
+    public ApiResponse<List<RecommendedProjectResponseDto>> getRecommendedProject() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() == "anonymousUser") {
+            return success(projectService.getRecommendedProject(null));
+        }
+        Long userId = (Long) authentication.getPrincipal();
+        return success(projectService.getRecommendedProject(userId));
+    }
     @PutMapping("/{projectId}/pull-up")
     public ApiResponse<PullUpProjectResponseDto> pullUpProject(
             @UserId Long userId,

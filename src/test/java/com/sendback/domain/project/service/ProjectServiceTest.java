@@ -1,11 +1,14 @@
 package com.sendback.domain.project.service;
 
+import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.GetProjectsResponseDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
@@ -16,6 +19,7 @@ import com.sendback.domain.scrap.repository.ScrapRepository;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.service.UserService;
 import com.sendback.global.ServiceTest;
+import com.sendback.global.common.constants.FieldName;
 import com.sendback.global.common.CustomPage;
 import com.sendback.global.config.image.service.ImageService;
 import com.sendback.global.exception.type.BadRequestException;
@@ -28,15 +32,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
+import java.util.*;
 import static com.sendback.domain.project.exception.ProjectExceptionType.*;
 import static com.sendback.domain.project.fixture.ProjectFixture.*;
 import static com.sendback.domain.scrap.fixture.ScrapFixture.createDummyScrap;
 import static com.sendback.domain.user.fixture.UserFixture.createDummyUser;
+import static com.sendback.global.common.constants.FieldName.GAME;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -62,6 +64,9 @@ public class ProjectServiceTest extends ServiceTest {
     @Mock
     ScrapRepository scrapRepository;
 
+    @Mock
+    FieldRepository fieldRepository;
+
     private User user;
     private Project project;
     private final List<MultipartFile> images = List.of(mockingMultipartFile("sendback1.jpg"),
@@ -80,20 +85,20 @@ public class ProjectServiceTest extends ServiceTest {
     @DisplayName("프로젝트 상세 조회 시")
     class getProjectDetail {
 
-       @Test
-       @DisplayName("로그인 안한 유저가 정상적인 요청 시 값을 반환한다.")
-       public void success_anonymous() throws Exception {
-           //given
-           given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
-           given(user.getId()).willReturn(1L);
-           given(project.getId()).willReturn(1L);
-           given(project.getCreatedAt()).willReturn(LocalDateTime.now());
-           given(project.getLikes()).willReturn(List.of());
-           given(project.getScraps()).willReturn(List.of());
-           given(project.getComments()).willReturn(List.of());
+        @Test
+        @DisplayName("로그인 안한 유저가 정상적인 요청 시 값을 반환한다.")
+        public void success_anonymous() throws Exception {
+            //given
+            given(projectRepository.findById(anyLong())).willReturn(Optional.of(project));
+            given(user.getId()).willReturn(1L);
+            given(project.getId()).willReturn(1L);
+            given(project.getCreatedAt()).willReturn(LocalDateTime.now());
+            given(project.getLikes()).willReturn(List.of());
+            given(project.getScraps()).willReturn(List.of());
+            given(project.getComments()).willReturn(List.of());
 
-           //when
-           ProjectDetailResponseDto response = projectService.getProjectDetail(null, 1L);
+            //when
+            ProjectDetailResponseDto response = projectService.getProjectDetail(null, 1L);
 
 
            //then
@@ -103,8 +108,7 @@ public class ProjectServiceTest extends ServiceTest {
            assertThat(response.scrapCount()).isEqualTo(project.getScraps().size());
            assertThat(response.commentCount()).isEqualTo(project.getLikes().size());
            assertThat(response.isAuthor()).isFalse();
-
-       }
+        }
 
         @Test
         @DisplayName("로그인 한 유저가 정상적인 요청 시 값을 반환한다.")
@@ -290,6 +294,40 @@ public class ProjectServiceTest extends ServiceTest {
     }
 
     @Nested
+    @DisplayName("추천 프로젝트 조회")
+    class getRecommendedProject {
+
+        @Test
+        @DisplayName("성공하면 200과 함께 추천 프로젝트를 반환한다.")
+        void getUserInfo_success() {
+            // given
+            Long mock_userId = 1L;
+            List<FieldName> fieldNameList = List.of(GAME); // 수정된 부분
+            List<Field> fieldList = new ArrayList<>();
+            fieldList.add(Field.of(GAME, user));
+
+            List<RecommendedProjectResponseDto> projects = new ArrayList<>();
+            projects.add(MOCK_RECOMMEND_PROJECT_RESPONSE_DTO);
+
+            given(fieldRepository.findAllByUserId(mock_userId)).willReturn(fieldList);
+            given(projectRepository.findRecommendedProjects(mock_userId, fieldNameList)).willReturn(projects);
+
+            // when
+            List<RecommendedProjectResponseDto> result = projectService.getRecommendedProject(mock_userId);
+
+            // then
+            assertThat(projects.get(0).projectId()).isEqualTo(result.get(0).projectId());
+            assertThat(projects.get(0).field()).isEqualTo(result.get(0).field());
+            assertThat(projects.get(0).createdAt()).isEqualTo(result.get(0).createdAt());
+            assertThat(projects.get(0).title()).isEqualTo(result.get(0).title());
+            assertThat(projects.get(0).profileImageUrl()).isEqualTo(result.get(0).profileImageUrl());
+            assertThat(projects.get(0).createdBy()).isEqualTo(result.get(0).createdBy());
+            assertThat(projects.get(0).summary()).isEqualTo(result.get(0).summary());
+            assertThat(projects.get(0).progress()).isEqualTo(result.get(0).progress());
+        }
+
+    }
+
     @DisplayName("프로젝트 끌올 시")
     class pullUpProject {
 
@@ -440,5 +478,4 @@ public class ProjectServiceTest extends ServiceTest {
             assertThat(response.getTotalElements()).isEqualTo(1);
         }
     }
-
 }

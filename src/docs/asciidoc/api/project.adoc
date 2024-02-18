@@ -103,14 +103,34 @@ include::{snippets}/project/delete/http-response.adoc[]
 - Response body +
 include::{snippets}/project/delete/response-fields.adoc[]
 
+
+
+[[project-recommend]]
+== 추천 프로젝트 조회
+
+=== 성공
+
+==== HTTP Requests
+
+- Header +
+JWT 토큰 : 로그인 한 사용자면 송신 O, 로그인 안한 사용자면 송신 X
+include::{snippets}/getRecommendedProjects-success/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/getRecommendedProjects-success/http-response.adoc[]
+- Response body +
+include::{snippets}/getRecommendedProjects-success/response-fields.adoc[]
+
+
+
 [[project-pull-up]]
 == 프로젝트 끌올
 
 === 성공
 
 ==== HTTP Requests
-include::{snippets}/project/pull-up/http-request.adoc[]
 
+include::{snippets}/project/pull-up/http-request.adoc[]
 - Path parameters +
 include::{snippets}/project/pull-up/path-parameters.adoc[]
 
@@ -118,3 +138,4 @@ include::{snippets}/project/pull-up/path-parameters.adoc[]
 include::{snippets}/project/pull-up/http-response.adoc[]
 - Response body +
 include::{snippets}/project/pull-up/response-fields.adoc[]
+

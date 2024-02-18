@@ -1,6 +1,7 @@
 package com.sendback.global.common.constants;
 
 import com.sendback.global.exception.type.BadRequestException;
+import com.sendback.global.exception.type.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -35,6 +36,23 @@ public enum FieldName {
             case "기타" -> ETC;
             default -> throw new BadRequestException(NOT_FOUND_FIELD);
         };
+    }
+
+    public static String toKorean(String fieldName) {
+        return switch (fieldName) {
+            case "ART" -> "예술/대중문화";
+            case "FINANCE" -> "금융/핀테크";
+            case "ENVIRONMENT" -> "환경";
+            case "EDU" -> "교육";
+            case "HEALTH" -> "건강";
+            case "IT" -> "AI/머신러닝";
+            case "HOBBY" -> "취미/실용";
+            case "GAME" -> "게임";
+
+            default -> throw new NotFoundException(NOT_FOUND_FIELD);
+        };
+
+
     }
 
 }

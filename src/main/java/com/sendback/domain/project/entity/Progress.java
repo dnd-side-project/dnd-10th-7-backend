@@ -22,4 +22,14 @@ public enum Progress {
             default -> throw new NotFoundException(NOT_FOUND_PROGRESS);
         };
     }
+
+    public static String toKorean(String progress) {
+        return switch (progress) {
+            case "PLANNING" -> "기획중";
+            case "DEVELOPING" -> "개발중";
+            case "REFACTORING" -> "리팩토링중";
+
+            default -> throw new NotFoundException(NOT_FOUND_PROGRESS);
+        };
+    }
 }
