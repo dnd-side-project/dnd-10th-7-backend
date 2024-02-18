@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
@@ -63,6 +64,9 @@ public class Project extends BaseEntity {
 
     private boolean isDeleted = false;
 
+    @Formula("(select count(*) from likes where likes.project_id=id and likes.is_deleted = false)")
+    private int likeCount;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<>();
 
@@ -112,7 +116,7 @@ public class Project extends BaseEntity {
     public static Project of(User user, SaveProjectRequestDto saveProjectRequestDto) {
         return Project.builder()
                 .user(user)
-                .fieldName(FieldName.toEnum(saveProjectRequestDto.fieldName()))
+                .fieldName(FieldName.toEnum(saveProjectRequestDto.field()))
                 .title(saveProjectRequestDto.title())
                 .content(saveProjectRequestDto.content())
                 .summary(saveProjectRequestDto.summary())
@@ -158,6 +162,10 @@ public class Project extends BaseEntity {
 
     public void pullUp() {
         this.projectPull.pullUp();
+    }
+
+    public void updateIsFinished() {
+        this.isFinished = true;
     }
 
 }
