@@ -2,6 +2,27 @@
 [[Project-API]]
 = Project API
 
+[[project-select]]
+== 프로젝트 전체 조회(메인 페이지)
+
+=== 성공
+
+==== HTTP Requests
+include::{snippets}/project/select/http-request.adoc[]
+
+- Query parameters
+include::{snippets}/project/select/query-parameters.adoc[]
+field 종류 : 예술/대중문화, 금융/핀테크, 환경, 교육, 건강, AI/머신러닝, 취미/실용, 게임, *(아무것도 안보내면 전체)*
+
+- Header +
+로그인 한 사용자면 보내주시고 아니면 안보내주셔도 됩니다
+include::{snippets}/project/select/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/project/select/http-response.adoc[]
+- Request body +
+include::{snippets}/project/select/response-fields.adoc[]
+
 [[project-save]]
 == 프로젝트 등록
 
