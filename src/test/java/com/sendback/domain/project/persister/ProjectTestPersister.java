@@ -7,6 +7,7 @@ import com.sendback.domain.user.entity.User;
 import com.sendback.domain.project.entity.Progress;
 import com.sendback.domain.user.persister.UserTestPersister;
 import com.sendback.global.Persister;
+import com.sendback.global.common.constants.FieldName;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
@@ -53,6 +54,28 @@ public class ProjectTestPersister {
                     (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, IT.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
                             PLANNING_PROGRESS.getValue(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
             );
+            return projectRepository.save(project);
+        }
+
+        public Project save(FieldName fieldName, boolean isFinished) {
+            Project project = Project.of(
+                    (user == null ? userTestPersister.builder().save() : user),
+                    (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, fieldName.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
+                            PLANNING_PROGRESS.getValue(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
+            );
+            if (isFinished)
+                project.updateIsFinished();
+            return projectRepository.save(project);
+        }
+
+        public Project save(String title, FieldName fieldName, boolean isFinished) {
+            Project project = Project.of(
+                    (user == null ? userTestPersister.builder().save() : user),
+                    (saveProjectRequestDto == null ? new SaveProjectRequestDto(title, fieldName.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
+                            PLANNING_PROGRESS.getValue(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
+            );
+            if (isFinished)
+                project.updateIsFinished();
             return projectRepository.save(project);
         }
 
