@@ -33,7 +33,7 @@ public class ProjectController {
 
     @GetMapping
     public ApiResponse<CustomPage<GetProjectsResponseDto>> getProjects(
-            @PageableDefault(size = 5) Pageable pageable,
+            @PageableDefault(page = 1, size = 5) Pageable pageable,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String field,
             @RequestParam(name = "is-finished", required = false) Boolean isFinished,

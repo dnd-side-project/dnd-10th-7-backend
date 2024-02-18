@@ -22,6 +22,7 @@ import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -199,7 +200,9 @@ public class ProjectService {
 
     public CustomPage<GetProjectsResponseDto> getProjects(
             Long userId, Pageable pageable, String keyword, String field, Boolean isFinished, Long sort) {
-        Page<Project> result = projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(pageable, keyword, field, isFinished, sort);
+        Pageable changePageable = PageRequest.of(pageable.getPageNumber() - 1, pageable.getPageSize());
+
+        Page<Project> result = projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(changePageable, keyword, field, isFinished, sort);
 
         if (userId == null) {
             Page<GetProjectsResponseDto> responseDtos = result

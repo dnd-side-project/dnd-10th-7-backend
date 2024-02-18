@@ -399,9 +399,10 @@ public class ProjectServiceTest extends ServiceTest {
         @DisplayName("로그인 안한 유저가 접근 시 값을 반환한다.")
         public void success_anonymous() throws Exception {
             //given
-            Pageable pageable = PageRequest.of(0, 5);
+            Pageable pageable = PageRequest.of(1, 5);
+            Pageable changePageable = PageRequest.of(0, 5);
 
-            Page<Project> projectPage = new PageImpl<>(List.of(project), pageable, 1);
+            Page<Project> projectPage = new PageImpl<>(List.of(project), changePageable, 1);
 
             given(projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(any(Pageable.class), any(), any(), any(), any()))
                     .willReturn(projectPage);
@@ -418,8 +419,9 @@ public class ProjectServiceTest extends ServiceTest {
         @DisplayName("로그인 한 유저가 접근 시 값을 반환한다.")
         public void success() throws Exception {
             //given
-            Pageable pageable = PageRequest.of(0, 5);
-            Page<Project> projectPage = new PageImpl<>(List.of(project), pageable, 1);
+            Pageable pageable = PageRequest.of(1, 5);
+            Pageable changePageable = PageRequest.of(0, 5);
+            Page<Project> projectPage = new PageImpl<>(List.of(project), changePageable, 1);
             Scrap scrap = createDummyScrap(user, project);
 
             given(projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(any(Pageable.class), any(), any(), any(), any()))
