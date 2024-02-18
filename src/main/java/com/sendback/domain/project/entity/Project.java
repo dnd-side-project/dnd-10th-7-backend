@@ -1,6 +1,7 @@
 package com.sendback.domain.project.entity;
 
 import com.sendback.domain.comment.entity.Comment;
+import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.like.entity.Like;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
@@ -13,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
@@ -63,6 +65,12 @@ public class Project extends BaseEntity {
 
     private boolean isDeleted = false;
 
+    @Formula("(select count(*) from likes where likes.project_id=id and likes.is_deleted = false)")
+    private int likeCount;
+
+    @Formula("(select count(*) from feedback where feedback.project_id=id and feedback.is_finished = false and feedback.is_deleted = false)")
+    private int feedbackCount;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<>();
 
@@ -74,6 +82,9 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectImage> projectImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Feedback> feedbacks = new ArrayList<>();
 
     @Builder
     private Project(
@@ -90,9 +101,9 @@ public class Project extends BaseEntity {
             final long frontendCount,
             final long backendCount,
             final long designCount,
-            final boolean pullUpCnt,
-            final long isPulledUp,
-            final LocalDateTime pullEndAt,
+            final long pullUpCnt,
+            final boolean isPulledUp,
+            final LocalDateTime pulledAt,
             final boolean isFinished
     ) {
         this.user = user;
@@ -105,14 +116,14 @@ public class Project extends BaseEntity {
         this.endedAt = endedAt;
         this.progress = progress;
         this.projectParticipantCount = new ProjectParticipantCount(plannerCount, frontendCount, backendCount, designCount);
-        this.projectPull = new ProjectPull(isPulledUp, pullUpCnt, pullEndAt);
+        this.projectPull = new ProjectPull(pullUpCnt, isPulledUp, pulledAt);
         this.isFinished = isFinished;
     }
 
     public static Project of(User user, SaveProjectRequestDto saveProjectRequestDto) {
         return Project.builder()
                 .user(user)
-                .fieldName(FieldName.toEnum(saveProjectRequestDto.fieldName()))
+                .fieldName(FieldName.toEnum(saveProjectRequestDto.field()))
                 .title(saveProjectRequestDto.title())
                 .content(saveProjectRequestDto.content())
                 .summary(saveProjectRequestDto.summary())
@@ -124,6 +135,9 @@ public class Project extends BaseEntity {
                 .frontendCount(saveProjectRequestDto.frontendCount())
                 .backendCount(saveProjectRequestDto.backendCount())
                 .designCount(saveProjectRequestDto.designCount())
+                .pullUpCnt(0L)
+                .isPulledUp(false)
+                .pulledAt(LocalDateTime.now())
                 .isFinished(false)
                 .build();
     }
@@ -142,6 +156,23 @@ public class Project extends BaseEntity {
 
     public boolean isAuthor(final User user) {
         return Objects.equals(this.user, user);
+    }
+
+    public boolean isAvailablePulledUp() {
+        return (this.projectPull.getPulledAt().isBefore(LocalDateTime.now().minusDays(3))
+                || !this.getProjectPull().isPulledUp());
+    }
+
+    public boolean isOverPullUpCnt() {
+        return (this.projectPull.getPullUpCnt() > 15);
+    }
+
+    public void pullUp() {
+        this.projectPull.pullUp();
+    }
+
+    public void updateIsFinished() {
+        this.isFinished = true;
     }
 
 }

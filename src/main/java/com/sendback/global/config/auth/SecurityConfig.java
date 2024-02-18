@@ -33,12 +33,15 @@ public class SecurityConfig {
             "/",
             "/docs/index.html",
             "api/users/signup",
-            "api/users/check"
+            "api/users/check",
+            "/api/projects/recommend"
     };
 
     private final String[] GET_METHOD_PERMITTED_URLS = {
             "/api/projects/{projectId}/feedbacks/{feedbackId}",
-            "/api/projects/{projectId}"
+            "/api/projects/{projectId}",
+            "/api/projects/{projectId}/feedbacks",
+            "/api/projects"
     };
 
     @Bean

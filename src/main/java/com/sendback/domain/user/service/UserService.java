@@ -55,8 +55,8 @@ public class UserService {
         SigningAccount signingAccount = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
         User user = User.of(signingAccount, signUpRequestDto);
         User savedUser = userRepository.save(user);
-        List<Field> fieldList = signUpRequestDto.interests().stream()
-                .map(interests -> Field.of(FieldName.toEnum(interests), user))
+        List<Field> fieldList = signUpRequestDto.fields().stream()
+                .map(field -> Field.of(FieldName.toEnum(field), user))
                 .collect(Collectors.toList());
         fieldService.saveAll(fieldList);
         return jwtProvider.issueToken(savedUser.getId());
@@ -101,12 +101,12 @@ public class UserService {
         }
         user.update(updateUserInfoRequestDto);
         fieldRepository.deleteByUserId(userId);
-        List<Field> fieldList = updateUserInfoRequestDto.field().stream()
+        List<Field> fieldList = updateUserInfoRequestDto.fields().stream()
                 .map(intersts -> Field.of(FieldName.toEnum(intersts), user))
                 .collect(Collectors.toList());
         fieldRepository.saveAll(fieldList);
         return new UpdateUserInfoResponseDto(updateUserInfoRequestDto.nickname(), updateUserInfoRequestDto.birthday(),
-                updateUserInfoRequestDto.career(), updateUserInfoRequestDto.field());
+                updateUserInfoRequestDto.career(), updateUserInfoRequestDto.fields());
     }
 
     public CustomPage<RegisteredProjectResponseDto> getRegisteredProjects(Long userId, int page, int size, int sort){

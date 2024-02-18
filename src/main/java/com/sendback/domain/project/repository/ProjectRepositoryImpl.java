@@ -1,18 +1,27 @@
 package com.sendback.domain.project.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sendback.domain.project.entity.Progress;
+import com.sendback.domain.project.dto.response.QRecommendedProjectResponseDto;
+import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.dto.response.QRegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.QScrappedProjectResponseDto;
 import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.ScrappedProjectResponseDto;
+import com.sendback.global.common.constants.FieldName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import java.util.List;
+import static com.sendback.domain.like.entity.QLike.like;
 import static com.sendback.domain.project.entity.QProject.project;
 import static com.sendback.domain.scrap.entity.QScrap.scrap;
+import static com.sendback.domain.user.entity.QUser.user;
 
 @RequiredArgsConstructor
 public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
@@ -82,5 +91,84 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
                 .fetch().size();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    public List<RecommendedProjectResponseDto> findRecommendedProjects(Long userId, List<FieldName> filedNameList) {
+        List<RecommendedProjectResponseDto> content = queryFactory
+                .select(new QRecommendedProjectResponseDto(
+                        project.id.as("projectId"),
+                        project.progress.stringValue(),
+                        project.fieldName.stringValue(),
+                        project.title,
+                        project.summary,
+                        project.user.nickname,
+                        project.createdAt,
+                        project.user.profileImageUrl
+                ))
+                .from(project)
+                .join(project.likes, like)
+                .groupBy(project)
+                .where(
+                        like.isDeleted.eq(false),
+                        project.isDeleted.eq(false),
+                        userIdIs(userId, filedNameList)
+                )
+                .orderBy(like.count().desc())
+                .limit(10)
+                .fetch();
+        return content;
+    }
+
+    private BooleanExpression userIdIs(Long userId, List<FieldName> fileNameList) {
+        return userId == null ? null : project.fieldName.in(fileNameList);
+    }
+    public Page<Project> findAllByPageableAndFieldAndIsFinishedAndSort(Pageable pageable, String keyword, String field, Boolean isFinished, Long sort) {
+
+        JPAQuery<Project> query = queryFactory.selectFrom(project)
+                .join(project.user, user).fetchJoin()
+                .where(containsKeyword(keyword),
+                        specifyField(field),
+                        specifyIsFinished(isFinished),
+                        project.isDeleted.isFalse())
+                .orderBy(specifySort(sort))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        return PageableExecutionUtils.getPage(
+                query.fetch(),
+                pageable,
+                () -> queryFactory.selectFrom(project)
+                        .join(project.user, user).fetchJoin()
+                        .where(containsKeyword(keyword),
+                                specifyField(field),
+                                specifyIsFinished(isFinished),
+                                project.isDeleted.isFalse())
+                        .fetch().size());
+
+    }
+
+    private BooleanExpression containsKeyword(String keyword) {
+        if (keyword == null) return null;
+
+        return project.title.contains(keyword);
+    }
+
+    private BooleanExpression specifyField(String field) {
+        if (field == null || field.equals("분야 없음")) return null;
+
+        return project.fieldName.eq(FieldName.toEnum(field));
+    }
+
+    private BooleanExpression specifyIsFinished(Boolean isFinished) {
+        if (isFinished == null || !isFinished) {
+            return project.feedbackCount.gt(0);
+        }
+        return project.feedbackCount.eq(0);
+    }
+
+    private OrderSpecifier<?> specifySort(Long sort) {
+        if (sort == null || sort == 0)
+            return project.projectPull.pulledAt.desc();
+        return project.likeCount.desc();
     }
 }

@@ -2,6 +2,35 @@
 [[Project-API]]
 = Project API
 
+[[project-select]]
+== 프로젝트 전체 조회(메인 페이지)
+
+=== 성공
+
+==== HTTP Requests
+include::{snippets}/project/select/http-request.adoc[]
+
+- Query parameters
+include::{snippets}/project/select/query-parameters.adoc[]
+page : default(1 페이지)
+
+field 종류 : 예술/대중문화, 금융/핀테크, 환경, 교육, 건강, AI/머신러닝, 취미/실용, 게임, 기타, *(아무것도 안보내면 전체)*
+
+keyword : (default 검색 키워드가 없는 것으로 간주)
+
+is-finished : false(피드백 중) or true(피드백 중인게 없는) (default : false)
+
+sort : 0 (최신순) or 1 (인기순) (default : 0)
+
+- Header +
+로그인 한 사용자면 보내주시고 아니면 안보내주셔도 됩니다
+include::{snippets}/project/select/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/project/select/http-response.adoc[]
+- Request body +
+include::{snippets}/project/select/response-fields.adoc[]
+
 [[project-save]]
 == 프로젝트 등록
 
@@ -29,6 +58,9 @@ include::{snippets}/project/save/response-fields.adoc[]
 include::{snippets}/project/detail/http-request.adoc[]
 - Path parameters +
 include::{snippets}/project/detail/path-parameters.adoc[]
+- Header +
+로그인 한 사용자면 보내주시고 아니면 안보내주셔도 됩니다
+include::{snippets}/project/detail/request-headers.adoc[]
 
 ==== HTTP Response
 include::{snippets}/project/detail/http-response.adoc[]
@@ -42,6 +74,8 @@ include::{snippets}/project/detail/response-fields.adoc[]
 
 ==== HTTP Requests
 include::{snippets}/project/update/http-request.adoc[]
+- Path parameters +
+include::{snippets}/project/update/path-parameters.adoc[]
 
 - Request body +
 include::{snippets}/project/update/request-parts.adoc[]
@@ -60,9 +94,48 @@ include::{snippets}/project/update/response-fields.adoc[]
 
 ==== HTTP Requests
 include::{snippets}/project/delete/http-request.adoc[]
+- Path parameters +
+include::{snippets}/project/delete/path-parameters.adoc[]
 
 
 ==== HTTP Response
 include::{snippets}/project/delete/http-response.adoc[]
 - Response body +
 include::{snippets}/project/delete/response-fields.adoc[]
+
+
+
+[[project-recommend]]
+== 추천 프로젝트 조회
+
+=== 성공
+
+==== HTTP Requests
+
+- Header +
+JWT 토큰 : 로그인 한 사용자면 송신 O, 로그인 안한 사용자면 송신 X
+include::{snippets}/getRecommendedProjects-success/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/getRecommendedProjects-success/http-response.adoc[]
+- Response body +
+include::{snippets}/getRecommendedProjects-success/response-fields.adoc[]
+
+
+
+[[project-pull-up]]
+== 프로젝트 끌올
+
+=== 성공
+
+==== HTTP Requests
+
+include::{snippets}/project/pull-up/http-request.adoc[]
+- Path parameters +
+include::{snippets}/project/pull-up/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/project/pull-up/http-response.adoc[]
+- Response body +
+include::{snippets}/project/pull-up/response-fields.adoc[]
+
