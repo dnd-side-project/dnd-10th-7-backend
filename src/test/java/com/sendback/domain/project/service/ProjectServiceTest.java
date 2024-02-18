@@ -3,6 +3,7 @@ package com.sendback.domain.project.service;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
+import com.sendback.domain.project.dto.response.GetProjectsResponseDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
 import com.sendback.domain.project.dto.response.PullUpProjectResponseDto;
@@ -10,16 +11,22 @@ import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.project.repository.ProjectImageRepository;
 import com.sendback.domain.project.repository.ProjectRepository;
+import com.sendback.domain.scrap.entity.Scrap;
 import com.sendback.domain.scrap.repository.ScrapRepository;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.service.UserService;
 import com.sendback.global.ServiceTest;
+import com.sendback.global.common.CustomPage;
 import com.sendback.global.config.image.service.ImageService;
 import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -28,6 +35,7 @@ import java.util.Optional;
 
 import static com.sendback.domain.project.exception.ProjectExceptionType.*;
 import static com.sendback.domain.project.fixture.ProjectFixture.*;
+import static com.sendback.domain.scrap.fixture.ScrapFixture.createDummyScrap;
 import static com.sendback.domain.user.fixture.UserFixture.createDummyUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -89,7 +97,7 @@ public class ProjectServiceTest extends ServiceTest {
 
 
            //then
-           assertThat(response.username()).isEqualTo(user.getNickname());
+           assertThat(response.nickname()).isEqualTo(user.getNickname());
            assertThat(response.content()).isEqualTo(project.getContent());
            assertThat(response.likeCount()).isEqualTo(project.getLikes().size());
            assertThat(response.scrapCount()).isEqualTo(project.getScraps().size());
@@ -121,7 +129,7 @@ public class ProjectServiceTest extends ServiceTest {
 
 
             //then
-            assertThat(response.username()).isEqualTo(user.getNickname());
+            assertThat(response.nickname()).isEqualTo(user.getNickname());
             assertThat(response.content()).isEqualTo(project.getContent());
             assertThat(response.likeCount()).isEqualTo(project.getLikes().size());
             assertThat(response.scrapCount()).isEqualTo(project.getScraps().size());
@@ -380,6 +388,54 @@ public class ProjectServiceTest extends ServiceTest {
             //then
             assertThat(response.isPulledUp()).isTrue();
 
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 전체 조회 시")
+    class getProjects {
+
+        @Test
+        @DisplayName("로그인 안한 유저가 접근 시 값을 반환한다.")
+        public void success_anonymous() throws Exception {
+            //given
+            Pageable pageable = PageRequest.of(0, 5);
+
+            Page<Project> projectPage = new PageImpl<>(List.of(project), pageable, 1);
+
+            given(projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(any(Pageable.class), any(), any(), any(), any()))
+                    .willReturn(projectPage);
+            //when
+            CustomPage<GetProjectsResponseDto> response = projectService.getProjects(null, pageable, null, null, null, null);
+
+            //then
+            assertThat(response.getTotalPages()).isEqualTo(1);
+            assertThat(response.getContent().get(0).title()).isEqualTo(project.getTitle());
+            assertThat(response.getTotalElements()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("로그인 한 유저가 접근 시 값을 반환한다.")
+        public void success() throws Exception {
+            //given
+            Pageable pageable = PageRequest.of(0, 5);
+            Page<Project> projectPage = new PageImpl<>(List.of(project), pageable, 1);
+            Scrap scrap = createDummyScrap(user, project);
+
+            given(projectRepository.findAllByPageableAndFieldAndIsFinishedAndSort(any(Pageable.class), any(), any(), any(), any()))
+                    .willReturn(projectPage);
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(scrapRepository.findAllByUserAndIsDeletedIsFalse(any(User.class))).willReturn(List.of(scrap));
+            given(project.getId()).willReturn(1L);
+
+            //when
+            CustomPage<GetProjectsResponseDto> response = projectService.getProjects(1L, pageable, null, null, null, null);
+
+            //then
+            assertThat(response.getTotalPages()).isEqualTo(1);
+            assertThat(response.getContent().get(0).title()).isEqualTo(project.getTitle());
+            assertThat(response.getContent().get(0).isScrapped()).isEqualTo(true);
+            assertThat(response.getTotalElements()).isEqualTo(1);
         }
     }
 
