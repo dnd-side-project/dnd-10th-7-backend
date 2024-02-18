@@ -82,7 +82,7 @@ public class UserControllerTest extends ControllerTest {
                                             .description("성별"),
                                     fieldWithPath("career").type(JsonFieldType.STRING)
                                             .description("직업"),
-                                    fieldWithPath("interests").type(JsonFieldType.ARRAY)
+                                    fieldWithPath("fields").type(JsonFieldType.ARRAY)
                                             .description("관심사"),
                                     fieldWithPath("signToken").type(JsonFieldType.STRING)
                                             .description("sign 토큰")
@@ -172,8 +172,8 @@ public class UserControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.profileImageUrl").value("mock_image_url"))
                     .andExpect(jsonPath("$.data.birthday").value("2000.01.01"))
                     .andExpect(jsonPath("$.data.email").value("mock@kakao.com"))
-                    .andExpect(jsonPath("$.data.field[0]").value("게임"))
-                    .andExpect(jsonPath("$.data.field[1]").value("환경"))
+                    .andExpect(jsonPath("$.data.fields[0]").value("게임"))
+                    .andExpect(jsonPath("$.data.fields[1]").value("환경"))
                     .andExpect(jsonPath("$.data.level").value(1))
                     .andExpect(jsonPath("$.data.feedbackCount").value(2l))
                     .andExpect(jsonPath("$.data.needToFeedbackCount").value(2l))
@@ -201,7 +201,7 @@ public class UserControllerTest extends ControllerTest {
                                             .description("생일"),
                                     fieldWithPath("data.email").type(JsonFieldType.STRING)
                                             .description("이메일"),
-                                    fieldWithPath("data.field").type(JsonFieldType.ARRAY)
+                                    fieldWithPath("data.fields").type(JsonFieldType.ARRAY)
                                             .description("관심사"),
                                     fieldWithPath("data.level").type(JsonFieldType.NUMBER)
                                             .description("레벨"),
@@ -247,8 +247,8 @@ public class UserControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.nickname").value(updateUserInfoResponseDto.nickname()))
                     .andExpect(jsonPath("$.data.career").value(updateUserInfoResponseDto.career()))
                     .andExpect(jsonPath("$.data.birthday").value(updateUserInfoResponseDto.birthday()))
-                    .andExpect(jsonPath("$.data.field[0]").value("환경"))
-                    .andExpect(jsonPath("$.data.field[1]").value("게임"))
+                    .andExpect(jsonPath("$.data.fields[0]").value("환경"))
+                    .andExpect(jsonPath("$.data.fields[1]").value("게임"))
                     .andDo(print());
 
             // then
@@ -263,7 +263,7 @@ public class UserControllerTest extends ControllerTest {
                                             .description("직업"),
                                     fieldWithPath("birthday").type(JsonFieldType.STRING)
                                             .description("생일"),
-                                    fieldWithPath("field").type(JsonFieldType.ARRAY)
+                                    fieldWithPath("fields").type(JsonFieldType.ARRAY)
                                             .description("관심사")
                             ),
                             responseFields(
@@ -277,7 +277,7 @@ public class UserControllerTest extends ControllerTest {
                                             .description("직업"),
                                     fieldWithPath("data.birthday").type(JsonFieldType.STRING)
                                             .description("생일"),
-                                    fieldWithPath("data.field").type(JsonFieldType.ARRAY)
+                                    fieldWithPath("data.fields").type(JsonFieldType.ARRAY)
                                             .description("관심사"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")

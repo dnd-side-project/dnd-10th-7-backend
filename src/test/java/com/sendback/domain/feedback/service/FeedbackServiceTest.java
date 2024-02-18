@@ -191,7 +191,7 @@ public class FeedbackServiceTest extends ServiceTest {
 
             //then
             assertThat(feedbackDetailResponseDto.feedbackTitle()).isEqualTo(feedback.getTitle());
-            assertThat(feedbackDetailResponseDto.username()).isEqualTo(feedback.getUser().getNickname());
+            assertThat(feedbackDetailResponseDto.nickname()).isEqualTo(feedback.getUser().getNickname());
             assertThat(feedbackDetailResponseDto.projectTitle()).isEqualTo(feedback.getProject().getTitle());
         }
     }

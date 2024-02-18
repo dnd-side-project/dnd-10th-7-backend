@@ -5,6 +5,6 @@ public record UpdateUserInfoResponseDto(
         String nickname,
         String birthday,
         String career,
-        List<String> field
+        List<String> fields
 )
 {}

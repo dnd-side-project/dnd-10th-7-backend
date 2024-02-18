@@ -33,6 +33,7 @@ public class User extends BaseEntity {
     private String profileImageUrl;
     @Enumerated(EnumType.STRING)
     private Career career;
+    private Long pullUpCnt;
 
     private Boolean isDeleted = Boolean.FALSE;
 
@@ -48,6 +49,7 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
         this.career = career;
         this.nickname = nickname;
+        this.pullUpCnt = 0L;
     }
 
     public static User of(SocialType socialType, String socialId, String email, String socialName, String profileImageUrl){
@@ -99,5 +101,13 @@ public class User extends BaseEntity {
         this.nickname = updateUserInfoRequestDto.nickname();
         this.birthDay = updateUserInfoRequestDto.birthday();
         this.career = Career.toEnum(updateUserInfoRequestDto.career());
+    }
+
+    public boolean isOverPullUpCnt() {
+        return (this.pullUpCnt >= this.level.getPullUpCnt());
+    }
+
+    public void actPullUp() {
+        this.pullUpCnt += 1;
     }
 }

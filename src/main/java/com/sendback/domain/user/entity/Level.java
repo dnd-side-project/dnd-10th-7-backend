@@ -4,17 +4,19 @@ import lombok.Getter;
 
 @Getter
 public enum Level {
-    ONE("주먹밥", 0L),
-    TWO("솜주먹", 5L),
-    THREE("물주먹", 10L),
-    FOUR("돌주먹", 15L),
-    FIVE("불주먹", 20L);
+    ONE("주먹밥", 0L, 3L),
+    TWO("솜주먹", 5L, 6L),
+    THREE("물주먹", 10L, 10L),
+    FOUR("돌주먹", 15L, 15L),
+    FIVE("불주먹", 20L, 20L);
     private final String name;
     private final Long feedbackSubmitCount;
+    private final Long pullUpCnt;
 
-    Level(String name, Long feedbackSubmitCount){
+    Level(String name, Long feedbackSubmitCount, Long pullUpCnt) {
         this.name = name;
         this.feedbackSubmitCount = feedbackSubmitCount;
+        this.pullUpCnt = pullUpCnt;
     }
 
     public static int toNumber(Level level) {
