@@ -1,10 +1,13 @@
 package com.sendback.domain.project.service;
 
+import com.sendback.domain.field.entity.Field;
+import com.sendback.domain.field.repository.FieldRepository;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.dto.request.UpdateProjectRequestDto;
 import com.sendback.domain.project.dto.response.ProjectDetailResponseDto;
 import com.sendback.domain.project.dto.response.ProjectIdResponseDto;
+import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.entity.ProjectImage;
 import com.sendback.domain.project.repository.ProjectImageRepository;
@@ -20,9 +23,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import static com.sendback.domain.project.exception.ProjectExceptionType.*;
 
 @Service
@@ -36,6 +39,8 @@ public class ProjectService {
     private final ProjectImageRepository projectImageRepository;
     private final LikeRepository likeRepository;
     private final ScrapRepository scrapRepository;
+
+    private final FieldRepository fieldRepository;
 
     public ProjectDetailResponseDto getProjectDetail(Long userId, Long projectId) {
         Project project = getProjectById(projectId);
@@ -100,6 +105,15 @@ public class ProjectService {
         // 추후 연관된 것 모두 삭제 처리할 것
         projectImageRepository.deleteAll(projectImages);
         projectRepository.delete(project);
+    }
+
+    public List<RecommendedProjectResponseDto> getRecommendedProject(Long userId){
+        List<FieldName> fieldNameList = new ArrayList<>();
+        if(userId!=null) {
+            List<Field> fieldList = fieldRepository.findAllByUserId(userId);
+            fieldNameList = fieldList.stream().map(Field::getName).collect(Collectors.toList());
+        }
+        return projectRepository.findRecommendedProjects(userId, fieldNameList);
     }
 
     public void validateProjectAuthor(User user, Project project) {
