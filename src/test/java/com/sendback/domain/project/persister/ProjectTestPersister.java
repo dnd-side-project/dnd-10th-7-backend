@@ -57,25 +57,21 @@ public class ProjectTestPersister {
             return projectRepository.save(project);
         }
 
-        public Project save(FieldName fieldName, boolean isFinished) {
+        public Project save(FieldName fieldName) {
             Project project = Project.of(
                     (user == null ? userTestPersister.builder().save() : user),
                     (saveProjectRequestDto == null ? new SaveProjectRequestDto(TITLE, fieldName.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
                             PLANNING_PROGRESS.getValue(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
             );
-            if (isFinished)
-                project.updateIsFinished();
             return projectRepository.save(project);
         }
 
-        public Project save(String title, FieldName fieldName, boolean isFinished) {
+        public Project save(String title, FieldName fieldName) {
             Project project = Project.of(
                     (user == null ? userTestPersister.builder().save() : user),
                     (saveProjectRequestDto == null ? new SaveProjectRequestDto(title, fieldName.getName(), CONTENT, SUMMARY, DEMO_SITE_URL, START_DATE, END_DATE,
                             PLANNING_PROGRESS.getValue(), 1L, 2L, 3L, 4L) : saveProjectRequestDto)
             );
-            if (isFinished)
-                project.updateIsFinished();
             return projectRepository.save(project);
         }
 
