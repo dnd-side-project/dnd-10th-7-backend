@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -283,6 +282,31 @@ public class UserServiceTest extends ServiceTest {
 
             // when
             CustomPage<ScrappedProjectResponseDto> responseDtoPage = userService.getScrappedProjects(userId, page, size, sort);
+
+            // then
+            assert responseDtoPage != null;
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 피드백한 프로젝트 조회")
+    class getSubmittedProjects {
+
+        @Test
+        @DisplayName("성공하면 200과 함께 피드백 리스트 정보들이 반환된다.")
+        void getSubmittedProjects_success() {
+            // given
+            Long userId = 1L;
+            int page = 1;
+            int size = 5;
+            int sort = 0;
+            Page<SubmittedFeedbackResponseDto> mockResponseDtoPage = mock(Page.class);
+            Pageable pageable = PageRequest.of(page - 1, size);
+            boolean isFinished = sort == 0;
+            given(projectRepository.findAllSubmittedProjectsByMe(pageable, userId, isFinished)).willReturn(mockResponseDtoPage);
+
+            // when
+            CustomPage<SubmittedFeedbackResponseDto> responseDtoPage = userService.getSubmittedFeedback(userId, page, size, sort);
 
             // then
             assert responseDtoPage != null;

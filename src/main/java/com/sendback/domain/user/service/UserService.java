@@ -129,6 +129,15 @@ public class UserService {
         return CustomPage.of(responseDtos);
     }
 
+    public CustomPage<SubmittedFeedbackResponseDto> getSubmittedFeedback(Long userId, int page, int size, int sort){
+        Pageable pageable = PageRequest.of(page-1, size);
+        boolean isFinished = sort == 0 ? true : false;
+
+        Page<SubmittedFeedbackResponseDto> responseDtos = projectRepository.findAllSubmittedProjectsByMe(pageable, userId, isFinished);
+
+        return CustomPage.of(responseDtos);
+    }
+
 
     public User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(
