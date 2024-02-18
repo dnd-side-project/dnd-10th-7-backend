@@ -90,3 +90,17 @@ include::{snippets}/getScrappedProjects-success/query-parameters.adoc[]
 include::{snippets}/getScrappedProjects-success/http-response.adoc[]
 - Response body
 include::{snippets}/getScrappedProjects-success/response-fields.adoc[]
+
+[[getSubmittedProjects]]
+== 내가 피드백에 참여한 피드백들 조회
+=== 성공
+==== HTTP Requests
+include::{snippets}/getSubmittedProjects_success/http-request.adoc[]
+
+- Query parameters
+include::{snippets}/getSubmittedProjects_success/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/getSubmittedProjects_success/http-response.adoc[]
+- Response body
+include::{snippets}/getSubmittedProjects_success/response-fields.adoc[]

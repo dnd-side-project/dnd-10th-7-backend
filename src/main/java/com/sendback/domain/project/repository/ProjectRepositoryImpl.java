@@ -7,10 +7,7 @@ import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.sendback.domain.project.entity.Project;
-import com.sendback.domain.user.dto.response.QRegisteredProjectResponseDto;
-import com.sendback.domain.user.dto.response.QScrappedProjectResponseDto;
-import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
-import com.sendback.domain.user.dto.response.ScrappedProjectResponseDto;
+import com.sendback.domain.user.dto.response.*;
 import com.sendback.global.common.constants.FieldName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +15,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import java.util.List;
+import static com.sendback.domain.feedback.entity.QFeedback.feedback;
+import static com.sendback.domain.feedback.entity.QFeedbackSubmit.feedbackSubmit;
 import static com.sendback.domain.like.entity.QLike.like;
 import static com.sendback.domain.project.entity.QProject.project;
 import static com.sendback.domain.scrap.entity.QScrap.scrap;
@@ -93,6 +92,46 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         return new PageImpl<>(content, pageable, total);
     }
 
+    @Override
+    public Page<SubmittedFeedbackResponseDto> findAllSubmittedProjectsByMe(Pageable pageable, Long userId, Boolean isFinished) {
+        List<SubmittedFeedbackResponseDto> content = queryFactory
+                .select(new QSubmittedFeedbackResponseDto(
+                        feedback.project.progress.stringValue(),
+                        feedback.project.fieldName.stringValue(),
+                        feedback.title,
+                        feedback.content.as("summary"),
+                        feedback.id.as("feedbackId"),
+                        feedback.createdAt
+                ))
+                .distinct()
+                .from(feedbackSubmit)
+                .join(feedbackSubmit.feedback, feedback)
+                .where(feedbackSubmit.user.id.eq(userId),
+                        feedbackSubmit.isDeleted.eq(false),
+                        feedback.isDeleted.eq(false),
+                        feedback.isFinished.eq(isFinished)
+                )
+                .orderBy(feedback.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        int total = queryFactory
+                .select(feedbackSubmit.feedback)
+                .from(feedbackSubmit)
+                .distinct()
+                .join(feedbackSubmit.feedback, feedback)
+                .where(feedbackSubmit.user.id.eq(userId),
+                        feedbackSubmit.isDeleted.eq(false),
+                        feedback.isDeleted.eq(false),
+                        feedback.isFinished.eq(isFinished)
+                )
+                .fetch().size();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
     public List<RecommendedProjectResponseDto> findRecommendedProjects(Long userId, List<FieldName> filedNameList) {
         List<RecommendedProjectResponseDto> content = queryFactory
                 .select(new QRecommendedProjectResponseDto(
@@ -119,9 +158,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         return content;
     }
 
-    private BooleanExpression userIdIs(Long userId, List<FieldName> fileNameList) {
-        return userId == null ? null : project.fieldName.in(fileNameList);
-    }
+    @Override
     public Page<Project> findAllByPageableAndFieldAndIsFinishedAndSort(Pageable pageable, String keyword, String field, Boolean isFinished, Long sort) {
 
         JPAQuery<Project> query = queryFactory.selectFrom(project)
@@ -170,5 +207,9 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         if (sort == null || sort == 0)
             return project.projectPull.pulledAt.desc();
         return project.likeCount.desc();
+    }
+
+    private BooleanExpression userIdIs(Long userId, List<FieldName> fileNameList) {
+        return userId == null ? null : project.fieldName.in(fileNameList);
     }
 }
