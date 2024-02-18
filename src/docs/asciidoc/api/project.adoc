@@ -14,7 +14,7 @@ include::{snippets}/project/select/http-request.adoc[]
 include::{snippets}/project/select/query-parameters.adoc[]
 page : default(1 페이지)
 
-field 종류 : 예술/대중문화, 금융/핀테크, 환경, 교육, 건강, AI/머신러닝, 취미/실용, 게임, *(아무것도 안보내면 전체)*
+field 종류 : 예술/대중문화, 금융/핀테크, 환경, 교육, 건강, AI/머신러닝, 취미/실용, 게임, 기타, *(아무것도 안보내면 전체)*
 
 keyword : (default 검색 키워드가 없는 것으로 간주)
 
