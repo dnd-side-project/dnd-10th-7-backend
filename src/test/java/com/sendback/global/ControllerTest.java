@@ -5,6 +5,8 @@ import com.sendback.domain.auth.controller.AuthController;
 import com.sendback.domain.auth.service.AuthService;
 import com.sendback.domain.auth.service.GoogleService;
 import com.sendback.domain.auth.service.KakaoService;
+import com.sendback.domain.comment.controller.CommentController;
+import com.sendback.domain.comment.service.CommentService;
 import com.sendback.domain.feedback.controller.FeedbackController;
 import com.sendback.domain.feedback.service.FeedbackService;
 import com.sendback.domain.like.controller.LikeController;
@@ -36,7 +38,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
         ScrapController.class,
         AuthController.class,
         FeedbackController.class,
-        UserController.class
+        UserController.class,
+        CommentController.class
 })
 @ActiveProfiles("test")
 @AutoConfigureRestDocs
@@ -71,6 +74,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected UserService userService;
+
+    @MockBean
+    protected CommentService commentService;
 
     protected static final String ACCESS_TOKEN_PREFIX = "Bearer ";
 
