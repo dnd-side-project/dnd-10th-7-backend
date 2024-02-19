@@ -1,6 +1,7 @@
 package com.sendback.domain.comment.controller;
 
 import com.sendback.domain.comment.dto.request.SaveCommentRequestDto;
+import com.sendback.domain.comment.dto.response.GetCommentsResponseDto;
 import com.sendback.domain.comment.dto.response.SaveCommentResponseDto;
 import com.sendback.global.ControllerTest;
 import com.sendback.global.WithMockCustomUser;
@@ -14,10 +15,13 @@ import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.ResultActions;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -100,6 +104,77 @@ public class CommentControllerTest extends ControllerTest {
                     )));
 
             verify(commentService).saveComment(any(), any(), any());
+        }
+    }
+
+    @Nested
+    @DisplayName("댓글 리스트 조회")
+    class getCommentList {
+
+        @Test
+        @WithMockCustomUser
+        @DisplayName("정상적인 요청이라면 댓글 리스트들을 조회한다.")
+        public void getCommentList_success() throws Exception {
+            // given
+            Long mock_userId = 1L;
+            Long mock_projectId = 1L;
+            LocalDateTime mockDateTime = LocalDateTime.now();
+            List<GetCommentsResponseDto> commentsResponseDtoList = new ArrayList<>();
+            GetCommentsResponseDto responseDto = new GetCommentsResponseDto(1L, "테스터", "테스트 이미지", 1L,
+                    "안녕하세요", mockDateTime, true);
+            commentsResponseDtoList.add(responseDto);
+            given(commentService.getCommentList(mock_userId, mock_projectId)).willReturn(commentsResponseDtoList);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get("/api/{projectId}/comments/", 1L)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .with(csrf().asHeader())
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data").isArray())
+                    .andExpect(jsonPath("$.data[0].commentId").value(commentsResponseDtoList.get(0).commentId()))
+                    .andExpect(jsonPath("$.data[0].content").value(commentsResponseDtoList.get(0).content()))
+                    .andExpect(jsonPath("$.data[0].userId").value(commentsResponseDtoList.get(0).userId()))
+                    .andExpect(jsonPath("$.data[0].profileImageUrl").value(commentsResponseDtoList.get(0).profileImageUrl()))
+                    .andExpect(jsonPath("$.data[0].nickname").value(commentsResponseDtoList.get(0).nickname()))
+                    .andExpect(jsonPath("$.data[0].createdAt").value(mockDateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
+                    .andExpect(jsonPath("$.data[0].isAuthor").value(commentsResponseDtoList.get(0).isAuthor()))
+                    .andDo(print());
+
+            // then
+            resultActions.andDo(document("getCommentList_success",
+                    customRequestPreprocessor(),
+                    preprocessResponse(prettyPrint()),
+                    pathParameters(
+                            parameterWithName("projectId").description("프로젝트 ID")
+                    ),
+                    responseFields(
+                            fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                    .description("코드"),
+                            fieldWithPath("data").type(JsonFieldType.ARRAY)
+                                    .description("응답 데이터"),
+                            fieldWithPath("data[0].userId").type(JsonFieldType.NUMBER)
+                                    .description("유저 ID"),
+                            fieldWithPath("data[0].nickname").type(JsonFieldType.STRING)
+                                    .description("닉네임"),
+                            fieldWithPath("data[0].profileImageUrl").type(JsonFieldType.STRING)
+                                    .description("프로필 사진 URL"),
+                            fieldWithPath("data[0].commentId").type(JsonFieldType.NUMBER)
+                                    .description("댓글 ID"),
+                            fieldWithPath("data[0].content").type(JsonFieldType.STRING)
+                                    .description("내용"),
+                            fieldWithPath("data[0].createdAt").type(JsonFieldType.STRING)
+                                    .attributes(Attributes.key("format").value("yyyy.MM.dd"))
+                                    .description("등록 일자"),
+                            fieldWithPath("data[0].isAuthor").type(JsonFieldType.BOOLEAN)
+                                    .description("작성자"),
+                            fieldWithPath("message").type(JsonFieldType.STRING)
+                                    .description("메시지")
+                    )));
+
+            verify(commentService).getCommentList(any(), any());
         }
     }
 }
