@@ -210,6 +210,10 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
     }
 
     private BooleanExpression userIdIs(Long userId, List<FieldName> fileNameList) {
-        return userId == null ? null : project.fieldName.in(fileNameList);
+        if (userId != null) {
+            return project.fieldName.in(fileNameList);
+        } else {
+            return null;
+        }
     }
 }
