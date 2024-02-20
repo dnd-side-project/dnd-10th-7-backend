@@ -1,6 +1,7 @@
 package com.sendback.domain.comment.service;
 
 import com.sendback.domain.comment.dto.request.SaveCommentRequestDto;
+import com.sendback.domain.comment.dto.response.DeleteCommentResponseDto;
 import com.sendback.domain.comment.dto.response.GetCommentsResponseDto;
 import com.sendback.domain.comment.dto.response.SaveCommentResponseDto;
 import com.sendback.domain.comment.entity.Comment;
@@ -9,12 +10,15 @@ import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.repository.UserRepository;
+import com.sendback.global.exception.type.BadRequestException;
 import com.sendback.global.exception.type.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import static com.sendback.domain.comment.exception.CommentExceptionType.NOT_COMMENT_AUTHOR;
+import static com.sendback.domain.comment.exception.CommentExceptionType.NOT_FOUND_COMMENT;
 import static com.sendback.domain.project.exception.ProjectExceptionType.NOT_FOUND_PROJECT;
 import static com.sendback.domain.user.exception.UserExceptionType.NOT_FOUND_USER;
 
@@ -62,5 +66,19 @@ public class CommentService {
                 .collect(Collectors.toList());
 
         return responseDtoList;
+    }
+
+    public DeleteCommentResponseDto deleteComment(Long userId, Long commentId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException(NOT_FOUND_USER)
+        );
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException(NOT_FOUND_COMMENT)
+        );
+        if(comment.getUser().getId()!=user.getId()){
+            throw new BadRequestException(NOT_COMMENT_AUTHOR);
+        }
+        commentRepository.deleteById(commentId);
+        return new DeleteCommentResponseDto(true);
     }
 }
