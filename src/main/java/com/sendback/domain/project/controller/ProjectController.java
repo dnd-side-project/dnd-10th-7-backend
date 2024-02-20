@@ -37,7 +37,7 @@ public class ProjectController {
             @PageableDefault(page = 1, size = 5) Pageable pageable,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String field,
-            @RequestParam(name = "is-finished", required = false) Boolean isFinished,
+            @RequestParam(required = false) Boolean isFinished,
             @RequestParam(required = false) Long sort
             ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
