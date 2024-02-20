@@ -110,4 +110,8 @@ public class User extends BaseEntity {
     public void actPullUp() {
         this.pullUpCnt += 1;
     }
+
+    public void resetPullUpCnt() {
+        this.pullUpCnt = 0L;
+    }
 }
