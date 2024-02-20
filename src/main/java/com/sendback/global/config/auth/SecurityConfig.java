@@ -42,7 +42,8 @@ public class SecurityConfig {
             "/api/projects/{projectId}/feedbacks/{feedbackId}",
             "/api/projects/{projectId}",
             "/api/projects/{projectId}/feedbacks",
-            "/api/projects"
+            "/api/projects",
+            "/api/projects/{projectId}/comments"
     };
 
     @Bean
