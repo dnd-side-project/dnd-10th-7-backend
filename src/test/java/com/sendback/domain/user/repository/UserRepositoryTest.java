@@ -1,14 +1,17 @@
 package com.sendback.domain.user.repository;
 
 import com.sendback.domain.user.entity.User;
+import com.sendback.domain.user.persister.UserTestPersister;
 import com.sendback.global.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -43,6 +46,32 @@ public class UserRepositoryTest extends RepositoryTest {
 
             //then
             assertTrue(!findUser.isPresent());
+        }
+    }
+
+    @Nested
+    @DisplayName("pullUpCnt가 1 이상인 유저 조회")
+    class findAllByPullUpCntIsGreaterThan {
+
+        @Test
+        @DisplayName("검색에 성공한다.")
+        public void success_existUsers() throws Exception {
+            //given
+            UserTestPersister.UserBuilder builder = userTestPersister.builder();
+            User user_A = builder.save();
+            User user_B = builder.save();
+            user_B.actPullUp();
+            User user_C = builder.save();
+            user_C.actPullUp();
+            User user_D = builder.save();
+
+            //when
+            List<User> users = userRepository.findAllByPullUpCntIsGreaterThan(0L);
+
+            //then
+            assertThat(users.size()).isEqualTo(2);
+            assertThat(users).containsExactlyInAnyOrder(user_B, user_C);
+
         }
     }
 

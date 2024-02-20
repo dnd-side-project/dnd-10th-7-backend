@@ -74,4 +74,8 @@ public class Feedback extends BaseEntity {
                 .build();
     }
 
+    public void updateIsFinished() {
+        this.isFinished = true;
+    }
+
 }

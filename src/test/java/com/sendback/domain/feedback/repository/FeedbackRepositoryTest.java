@@ -1,5 +1,6 @@
 package com.sendback.domain.feedback.repository;
 
+import com.sendback.domain.feedback.dto.request.SaveFeedbackRequestDto;
 import com.sendback.domain.feedback.entity.Feedback;
 import com.sendback.domain.feedback.persister.FeedbackTestPersister;
 import com.sendback.global.RepositoryTest;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,6 +71,37 @@ public class FeedbackRepositoryTest extends RepositoryTest {
             assertThat(response.get(0)).usingRecursiveComparison().isEqualTo(feedback_first);
             assertThat(response.get(1)).usingRecursiveComparison().isEqualTo(feedback_second);
             assertThat(response.get(2)).usingRecursiveComparison().isEqualTo(feedback_third);
+        }
+    }
+
+    @Nested
+    @DisplayName("피드백 종료일이 지났는지 조회")
+    class findAllByEndedAtBeforeAndIsDeletedIsFalse {
+
+        @Test
+        @DisplayName("리스트를 반환한다.")
+        public void success() throws Exception {
+            //given
+            FeedbackTestPersister.FeedbackBuilder feedbackBuilder = feedbackTestPersister.builder();
+            Feedback feedback_A = feedbackBuilder.save();
+            Feedback feedback_B = feedbackBuilder.save();
+            Feedback feedback_C = feedbackBuilder.save();
+            SaveFeedbackRequestDto saveFeedbackRequestDto = new SaveFeedbackRequestDto(
+                    "title", "link", "content", "reward",
+                    LocalDate.of(2024, 1, 12), LocalDate.of(2025, 1, 12)
+            );
+
+            feedbackBuilder.saveFeedbackRequestDto(saveFeedbackRequestDto).save();
+            feedbackBuilder.saveFeedbackRequestDto(saveFeedbackRequestDto).save();
+            LocalDate now = LocalDate.now();
+
+            //when
+            List<Feedback> feedbacks = feedbackRepository.findAllByEndedAtBeforeAndIsDeletedIsFalse(now);
+
+            //then
+            assertThat(feedbacks.size()).isEqualTo(3);
+            assertThat(feedbacks).containsExactlyInAnyOrder(feedback_A, feedback_B, feedback_C);
+
         }
     }
 }
