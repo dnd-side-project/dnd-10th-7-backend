@@ -51,6 +51,7 @@ public class ProjectControllerTest extends ControllerTest {
     class getProjects {
 
         GetProjectsResponseDto getProjectsResponseDto = MOCK_GET_PROJECTS_RESPONSE_DTO;
+
         @Test
         @WithMockCustomUser
         @DisplayName("정상적인 요청일 시 성공을 반환한다.")
@@ -75,7 +76,7 @@ public class ProjectControllerTest extends ControllerTest {
                             .param("size", "5")
                             .param("keyword", "재미있는")
                             .param("field", "게임")
-                            .param("is-finished", "true")
+                            .param("isFinished", "true")
                             .param("sort", "0"))
                     .andDo(print());
 
@@ -89,7 +90,7 @@ public class ProjectControllerTest extends ControllerTest {
                                     parameterWithName("size").description("사이즈"),
                                     parameterWithName("keyword").description("검색 키워드"),
                                     parameterWithName("field").description("분야"),
-                                    parameterWithName("is-finished").description("종료 여부"),
+                                    parameterWithName("isFinished").description("종료 여부"),
                                     parameterWithName("sort").description("정렬 기준")
 
                             ),

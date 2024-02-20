@@ -49,7 +49,7 @@ public record FeedbackDetailResponseDto(
                 project.getId(),
                 project.getTitle(),
                 project.getFieldName().getName(),
-                project.getProgress().toString()
+                project.getProgress().getValue()
         );
     }
 }

@@ -42,17 +42,17 @@ public class FeedbackFixture {
     public static final FeedbackResponseDto MOCK_FEEDBACK_RESPONSE_DTO_A = new FeedbackResponseDto(
             1L, "기획 피드백 부탁해요", "아메리카노 5개",
             LocalDate.of(2024, 1, 12),
-            LocalDate.of(2024, 1, 15), false, false, false
+            LocalDate.of(2024, 1, 15), false, false
     );
 
     public static final FeedbackResponseDto MOCK_FEEDBACK_RESPONSE_DTO_B = new FeedbackResponseDto(
             2L, "와이어 프레임 피드백 부탁해요", "빙수 5개",
             LocalDate.of(2024, 1, 15),
-            LocalDate.of(2024, 1, 18), true, true, false
+            LocalDate.of(2024, 1, 18), true, true
     );
 
     public static final GetFeedbacksResponse MOCK_GET_FEEDBACK_RESPONSE = new GetFeedbacksResponse(
-            List.of(MOCK_FEEDBACK_RESPONSE_DTO_A, MOCK_FEEDBACK_RESPONSE_DTO_B)
+            List.of(MOCK_FEEDBACK_RESPONSE_DTO_A, MOCK_FEEDBACK_RESPONSE_DTO_B), false
     );
 
     public static FeedbackSubmit createDummyFeedbackSubmit(User user, Feedback feedback) {
