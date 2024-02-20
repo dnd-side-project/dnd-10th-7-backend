@@ -1,6 +1,7 @@
 package com.sendback.domain.comment.controller;
 
 import com.sendback.domain.comment.dto.request.SaveCommentRequestDto;
+import com.sendback.domain.comment.dto.response.DeleteCommentResponseDto;
 import com.sendback.domain.comment.dto.response.GetCommentsResponseDto;
 import com.sendback.domain.comment.dto.response.SaveCommentResponseDto;
 import com.sendback.domain.comment.service.CommentService;
@@ -15,7 +16,7 @@ import static com.sendback.global.common.ApiResponse.success;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/{projectId}/comments")
+@RequestMapping(value = "/api/projects/{projectId}/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -35,5 +36,12 @@ public class CommentController {
         }
         Long userId = (Long) authentication.getPrincipal();
         return success(commentService.getCommentList(userId, projectId));
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ApiResponse<DeleteCommentResponseDto> deleteComment(@UserId Long userId,
+                                                               @PathVariable Long commentId) {
+
+        return success(commentService.deleteComment(userId, commentId));
     }
 }

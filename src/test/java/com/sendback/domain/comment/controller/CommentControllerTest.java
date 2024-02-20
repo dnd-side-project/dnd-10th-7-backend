@@ -1,6 +1,7 @@
 package com.sendback.domain.comment.controller;
 
 import com.sendback.domain.comment.dto.request.SaveCommentRequestDto;
+import com.sendback.domain.comment.dto.response.DeleteCommentResponseDto;
 import com.sendback.domain.comment.dto.response.GetCommentsResponseDto;
 import com.sendback.domain.comment.dto.response.SaveCommentResponseDto;
 import com.sendback.global.ControllerTest;
@@ -21,8 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -55,7 +55,7 @@ public class CommentControllerTest extends ControllerTest {
             String content = objectMapper.writeValueAsString(commentRequestDto);
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/{projectId}/comments", 1L)
+            ResultActions resultActions = mockMvc.perform(post("/api/projects/{projectId}/comments", 1L)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(content).with(csrf().asHeader())
                                     .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
@@ -126,9 +126,9 @@ public class CommentControllerTest extends ControllerTest {
             given(commentService.getCommentList(mock_userId, mock_projectId)).willReturn(commentsResponseDtoList);
 
             // when
-            ResultActions resultActions = mockMvc.perform(get("/api/{projectId}/comments", 1L)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .with(csrf().asHeader()))
+            ResultActions resultActions = mockMvc.perform(get("/api/projects/{projectId}/comments", 1L)
+                            .with(csrf().asHeader())
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
@@ -174,6 +174,54 @@ public class CommentControllerTest extends ControllerTest {
                     )));
 
             verify(commentService).getCommentList(any(), any());
+        }
+    }
+
+    @Nested
+    @DisplayName("댓글 삭제")
+    class deleteComment {
+
+        @Test
+        @WithMockCustomUser
+        @DisplayName("정상적인 요청이라면 삭제 여부를 반환한다.")
+        public void deleteComment_success() throws Exception {
+            // given
+            Long mock_userId = 1L;
+            Long mock_projectId = 1L;
+            DeleteCommentResponseDto responseDto = new DeleteCommentResponseDto(true);
+            given(commentService.deleteComment(mock_userId, mock_projectId)).willReturn(responseDto);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(delete("/api/projects/{projectId}/comments/{commentId}",
+                            1L, 1L)
+                            .with(csrf().asHeader())
+                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공"))
+                    .andExpect(jsonPath("$.data.isDeleted").value(responseDto.isDeleted()))
+                    .andDo(print());
+
+            // then
+            resultActions.andDo(document("deleteComment_success",
+                    customRequestPreprocessor(),
+                    preprocessResponse(prettyPrint()),
+                    pathParameters(
+                            parameterWithName("projectId").description("프로젝트 ID"),
+                            parameterWithName("commentId").description("댓글 ID")
+                    ),
+                    responseFields(
+                            fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                    .description("코드"),
+                            fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                    .description("응답 데이터"),
+                            fieldWithPath("data.isDeleted").type(JsonFieldType.BOOLEAN)
+                                    .description("작성자"),
+                            fieldWithPath("message").type(JsonFieldType.STRING)
+                                    .description("메시지")
+                    )));
+
+            verify(commentService).deleteComment(any(), any());
         }
     }
 }
