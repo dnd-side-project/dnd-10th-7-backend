@@ -14,10 +14,9 @@ public record FeedbackResponseDto(
         @JsonFormat(pattern = "yyyy.MM.dd")
         LocalDate endedAt,
         boolean isFinished,
-        boolean isAuthor,
         boolean isSubmitted
 ) {
-    public static FeedbackResponseDto of(Feedback feedback, boolean isAuthor, boolean isSubmitted) {
+    public static FeedbackResponseDto of(Feedback feedback, boolean isSubmitted) {
         return new FeedbackResponseDto(
                 feedback.getId(),
                 feedback.getTitle(),
@@ -25,7 +24,6 @@ public record FeedbackResponseDto(
                 feedback.getStartedAt(),
                 feedback.getEndedAt(),
                 feedback.isFinished(),
-                isAuthor,
                 isSubmitted
         );
     }

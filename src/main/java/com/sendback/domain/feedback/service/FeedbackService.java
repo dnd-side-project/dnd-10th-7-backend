@@ -61,18 +61,18 @@ public class FeedbackService {
 
         if (userId == null) {
             List<FeedbackResponseDto> feedbackResponsDtos = feedbacks.stream()
-                    .map(feedback -> FeedbackResponseDto.of(feedback, false, false)).toList();
-            return new GetFeedbacksResponse(feedbackResponsDtos);
+                    .map(feedback -> FeedbackResponseDto.of(feedback, false)).toList();
+            return new GetFeedbacksResponse(feedbackResponsDtos, false);
         }
 
         User loginUser = userService.getUserById(userId);
         boolean isAuthor = project.isAuthor(loginUser);
 
         List<FeedbackResponseDto> feedbackResponsDtos = feedbacks.stream()
-                .map(feedback -> FeedbackResponseDto.of(feedback, isAuthor, checkSubmit(loginUser, feedback)))
+                .map(feedback -> FeedbackResponseDto.of(feedback, checkSubmit(loginUser, feedback)))
                 .toList();
 
-        return new GetFeedbacksResponse(feedbackResponsDtos);
+        return new GetFeedbacksResponse(feedbackResponsDtos, isAuthor);
     }
 
     private boolean checkSubmit(User loginUser, Feedback feedback) {
