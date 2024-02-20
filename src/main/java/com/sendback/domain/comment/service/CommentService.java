@@ -46,7 +46,7 @@ public class CommentService {
         Project project = projectRepository.findById(projectId).orElseThrow(
                 () -> new NotFoundException(NOT_FOUND_PROJECT)
         );
-        List<Comment> commentList = commentRepository.findByProjectIdOrderByCreatedAtDesc(project.getId());
+        List<Comment> commentList = commentRepository.findByProjectIdAndIsDeletedFalseOrderByCreatedAtDesc(project.getId());
         List<GetCommentsResponseDto> responseDtoList = commentList.stream()
                 .map(comment -> {
                     return new GetCommentsResponseDto(

@@ -20,19 +20,20 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ApiResponse<SaveCommentResponseDto> saveComment(@UserId Long userId, @PathVariable Long projectId,
                                                            @RequestBody SaveCommentRequestDto saveCommentRequestDto) {
         return success(commentService.saveComment(userId, projectId, saveCommentRequestDto));
     }
 
-    @GetMapping("/")
-    public ApiResponse<List<GetCommentsResponseDto>> getCommentList(@UserId Long userId, @PathVariable Long projectId) {
+    @GetMapping("")
+    public ApiResponse<List<GetCommentsResponseDto>> getCommentList(@PathVariable Long projectId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication.getPrincipal() == "anonymousUser") {
             return success(commentService.getCommentList(null , projectId));
         }
+        Long userId = (Long) authentication.getPrincipal();
         return success(commentService.getCommentList(userId, projectId));
     }
 }

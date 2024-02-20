@@ -30,10 +30,11 @@ public class Comment extends BaseEntity {
     private boolean isDeleted = false;
 
     @Builder
-    public Comment(Long id, String content, User user, Project project ) {
+    public Comment(Long id, String content, User user, Project project, boolean isDeleted ) {
         this.content = content;
         this.user = user;
         this.project = project;
+        this.isDeleted = isDeleted;
     }
 
     public static Comment of(String content, User user, Project project){
@@ -41,6 +42,15 @@ public class Comment extends BaseEntity {
                 .content(content)
                 .user(user)
                 .project(project)
+                .build();
+    }
+
+    public static Comment of(String content, User user, Project project, boolean isDeleted){
+        return Comment.builder()
+                .content(content)
+                .user(user)
+                .project(project)
+                .isDeleted(isDeleted)
                 .build();
     }
 }
