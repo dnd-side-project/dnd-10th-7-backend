@@ -38,7 +38,8 @@ public class User extends BaseEntity {
     private Boolean isDeleted = Boolean.FALSE;
 
     @Builder
-    public User(SocialType socialType, String socialId, String email, Level level, String socialname, Gender gender, String birthday, String profileImageUrl, Career career, String nickname) {
+    public User(Long userId, SocialType socialType, String socialId, String email, Level level, String socialname, Gender gender, String birthday, String profileImageUrl, Career career, String nickname) {
+        this.id = userId;
         this.socialType = socialType;
         this.socialId = socialId;
         this.email = email;
@@ -65,6 +66,23 @@ public class User extends BaseEntity {
     public static User of(SocialType socialType, String socialId, String email, Level level, String socialName, Gender gender,
                           String birthday, String profileImageUrl, Career career, String nickname){
         return User.builder()
+                .socialType(socialType)
+                .socialId(socialId)
+                .email(email)
+                .socialname(socialName)
+                .level(level)
+                .gender(gender)
+                .birthday(birthday)
+                .profileImageUrl(profileImageUrl)
+                .career(career)
+                .nickname(nickname)
+                .build();
+    }
+
+    public static User of(Long userId, SocialType socialType, String socialId, String email, Level level, String socialName, Gender gender,
+                          String birthday, String profileImageUrl, Career career, String nickname){
+        return User.builder()
+                .userId(userId)
                 .socialType(socialType)
                 .socialId(socialId)
                 .email(email)
