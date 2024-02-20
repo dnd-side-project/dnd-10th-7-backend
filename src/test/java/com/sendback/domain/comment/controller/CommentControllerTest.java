@@ -55,7 +55,7 @@ public class CommentControllerTest extends ControllerTest {
             String content = objectMapper.writeValueAsString(commentRequestDto);
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/{projectId}/comments/", 1L)
+            ResultActions resultActions = mockMvc.perform(post("/api/{projectId}/comments", 1L)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(content).with(csrf().asHeader())
                                     .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
@@ -126,10 +126,9 @@ public class CommentControllerTest extends ControllerTest {
             given(commentService.getCommentList(mock_userId, mock_projectId)).willReturn(commentsResponseDtoList);
 
             // when
-            ResultActions resultActions = mockMvc.perform(get("/api/{projectId}/comments/", 1L)
+            ResultActions resultActions = mockMvc.perform(get("/api/{projectId}/comments", 1L)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .with(csrf().asHeader())
-                            .header(HttpHeaders.AUTHORIZATION, ACCESS_TOKEN_PREFIX + "AccessToken"))
+                            .with(csrf().asHeader()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
