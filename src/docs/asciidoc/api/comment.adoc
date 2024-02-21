@@ -1,0 +1,49 @@
+
+[[Comment-API]]
+= Comment API
+
+[[save-comment]]
+== 댓글 등록
+=== 성공
+==== HTTP Requests
+
+include::{snippets}/saveComment-success/http-request.adoc[]
+- Path parameters +
+include::{snippets}/saveComment-success/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/saveComment-success/http-response.adoc[]
+- Response body
+include::{snippets}/saveComment-success/response-fields.adoc[]
+
+'''
+
+[[get-commentList]]
+== 댓글 리스트 조회
+=== 성공
+==== HTTP Requests
+
+include::{snippets}/getCommentList_success/http-request.adoc[]
+- Path parameters +
+include::{snippets}/getCommentList_success/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/getCommentList_success/http-response.adoc[]
+- Response body
+include::{snippets}/getCommentList_success/response-fields.adoc[]
+
+'''
+
+[[delete-comment]]
+== 댓글 삭제
+=== 성공
+==== HTTP Requests
+
+include::{snippets}/deleteComment_success/http-request.adoc[]
+- Path parameters +
+include::{snippets}/deleteComment_success/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/deleteComment_success/http-response.adoc[]
+- Response body
+include::{snippets}/deleteComment_success/response-fields.adoc[]

@@ -2,8 +2,6 @@ package com.sendback.domain.project.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sendback.domain.project.dto.response.QRecommendedProjectResponseDto;
-import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.sendback.domain.project.entity.Project;
@@ -26,6 +24,7 @@ import static com.sendback.domain.user.entity.QUser.user;
 public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
 
     @Override
     public Page<RegisteredProjectResponseDto> findAllRegisteredProjectsByMe(Pageable pageable, Long userId, Boolean check) {
@@ -132,28 +131,18 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
     }
 
     @Override
-    public List<RecommendedProjectResponseDto> findRecommendedProjects(Long userId, List<FieldName> filedNameList) {
-        List<RecommendedProjectResponseDto> content = queryFactory
-                .select(new QRecommendedProjectResponseDto(
-                        project.id.as("projectId"),
-                        project.progress.stringValue(),
-                        project.fieldName.stringValue(),
-                        project.title,
-                        project.summary,
-                        project.user.nickname,
-                        project.createdAt,
-                        project.user.profileImageUrl
-                ))
-                .from(project)
+    public List<Project> findRecommendedProjects(List<FieldName> filedNameList, int size) {
+        List<Project> content = queryFactory
+                .selectFrom(project)
                 .join(project.likes, like)
                 .groupBy(project)
                 .where(
                         like.isDeleted.eq(false),
                         project.isDeleted.eq(false),
-                        userIdIs(userId, filedNameList)
+                        project.fieldName.in(filedNameList)
                 )
                 .orderBy(like.count().desc())
-                .limit(10)
+                .limit(size)
                 .fetch();
         return content;
     }
@@ -209,7 +198,4 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         return project.likeCount.desc();
     }
 
-    private BooleanExpression userIdIs(Long userId, List<FieldName> fileNameList) {
-        return userId == null ? null : project.fieldName.in(fileNameList);
-    }
 }

@@ -49,4 +49,13 @@ public class UserFixture {
         return User.of(SOCIAL_TYPE_KAKAO, SOCIAL_ID_B, EMAIL_B, LEVEL, SOCIALNAME, GENDER, BIRTHDAY,
                 PROFILE_IMAGE_URL, CAREER, NICKNAME_B);
     }
+    public static User createDummyUser_D() {
+        return User.of(1L, SOCIAL_TYPE_KAKAO, SOCIAL_ID_B, EMAIL_B, LEVEL, SOCIALNAME, GENDER, BIRTHDAY,
+                PROFILE_IMAGE_URL, CAREER, NICKNAME_B);
+    }
+    public static User createDummyUser_E() {
+        return User.of(2L, SOCIAL_TYPE_KAKAO, SOCIAL_ID_B, EMAIL_B, LEVEL, SOCIALNAME, GENDER, BIRTHDAY,
+                PROFILE_IMAGE_URL, CAREER, NICKNAME_B);
+    }
+
 }
