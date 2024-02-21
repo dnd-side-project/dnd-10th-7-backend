@@ -2,6 +2,7 @@ package com.sendback.domain.project.repository;
 
 import com.sendback.domain.feedback.persister.FeedbackTestPersister;
 import com.sendback.domain.like.persister.LikeTestPersister;
+import com.sendback.domain.project.dto.request.SaveProjectRequestDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.persister.ProjectTestPersister;
 import com.sendback.global.RepositoryTest;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -271,6 +273,36 @@ public class ProjectRepositoryTest extends RepositoryTest {
             assertThat(response.getContent().get(1)).usingRecursiveComparison().isEqualTo(project_second);
             assertThat(response.getContent().get(2)).usingRecursiveComparison().isEqualTo(project_fourth);
             assertThat(response.getContent().get(3)).usingRecursiveComparison().isEqualTo(project_fifth);
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트가 종료일이 지났는지 조회")
+    class findAllByEndedAtBeforeAndIsDeletedIsFalse {
+
+        @Test
+        @DisplayName("리스트를 반환한다.")
+        public void success() throws Exception {
+            //given
+            ProjectTestPersister.ProjectBuilder projectBuilder = projectTestPersister.builder();
+            Project project_A = projectBuilder.save();
+            Project project_B = projectBuilder.save();
+            Project project_C = projectBuilder.save();
+            SaveProjectRequestDto saveProjectRequestDto = new SaveProjectRequestDto(
+                    "title", "게임", "content", "summary", "demo",
+                    LocalDate.of(2024, 1, 12), LocalDate.of(2025, 1, 12),
+                    "기획중", 0L, 1L, 2L, 3L);
+            projectBuilder.saveProjectRequestDto(saveProjectRequestDto).save();
+            projectBuilder.saveProjectRequestDto(saveProjectRequestDto).save();
+            LocalDate now = LocalDate.now();
+
+            //when
+            List<Project> projects = projectRepository.findAllByEndedAtBeforeAndIsDeletedIsFalse(now);
+
+            //then
+            assertThat(projects.size()).isEqualTo(3);
+            assertThat(projects).containsExactlyInAnyOrder(project_A, project_B, project_C);
+
         }
     }
 

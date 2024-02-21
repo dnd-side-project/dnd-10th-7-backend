@@ -270,6 +270,7 @@ public class FeedbackControllerTest extends ControllerTest {
                                             .description("코드"),
                                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
                                     fieldWithPath("data.feedbacks").type(JsonFieldType.ARRAY).description("피드백 리스트"),
+                                    fieldWithPath("data.isAuthor").type(JsonFieldType.BOOLEAN).description("작성자 여부"),
                                     fieldWithPath("data.feedbacks[].feedbackId").type(JsonFieldType.NUMBER).description("피드백 ID"),
                                     fieldWithPath("data.feedbacks[].title").type(JsonFieldType.STRING).description("제목"),
                                     fieldWithPath("data.feedbacks[].rewardMessage").type(JsonFieldType.STRING).description("추가 리워드"),
@@ -278,7 +279,6 @@ public class FeedbackControllerTest extends ControllerTest {
                                     fieldWithPath("data.feedbacks[].endedAt").type(JsonFieldType.STRING).description("끝나는 날짜")
                                             .attributes(Attributes.key("format").value("yyyy.MM.dd")),
                                     fieldWithPath("data.feedbacks[].isFinished").type(JsonFieldType.BOOLEAN).description("피드백 종료 여부"),
-                                    fieldWithPath("data.feedbacks[].isAuthor").type(JsonFieldType.BOOLEAN).description("작성자 여부"),
                                     fieldWithPath("data.feedbacks[].isSubmitted").type(JsonFieldType.BOOLEAN).description("제출 여부"),
                                     fieldWithPath("message").type(JsonFieldType.STRING)
                                             .description("메시지")
@@ -286,13 +286,13 @@ public class FeedbackControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공"))
                     .andExpect(jsonPath("$.data.feedbacks").isArray())
+                    .andExpect(jsonPath("$.data.isAuthor").value(false))
                     .andExpect(jsonPath("$.data.feedbacks[0].feedbackId").value(MOCK_FEEDBACK_RESPONSE_DTO_A.feedbackId()))
                     .andExpect(jsonPath("$.data.feedbacks[0].title").value(MOCK_FEEDBACK_RESPONSE_DTO_A.title()))
                     .andExpect(jsonPath("$.data.feedbacks[0].rewardMessage").value(MOCK_FEEDBACK_RESPONSE_DTO_A.rewardMessage()))
                     .andExpect(jsonPath("$.data.feedbacks[0].startedAt").value(MOCK_FEEDBACK_RESPONSE_DTO_A.startedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
                     .andExpect(jsonPath("$.data.feedbacks[0].endedAt").value(MOCK_FEEDBACK_RESPONSE_DTO_A.endedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
                     .andExpect(jsonPath("$.data.feedbacks[0].isFinished").value(MOCK_FEEDBACK_RESPONSE_DTO_A.isFinished()))
-                    .andExpect(jsonPath("$.data.feedbacks[0].isAuthor").value(MOCK_FEEDBACK_RESPONSE_DTO_A.isAuthor()))
                     .andExpect(jsonPath("$.data.feedbacks[0].isSubmitted").value(MOCK_FEEDBACK_RESPONSE_DTO_A.isSubmitted()))
                     .andExpect(jsonPath("$.data.feedbacks[1].feedbackId").value(MOCK_FEEDBACK_RESPONSE_DTO_B.feedbackId()))
                     .andExpect(jsonPath("$.data.feedbacks[1].title").value(MOCK_FEEDBACK_RESPONSE_DTO_B.title()))
@@ -300,7 +300,6 @@ public class FeedbackControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.data.feedbacks[1].startedAt").value(MOCK_FEEDBACK_RESPONSE_DTO_B.startedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
                     .andExpect(jsonPath("$.data.feedbacks[1].endedAt").value(MOCK_FEEDBACK_RESPONSE_DTO_B.endedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
                     .andExpect(jsonPath("$.data.feedbacks[1].isFinished").value(MOCK_FEEDBACK_RESPONSE_DTO_B.isFinished()))
-                    .andExpect(jsonPath("$.data.feedbacks[1].isAuthor").value(MOCK_FEEDBACK_RESPONSE_DTO_B.isAuthor()))
                     .andExpect(jsonPath("$.data.feedbacks[1].isSubmitted").value(MOCK_FEEDBACK_RESPONSE_DTO_B.isSubmitted()))
                     .andExpect(status().isOk());
         }

@@ -90,7 +90,6 @@ public class FeedbackServiceTest extends ServiceTest {
             assertThat(feedbackResponseDto.feedbackId()).isEqualTo(1L);
             assertThat(feedbackResponseDto.title()).isEqualTo(feedback.getTitle());
             assertThat(feedbackResponseDto.rewardMessage()).isEqualTo(feedback.getRewardMessage());
-            assertThat(feedbackResponseDto.isAuthor()).isEqualTo(false);
             assertThat(feedbackResponseDto.isSubmitted()).isEqualTo(false);
 
         }
@@ -115,9 +114,7 @@ public class FeedbackServiceTest extends ServiceTest {
             assertThat(feedbackResponseDto.feedbackId()).isEqualTo(1L);
             assertThat(feedbackResponseDto.title()).isEqualTo(feedback.getTitle());
             assertThat(feedbackResponseDto.rewardMessage()).isEqualTo(feedback.getRewardMessage());
-            assertThat(feedbackResponseDto.isAuthor()).isEqualTo(true);
             assertThat(feedbackResponseDto.isSubmitted()).isEqualTo(true);
-
 
         }
 
