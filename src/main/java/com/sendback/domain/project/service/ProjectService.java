@@ -31,10 +31,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 import static com.sendback.domain.project.exception.ProjectExceptionType.*;
+import static com.sendback.global.common.constants.FieldName.*;
 
 @Service
 @RequiredArgsConstructor
@@ -116,12 +118,18 @@ public class ProjectService {
     }
 
     public List<RecommendedProjectResponseDto> getRecommendedProject(Long userId){
-        List<FieldName> fieldNameList = new ArrayList<>();
+        List<RecommendedProjectResponseDto> responseDtos = new ArrayList<>();
         if(userId!=null) {
             List<Field> fieldList = fieldRepository.findAllByUserId(userId);
-            fieldNameList = fieldList.stream().map(Field::getName).collect(Collectors.toList());
+            List<FieldName> fieldNameList = fieldList.stream().map(Field::getName).collect(Collectors.toList());
+            List<Project> projects = projectRepository.findRecommendedProjects(fieldNameList, 12);
+            responseDtos.addAll(projects.stream().map(project -> RecommendedProjectResponseDto.of(project)).collect(Collectors.toList()));
         }
-        return projectRepository.findRecommendedProjects(userId, fieldNameList);
+        else{
+            List<Project> projects = projectRepository.findTop12ByOrderByLikeCountDesc();
+            responseDtos = projects.stream().map(project -> RecommendedProjectResponseDto.of(project)).collect(Collectors.toList());
+        }
+        return responseDtos;
     }
 
     public void validateProjectAuthor(User user, Project project) {

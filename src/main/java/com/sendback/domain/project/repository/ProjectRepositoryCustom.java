@@ -1,6 +1,5 @@
 package com.sendback.domain.project.repository;
 
-import com.sendback.domain.project.dto.response.RecommendedProjectResponseDto;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.user.dto.response.RegisteredProjectResponseDto;
 import com.sendback.domain.user.dto.response.ScrappedProjectResponseDto;
@@ -17,7 +16,8 @@ public interface ProjectRepositoryCustom {
 
     Page<ScrappedProjectResponseDto> findAllScrappedProjectsByMe(Pageable pageable, Long userId, Boolean isFinished);
 
-    List<RecommendedProjectResponseDto> findRecommendedProjects(Long userId, List<FieldName> fieldNameList);
+    List<Project> findRecommendedProjects(List<FieldName> fieldNameList, int size);
+
     Page<Project> findAllByPageableAndFieldAndIsFinishedAndSort(
             Pageable pageable, String keyword, String field, Boolean isFinished, Long sort);
     Page<SubmittedFeedbackResponseDto> findAllSubmittedProjectsByMe(Pageable pageable, Long userId, Boolean isFinished);
