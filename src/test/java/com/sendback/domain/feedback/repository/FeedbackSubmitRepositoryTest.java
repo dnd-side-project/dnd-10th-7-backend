@@ -2,6 +2,7 @@ package com.sendback.domain.feedback.repository;
 
 import com.sendback.domain.feedback.entity.FeedbackSubmit;
 import com.sendback.global.RepositoryTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class FeedbackSubmitRepositoryTest extends RepositoryTest {
             FeedbackSubmit feedbackSubmit = feedbackSubmitTestPersister.builder().save();
 
             // when
-            Long feedBackCount = feedbackSubmitRepository.countByUserId(feedbackSubmit.getUser().getId());
+            Long feedBackCount = feedbackSubmitRepository.countByUserAndIsDeletedIsFalse(feedbackSubmit.getUser());
 
             // then
             assertThat(feedBackCount).isEqualTo(1);
