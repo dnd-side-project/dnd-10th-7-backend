@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static com.sendback.domain.user.exception.UserExceptionType.*;
 
 @Service
@@ -77,10 +76,10 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(NOT_FOUND_USER)
         );
-        Long projectCount = projectRepository.countByUserId(userId);
-        Long feedbackCount = feedbackSubmitRepository.countByUserId(userId);
-        List<Project> projectList = projectRepository.findByUserId(userId);
-        Long likeCount = likeRepository.countByProjectIn(projectList);
+        Long projectCount = projectRepository.countByUserAndIsDeletedIsFalse(user);
+        Long feedbackCount = feedbackSubmitRepository.countByUserAndIsDeletedIsFalse(user);
+        List<Project> projectList = projectRepository.findByUserAndIsDeletedIsFalse(user);
+        Long likeCount = likeRepository.countByProjectInAndIsDeletedIsFalse(projectList);
         List<Field> fieldList = fieldRepository.findAllByUserId(userId);
         List<String> fieldNameList = fieldList.stream()
                 .map(Field::getName)

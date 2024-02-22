@@ -12,5 +12,5 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
 
     Optional<Like> findByUserAndProject(User user, Project project);
     boolean existsByUserAndProjectAndIsDeletedIsFalse(User user, Project project);
-    Long countByProjectIn(List<Project> projects);
+    Long countByProjectInAndIsDeletedIsFalse(List<Project> projects);
 }
