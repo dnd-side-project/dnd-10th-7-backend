@@ -54,7 +54,7 @@ public class GoogleService {
         User googleUser = userRepository.findBySocialId(googleUserInfo.id()).orElse(null);
 
         if (googleUser == null) {
-            String signToken = jwtProvider.generateSignToken(googleUserInfo);
+            String signToken = jwtProvider.generateSignToken(googleUserInfo, "GOOGLE");
             throw new SignInException(NEED_TO_SIGNUP, new SignTokenResponseDto(signToken));
         }
 

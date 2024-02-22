@@ -1,6 +1,6 @@
 package com.sendback.domain.user.fixture;
 
-import com.sendback.domain.user.dto.SigningAccount;
+import com.sendback.domain.user.dto.SigningUser;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.entity.User;
 import com.sendback.domain.user.entity.SocialType;
@@ -27,7 +27,7 @@ public class UserFixture {
     private static final Gender GENDER = MALE;
     private static final String BIRTHDAY = "2000.01.01";
     private static final Career CAREER = BACKEND;
-    public static final SigningAccount MOCK_SIGNING_ACCOUNT = new SigningAccount("123", "mock",
+    public static final SigningUser MOCK_SIGNING_ACCOUNT = new SigningUser("123", "mock",
             "mock_profile", "mock@kakao.com", "kakao");
     public static final SignUpRequestDto MOCK_SIGN_UP_REQUEST_DTO = new SignUpRequestDto("mock_user", "2000.01.01",
             "남자", "백엔드", Arrays.asList("예술/대중문화", "게임"), "valid signToken");

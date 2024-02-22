@@ -8,7 +8,7 @@ import com.sendback.domain.field.service.FieldService;
 import com.sendback.domain.like.repository.LikeRepository;
 import com.sendback.domain.project.entity.Project;
 import com.sendback.domain.project.repository.ProjectRepository;
-import com.sendback.domain.user.dto.SigningAccount;
+import com.sendback.domain.user.dto.SigningUser;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.domain.user.dto.response.*;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
@@ -51,11 +51,11 @@ public class UserService {
             throw new BadRequestException(DUPLICATED_NICKNAME);
         }
         jwtProvider.validateSignToken(signUpRequestDto.signToken());
-        SigningAccount signingAccount = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
-//        if(userRepository.findBySocialId(signingAccount.socialId()).isPresent()){
-//            throw new BadRequestException(PREVIOUS_REGISTERED_USER);
-//        }
-        User user = User.of(signingAccount, signUpRequestDto);
+        SigningUser signingUser = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
+        if(userRepository.findBySocialId(signingUser.socialId()).isPresent()){
+            throw new BadRequestException(PREVIOUS_REGISTERED_USER);
+        }
+        User user = User.of(signingUser, signUpRequestDto);
         User savedUser = userRepository.save(user);
         List<Field> fieldList = signUpRequestDto.fields().stream()
                 .map(field -> Field.of(FieldName.toEnum(field), user))
