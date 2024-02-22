@@ -8,7 +8,6 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project, Long>, ProjectRepositoryCustom {
     Long countByUserId(Long userId);
     List<Project> findByUserId(Long userId);
-    List<Project> findTop12ByOrderByLikeCountDesc();
     List<Project> findAllByEndedAtBeforeAndIsDeletedIsFalse(LocalDate localDate);
 
 }

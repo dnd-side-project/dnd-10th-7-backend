@@ -135,13 +135,29 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
         List<Project> content = queryFactory
                 .selectFrom(project)
                 .join(project.likes, like)
-                .groupBy(project)
+                .groupBy(project.id)
                 .where(
                         like.isDeleted.eq(false),
                         project.isDeleted.eq(false),
                         project.fieldName.in(filedNameList)
                 )
-                .orderBy(like.count().desc())
+                .orderBy(project.id.count().desc())
+                .limit(size)
+                .fetch();
+        return content;
+    }
+
+    @Override
+    public List<Project> findRecommendedProjects(int size) {
+        List<Project> content = queryFactory
+                .selectFrom(project)
+                .join(project.likes, like)
+                .groupBy(project.id)
+                .where(
+                        like.isDeleted.eq(false),
+                        project.isDeleted.eq(false)
+                )
+                .orderBy(project.id.count().desc())
                 .limit(size)
                 .fetch();
         return content;
