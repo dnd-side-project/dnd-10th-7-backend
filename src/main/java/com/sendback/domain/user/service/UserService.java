@@ -52,9 +52,9 @@ public class UserService {
         }
         jwtProvider.validateSignToken(signUpRequestDto.signToken());
         SigningAccount signingAccount = jwtProvider.getSignUserInfo(signUpRequestDto.signToken());
-        if(userRepository.findBySocialId(signingAccount.socialId()).isPresent()){
-            throw new BadRequestException(PREVIOUS_REGISTERED_USER);
-        }
+//        if(userRepository.findBySocialId(signingAccount.socialId()).isPresent()){
+//            throw new BadRequestException(PREVIOUS_REGISTERED_USER);
+//        }
         User user = User.of(signingAccount, signUpRequestDto);
         User savedUser = userRepository.save(user);
         List<Field> fieldList = signUpRequestDto.fields().stream()
