@@ -31,12 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 import static com.sendback.domain.project.exception.ProjectExceptionType.*;
-import static com.sendback.global.common.constants.FieldName.*;
 
 @Service
 @RequiredArgsConstructor
@@ -124,10 +122,14 @@ public class ProjectService {
             List<FieldName> fieldNameList = fieldList.stream().map(Field::getName).collect(Collectors.toList());
             List<Project> projects = projectRepository.findRecommendedProjects(fieldNameList, 12);
             responseDtos.addAll(projects.stream().map(project -> RecommendedProjectResponseDto.of(project)).collect(Collectors.toList()));
+            if(projects.size()<12) {
+                List<Project> extraProject = projectRepository.findRecommendedProjects(12 - projects.size());
+                responseDtos.addAll(extraProject.stream().map(project -> RecommendedProjectResponseDto.of(project)).collect(Collectors.toList()));
+            }
         }
         else{
-            List<Project> projects = projectRepository.findTop12ByOrderByLikeCountDesc();
-            responseDtos = projects.stream().map(project -> RecommendedProjectResponseDto.of(project)).collect(Collectors.toList());
+            List<Project> projects = projectRepository.findRecommendedProjects(12);
+            responseDtos.addAll(projects.stream().map(project -> RecommendedProjectResponseDto.of(project)).collect(Collectors.toList()));
         }
         return responseDtos;
     }

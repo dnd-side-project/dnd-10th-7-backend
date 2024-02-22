@@ -178,12 +178,12 @@ public class UserServiceTest extends ServiceTest {
             Long needToFeedbackCount = Level.getRemainCountUntilNextLevel(feedbackCount);
 
             given(userRepository.findById(mockUserId)).willReturn(Optional.of(user));
-            given(projectRepository.countByUserId(mockUserId)).willReturn(projectCount);
-            given(feedbackSubmitRepository.countByUserId(mockUserId)).willReturn(feedbackCount);
+            given(projectRepository.countByUserAndIsDeletedIsFalse(user)).willReturn(projectCount);
+            given(feedbackSubmitRepository.countByUserAndIsDeletedIsFalse(user)).willReturn(feedbackCount);
             List<Project> projectList = new ArrayList<>();
             projectList.add(project);
-            given(projectRepository.findByUserId(mockUserId)).willReturn(projectList);
-            given(likeRepository.countByProjectIn(projectList)).willReturn(likeCount);
+            given(projectRepository.findByUserAndIsDeletedIsFalse(user)).willReturn(projectList);
+            given(likeRepository.countByProjectInAndIsDeletedIsFalse(projectList)).willReturn(likeCount);
             given(fieldRepository.findAllByUserId(mockUserId)).willReturn(mock_Fields);
             List<String> mock_fieldNameList = mock_Fields.stream()
                     .map(Field::getName)

@@ -33,7 +33,7 @@ public class ProjectRepositoryTest extends RepositoryTest {
         Project project = projectTestPersister.builder().save();
 
         //when
-        Long projectCount = projectRepository.countByUserId(project.getUser().getId());
+        Long projectCount = projectRepository.countByUserAndIsDeletedIsFalse(project.getUser());
 
         //then
         assertThat(projectCount).isEqualTo(1);
@@ -46,7 +46,7 @@ public class ProjectRepositoryTest extends RepositoryTest {
         Project project = projectTestPersister.builder().save();
 
         //when
-        List<Project> findProject = projectRepository.findByUserId(project.getUser().getId());
+        List<Project> findProject = projectRepository.findByUserAndIsDeletedIsFalse(project.getUser());
 
         //then
         assertThat(findProject.size()).isEqualTo(1);
