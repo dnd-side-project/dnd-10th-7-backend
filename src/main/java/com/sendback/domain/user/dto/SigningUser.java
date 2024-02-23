@@ -1,6 +1,6 @@
 package com.sendback.domain.user.dto;
 
-public record SigningAccount(
+public record SigningUser(
         String socialId,
         String socialname,
         String profileImageUrl,

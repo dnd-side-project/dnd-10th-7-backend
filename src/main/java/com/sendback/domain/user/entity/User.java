@@ -1,6 +1,6 @@
 package com.sendback.domain.user.entity;
 
-import com.sendback.domain.user.dto.SigningAccount;
+import com.sendback.domain.user.dto.SigningUser;
 import com.sendback.domain.user.dto.request.SignUpRequestDto;
 import com.sendback.domain.user.dto.request.UpdateUserInfoRequestDto;
 import com.sendback.global.common.BaseEntity;
@@ -96,16 +96,16 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    public static User of(SigningAccount signingAccount, SignUpRequestDto signUpRequestDto) {
+    public static User of(SigningUser signingUser, SignUpRequestDto signUpRequestDto) {
         return User.builder()
-                .socialType(SocialType.toEnum(signingAccount.socialType()))
-                .socialId(signingAccount.socialId())
-                .email(signingAccount.email())
+                .socialType(SocialType.toEnum(signingUser.socialType()))
+                .socialId(signingUser.socialId())
+                .email(signingUser.email())
                 .level(Level.ONE)
-                .socialname(signingAccount.socialname())
+                .socialname(signingUser.socialname())
                 .gender(Gender.toEnum(signUpRequestDto.gender()))
                 .birthday(signUpRequestDto.birthday())
-                .profileImageUrl(signingAccount.profileImageUrl())
+                .profileImageUrl(signingUser.profileImageUrl())
                 .career(Career.toEnum(signUpRequestDto.career()))
                 .nickname(signUpRequestDto.nickname())
                 .build();

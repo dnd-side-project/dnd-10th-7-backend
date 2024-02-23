@@ -51,7 +51,7 @@ public class KakaoService {
         User kakaoUser = userRepository.findBySocialId(kakaoUserInfo.id()).orElse(null);
 
         if (kakaoUser == null) {
-            String signToken = jwtProvider.generateSignToken(kakaoUserInfo);
+            String signToken = jwtProvider.generateSignToken(kakaoUserInfo, "KAKAO");
             throw new SignInException(NEED_TO_SIGNUP,new SignTokenResponseDto(signToken));
         }
 
