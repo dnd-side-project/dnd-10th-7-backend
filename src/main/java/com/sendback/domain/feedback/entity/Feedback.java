@@ -34,6 +34,7 @@ public class Feedback extends BaseEntity {
     private Project project;
     private String title;
     private String linkUrl;
+    @Column(length = 500)
     private String content;
     private String rewardMessage;
     private LocalDate startedAt;
