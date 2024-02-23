@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -76,6 +77,10 @@ public class Feedback extends BaseEntity {
 
     public void updateIsFinished() {
         this.isFinished = true;
+    }
+
+    public boolean isAuthor(final User user) {
+        return Objects.equals(this.user, user);
     }
 
 }
