@@ -21,8 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.sendback.domain.feedback.exception.FeedbackExceptionType.DUPLICATE_FEEDBACK_SUBMIT;
-import static com.sendback.domain.feedback.exception.FeedbackExceptionType.NOT_FOUND_FEEDBACK;
+import static com.sendback.domain.feedback.exception.FeedbackExceptionType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +88,8 @@ public class FeedbackService {
         User loginUser = userService.getUserById(userId);
         Feedback feedback = getFeedback(feedbackId);
 
+        validateIsAuthor(loginUser, feedback);
+
         validateAlreadySubmit(loginUser, feedback);
 
         String screenShotUrl = imageService.uploadImage(file, "feedback");
@@ -100,6 +101,12 @@ public class FeedbackService {
         Long remainCount = Level.getRemainCountUntilNextLevel(submitCount);
 
         return new SubmitFeedbackResponseDto(loginUser.getLevel().getName(), isLevelUp, remainCount);
+    }
+
+    private void validateIsAuthor(User loginUser, Feedback feedback) {
+        boolean isAuthor = feedback.isAuthor(loginUser);
+        if (isAuthor)
+            throw new BadRequestException(REJECT_SUBMIT_FEEDBACK_BY_AUTHOR);
     }
 
     private boolean isLevelUpUserLevelBySubmitting(User user, Long submitCount) {

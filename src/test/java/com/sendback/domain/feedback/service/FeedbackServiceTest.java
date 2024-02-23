@@ -26,8 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sendback.domain.feedback.exception.FeedbackExceptionType.DUPLICATE_FEEDBACK_SUBMIT;
-import static com.sendback.domain.feedback.exception.FeedbackExceptionType.NOT_FOUND_FEEDBACK;
+import static com.sendback.domain.feedback.exception.FeedbackExceptionType.*;
 import static com.sendback.domain.feedback.fixture.FeedbackFixture.*;
 import static com.sendback.domain.project.exception.ProjectExceptionType.NOT_PROJECT_AUTHOR;
 import static com.sendback.domain.project.fixture.ProjectFixture.createDummyProject;
@@ -198,11 +197,26 @@ public class FeedbackServiceTest extends ServiceTest {
     class submitFeedback {
 
         @Test
+        @DisplayName("작성자가 피드백을 제출하면 예외를 일으킨다.")
+        public void fail_isAuthor() throws Exception {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(user);
+            given(feedbackRepository.findById(anyLong())).willReturn(Optional.of(feedback));
+            given(feedback.isAuthor(any(User.class))).willReturn(true);
+
+            //when - then
+            assertThatThrownBy(() -> feedbackService.submitFeedback(1L, 1L, mockingMultipartFile("screenShot")))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(REJECT_SUBMIT_FEEDBACK_BY_AUTHOR.getMessage());
+        }
+
+        @Test
         @DisplayName("이미 제출했던 유저면 예외를 발생한다.")
         public void fail_alreadySubmit() throws Exception {
             //given
             given(userService.getUserById(anyLong())).willReturn(user);
             given(feedbackRepository.findById(anyLong())).willReturn(Optional.of(feedback));
+            given(feedback.isAuthor(any(User.class))).willReturn(false);
             given(feedbackSubmitRepository.existsByUserAndFeedbackAndIsDeletedIsFalse(any(User.class), any(Feedback.class))).willReturn(true);
 
             //when - then
@@ -217,6 +231,7 @@ public class FeedbackServiceTest extends ServiceTest {
             //given
             given(userService.getUserById(anyLong())).willReturn(user);
             given(feedbackRepository.findById(anyLong())).willReturn(Optional.of(feedback));
+            given(feedback.isAuthor(any(User.class))).willReturn(false);
             given(feedbackSubmitRepository.existsByUserAndFeedbackAndIsDeletedIsFalse(any(User.class), any(Feedback.class))).willReturn(false);
             given(imageService.uploadImage(any(), anyString())).willReturn("sendback1.jpg");
             given(feedbackSubmitRepository.save(any(FeedbackSubmit.class))).willReturn(feedbackSubmit);
@@ -238,6 +253,7 @@ public class FeedbackServiceTest extends ServiceTest {
             //given
             given(userService.getUserById(anyLong())).willReturn(user);
             given(feedbackRepository.findById(anyLong())).willReturn(Optional.of(feedback));
+            given(feedback.isAuthor(any(User.class))).willReturn(false);
             given(feedbackSubmitRepository.existsByUserAndFeedbackAndIsDeletedIsFalse(any(User.class), any(Feedback.class))).willReturn(false);
             given(imageService.uploadImage(any(), anyString())).willReturn("sendback1.jpg");
             given(feedbackSubmitRepository.save(any(FeedbackSubmit.class))).willReturn(feedbackSubmit);
