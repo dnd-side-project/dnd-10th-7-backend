@@ -31,8 +31,8 @@ public record GetProjectsResponseDto(
                 project.getFieldName().getName(),
                 project.getCreatedAt(),
                 project.getProjectPull().getPullUpCnt(),
-                project.getLikes().stream().map(like -> !like.isDeleted()).count(),
-                project.getComments().stream().map(comment -> !comment.isDeleted()).count(),
+                project.getLikes().stream().filter(like -> !like.isDeleted()).count(),
+                project.getComments().stream().filter(comment -> !comment.isDeleted()).count(),
                 isScrapped
         );
     }
