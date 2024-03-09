@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.1.5'
 	id 'io.spring.dependency-management' version '1.1.4'
 	id "org.asciidoctor.jvm.convert" version "3.3.2"
+	id 'jacoco'
 }
 
 group = 'com'
@@ -12,7 +13,9 @@ java {
 	sourceCompatibility = '17'
 }
 
-
+jacoco {
+	toolVersion = "0.8.8"
+}
 
 configurations {
 	compileOnly {
@@ -78,6 +81,16 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport'
+}
+
+jacocoTestReport {
+	reports {
+		// html로 report 생성하기
+		// 빌드경로/jacoco/report.html 폴더 내부로 경로 설정
+		html.destination file("$buildDir/jacoco/report.html")
+	}
+
 }
 
 // gradlew 빌드시 에러 발생방지, 빌드시 -plain.jar 생기는 설정 끄기 for Github Actions
