@@ -23,9 +23,10 @@ Sendback 과 함께 프로젝트 기획부터 론칭까지, 프로젝트를 등
 ![ERD](https://github.com/dnd-side-project/dnd-10th-7-backend/assets/114072164/cc29ff1a-f7a5-406b-986a-b179ab66e093)
 
 ---
-## **Architecture**
+## Architecture
 ![스크린샷(877) 1](https://github.com/dnd-side-project/dnd-10th-7-backend/assets/114072164/bcd0db4c-ce85-4439-bf12-467368cd8036)
 
 ---
+## API 문서
 API 문서는 [해당 페이지](https://api.sendback.co.kr/docs/index.html)에서 확인해 볼 수 있습니다.
 `Spring Rest Docs`를 이용하여 테스트 코드가 통과한 API에 대한 문서를 자동으로 생성하고 있습니다.
